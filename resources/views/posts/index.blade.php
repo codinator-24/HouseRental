@@ -4,7 +4,67 @@
         <h1>Logged in</h1>
     @endauth
 
-    @guest
-        <h1>Guest</h1>
-    @endguest
+    {{-- @guest --}}
+        <div class="container mx-auto">
+            <h1 class="text-2xl font-bold mb-6 text-center">Our Services</h1>
+
+            <!-- Flex Container -->
+            <div class="flex flex-col md:flex-row gap-6 justify-center">
+
+                <!-- Card 1 -->
+                <div class="flex-1 bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-3">Card Title 1</h2>
+                    <p class="text-gray-700">
+                        This is the content for the first card. It provides a brief description or some information.
+                    </p>
+                    @auth
+                    <button class="mt-4 bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Learn More
+                    </button>
+                    @endauth
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flex-1 bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-3">Card Title 2</h2>
+                    <p class="text-gray-700">
+                        Content for the second card goes here. Tailor it to your needs.
+                    </p>
+                    @auth
+                    <button class="mt-4 bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Learn More
+                    </button>
+                    @endauth
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flex-1 bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-3">Card Title 3</h2>
+                    <p class="text-gray-700">
+                        Here is the description for the third card. Keep it concise and informative.
+                    </p>
+                    @auth
+                    <button class="mt-4 bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Learn More
+                    </button>
+                    @endauth
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flex-1 bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-3">Card Title 4</h2>
+                    <p class="text-gray-700">
+                        Finally, the content for the fourth card. You can add images, links, etc.
+                    </p>
+                    @auth
+                    <button class="mt-4 bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Learn More
+                    </button>
+                    @endauth
+                </div>
+
+            </div>
+        </div>
+
+    {{-- @endguest --}}
 </x-layout>

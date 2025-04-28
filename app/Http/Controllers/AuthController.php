@@ -15,14 +15,15 @@ class AuthController extends Controller
         //Validate
         $fields = $request->validate([
             'fullName' => ['required', 'max:120'],
-            'email' => ['required', 'max:100', 'email', 'unique:tenants'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            'email' => ['required', 'max:100', 'email', 'unique:tenants',  'regex:/^.+@.+\..+$/'],
+            'password' => ['required', 'min:4', 'confirmed'],
             'address' => ['required', 'max:255'],
             'contactNo' => ['required', 'regex:/^07[0-9]{9}$/'],
             'userTitle' => ['required', 'max:100']
         ], [
-            // Custom Messages
-            'contactNo.regex' => 'Please enter the correct number',
+            'contactNo.regex' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',
+            'email.regex'     => 'Please enter a valid email address format.',
+            'email.unique'    => 'This email address is already registered.',
         ]);
 
         //Hash the passowrd before registering
@@ -48,7 +49,7 @@ class AuthController extends Controller
 
         // Attempt Login
         if (Auth::attempt($fields, $request->remember)) {
-            return redirect()->intended('dashboard');
+            return redirect()->intended('/');
         } else {
             return back()->withErrors([
                 'failed' => 'The provided credentials do not match our records.'
