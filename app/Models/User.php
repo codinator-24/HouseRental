@@ -29,12 +29,15 @@ class User extends Authenticatable // <-- Changed from Tenant
      * @var array<int, string>
      */
     protected $fillable = [
-        'fullName',
+        'full_name',
+        'user_name',
+        'first_phoneNumber',
+        'second_phoneNumber',
         'email',
         'password',
+        'role',
         'address',
-        'contactNo',
-        'userTitle', // Keep your existing fillable fields
+        'picture',
     ];
 
     /**
