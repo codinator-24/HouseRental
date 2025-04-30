@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard'     => env('AUTH_GUARD', 'tenant'),         // was 'web'
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'tenants'), // was 'users'
+        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'), // was 'users'
     ],
 
 
@@ -46,7 +46,7 @@ return [
         // new tenant guard
         'tenant' => [
             'driver'   => 'session',
-            'provider' => 'tenants',
+            'provider' => 'users',
         ],
     ],
 
@@ -69,9 +69,9 @@ return [
 
     'providers' => [
         // you may rename the default 'users' provider or add a new one
-        'tenants' => [
+        'users' => [
             'driver' => 'eloquent',
-            'model'  => App\Models\Tenant::class,
+            'model'  => App\Models\User::class,
         ],
 
 
@@ -101,8 +101,8 @@ return [
     */
 
     'passwords' => [
-        'tenants' => [
-            'provider' => 'tenants',
+        'users' => [
+            'provider' => 'users',
             'table'    => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire'   => 60,
             'throttle' => 60,

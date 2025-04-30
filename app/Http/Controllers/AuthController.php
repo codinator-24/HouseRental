@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +15,9 @@ class AuthController extends Controller
         //Validate
         $fields = $request->validate([
             'fullName' => ['required', 'max:120'],
-            'email' => ['required', 'max:100', 'email', 'unique:tenants',  'regex:/^.+@.+\..+$/'],
+            // *** THIS IS THE LINE TO FIX ***
+            // Change 'unique:tenants,email' to 'unique:users,email'
+            'email' => ['required', 'max:100', 'email', 'unique:users,email', 'regex:/^.+@.+\..+$/'],
             'password' => ['required', 'min:4', 'confirmed'],
             'address' => ['required', 'max:255'],
             'contactNo' => ['required', 'regex:/^07[0-9]{9}$/'],
@@ -26,24 +28,23 @@ class AuthController extends Controller
             'email.unique'    => 'This email address is already registered.',
         ]);
 
-        //Hash the passowrd before registering
-        $fields['password'] = Hash::make($fields['password']);
-        //Register
-        $user = Tenant::create($fields);
+        // Register using the User model
+        $user = User::create($fields); // Ensure this uses User::create
 
         //Login
         Auth::login($user);
 
         //Redirect
-        return redirect()->route('home');
+        return redirect()->route('home'); // Or wherever you redirect after registration
     }
 
-    //Login User
     public function login(Request $request)
     {
         //Validate
         $fields = $request->validate([
-            'email' => ['required', 'email'],
+
+            // 'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'exists:users,email'],
             'password' => ['required'],
         ]);
 
