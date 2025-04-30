@@ -1,7 +1,7 @@
 <x-layout>
 
     @auth
-        <h1>Logged in</h1>
+        <h1>{{ explode(' ', auth()->user()->fullName)[0] }} Logged In</h1>
     @endauth
 
     {{-- @guest --}}
