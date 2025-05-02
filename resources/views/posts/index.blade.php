@@ -6,7 +6,7 @@
 
     {{-- @guest --}}
     <div class="container mx-auto">
-        <h1 class="text-2xl font-bold mb-6 text-center">Our Services</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center">@lang('words.Our_Services')</h1>
 
         <!-- Grid Container -->
         <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
