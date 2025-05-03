@@ -6,7 +6,8 @@ return [
     'Register' => 'Register',
     'Login' => 'Login',
     'Logout' => 'Logout',
-    'Language'=>'EN',
+    'Language' => 'EN',
+    'About' => 'About',
     //Register
     'Register_New' => 'Register New Account',
     'Full_Name' => 'Full Name',
