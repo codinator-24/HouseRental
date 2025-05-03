@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HouseController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -22,11 +23,20 @@ Route::middleware('lang')->group(function () {
 
     //Route for Authenicated Users
     Route::middleware('auth')->group(function () {
-
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+        Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile.show');
+        Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+        Route::put('/profile/password', [AuthController::class, 'updatePassword'])->name('password.update');
+
+        Route::get('/houses/add', [HouseController::class, 'ShowAddHouse'])->name('Show.house.add');
+        Route::post('/houses/add', [HouseController::class, 'AddHouse'])->name('house.add');
+
     });
 });
+
+
 
 //Route bo langauge
 Route::get('/set/lang/{lang}', function ($lang) {

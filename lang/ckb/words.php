@@ -1,11 +1,11 @@
 <?php
 return [
     //Layout
-    'Home' => 'پەیجی سەرەکی',
+    'Home' => 'پەڕەی سەرەکی',
     'Dashboard' => 'داشبۆرد',
     'Register' => 'تۆمارکردن',
     'Login' => 'چوونە ژوورەوە',
-    'Logout' => 'دەرجوون',
+    'Logout' => 'دەرچوون',
     'Language' => 'کوردی',
     'About' => 'دەربارە',
     //Register
@@ -25,7 +25,8 @@ return [
     'Profile_Picture' => 'وێنەی پڕۆفایل',
     //Login
     'Welcome_Back' => 'بەخێربێیتەوە',
-    'Remember_Me' => 'من لەبیربێت',
+    'Remember_Me' => 'منت لەبیربێت',
     //Index
     'Our_Services' => 'خزمەت گووزاریەکانمان',
+    'Profile' => 'پڕۆفایل',
 ];

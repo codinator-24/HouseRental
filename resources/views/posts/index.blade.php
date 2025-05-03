@@ -1,5 +1,6 @@
 <x-layout>
 
+
     {{-- Hero Section --}}
     <section class="relative h-[500px] bg-cover bg-center flex items-center justify-center text-white" style="background-image: url('https://via.placeholder.com/1920x500.png?text=Hero+Background+Image');">
         {{-- Overlay --}}
@@ -13,6 +14,8 @@
             </a>
         </div>
     </section>
+
+    
 
     {{-- Search Bar Section --}}
     <section id="search" class="bg-white py-6 -mt-16 relative z-20 container mx-auto max-w-4xl rounded-lg shadow-lg px-6">
