@@ -7,6 +7,7 @@ return [
     'Login' => 'چوونە ژوورەوە',
     'Logout' => 'دەرچوون',
     'Language' => 'کوردی',
+    'About' => 'دەربارە',
     //Register
     'Register_New' => 'تۆمارکردنی ئەکاونتی نوێ',
     'Full_Name' => 'ناوی سیانی',
