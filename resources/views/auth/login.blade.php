@@ -39,9 +39,16 @@
             </div>
 
             {{-- Submit Button --}}
-            <button
-                class="py-3 px-4 inline-flex items-center gap-x-2 text-xl font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-hidden focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20">@lang('words.Login')</button>
+            <button class="w-full rounded-md bg-blue-600 px-4 py-2 text-center font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50">
+                @lang('words.Login')</button>
         </form>
+
+        {{-- Link to Register Page --}}
+        <div class="mt-4 text-center">
+            <a href="{{ route('register') }}" class="text-sm text-blue-600 hover:underline">
+                @lang('') @lang('words.Register')
+            </a>
+        </div>
 
     </div>
 </x-layout>

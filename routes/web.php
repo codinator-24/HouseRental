@@ -22,11 +22,15 @@ Route::middleware('lang')->group(function () {
 
     //Route for Authenicated Users
     Route::middleware('auth')->group(function () {
-
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+        Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile.show');
+        Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
     });
 });
+
+
 
 //Route bo langauge
 Route::get('/set/lang/{lang}', function ($lang) {

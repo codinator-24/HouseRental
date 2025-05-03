@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -29,8 +30,8 @@ class AuthController extends Controller
             'email.regex'     => 'Please enter a valid email address format.',
             'email.unique'    => 'This email address is already registered.',
             'user_name.unique' => 'This username is already taken.',
-         ]);
- 
+        ]);
+
         // Hash the password
         $fields['password'] = Hash::make($fields['password']);
 
@@ -85,5 +86,58 @@ class AuthController extends Controller
 
         //return to home
         return redirect('/');
+    }
+
+    public function showProfile()
+    {
+        $user = Auth::user(); // Get the currently authenticated user
+        return view('users.profile', compact('user')); // Pass user data to the view
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user(); // Get the currently authenticated user
+
+        // Validate
+        $fields = $request->validate([
+            'full_name' => ['required', 'string', 'max:255'],
+            // Ensure username is unique, *except* for the current user's existing username
+            'user_name' => ['required', 'string', 'max:100', 'unique:users,user_name,' . $user->id],
+            'first_phoneNumber' => ['required', 'regex:/^07[0-9]{9}$/'],
+            'second_phoneNumber' => ['nullable', 'regex:/^07[0-9]{9}$/'],
+            // Ensure email is unique, *except* for the current user's existing email
+            'email' => ['required', 'max:100', 'email', 'unique:users,email,' . $user->id, 'regex:/^.+@.+\..+$/'],
+            // Note: Password and Role are typically not updated here for security/logic reasons
+            'address' => ['required', 'max:255'],
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
+        ], [
+            'first_phoneNumber.regex' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',
+            'second_phoneNumber.regex' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',
+            'email.regex'     => 'Please enter a valid email address format.',
+            'email.unique'    => 'This email address is already registered by another user.',
+            'user_name.unique' => 'This username is already taken by another user.',
+        ]);
+
+        // Handle file upload if a new picture is provided
+        if ($request->hasFile('picture')) {
+            // Delete the old picture if it exists
+            if ($user->picture) {
+                Storage::disk('public')->delete($user->picture);
+            }
+            // Store the new file in 'public/profile_pictures' and get the path
+            $path = $request->file('picture')->store('profile_pictures', 'public');
+            $fields['picture'] = $path; // Add the new path to the fields to be updated
+        } else {
+            // If no new picture is uploaded, remove 'picture' from the fields array
+            // so the existing picture path isn't overwritten with null.
+            unset($fields['picture']);
+        }
+
+        // Update the user record
+        // We only pass $fields which contains validated data, potentially including the new picture path
+            User::where('id', $user->id)->update($fields);
+
+        // Redirect back to the profile page with a success message
+        return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
     }
 }

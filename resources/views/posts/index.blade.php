@@ -1,7 +1,20 @@
 <x-layout>
 
+    @guest
+        {{-- Link prompting guests to log in --}}
+        <div class="max-w-xl mx-auto mb-6 shadow rounded-md bg-white">
+            <a href="{{ route('login') }}" class="block text-center text-lg font-medium text-gray-700 hover:bg-gray-50 py-3 px-4 rounded-md transition duration-150 ease-in-out">
+                Please login to put your property up for rent</a>
+        </div>
+    @endguest
+
+
     @auth
-        <h1>{{ auth()->user()->user_name }} Logged In</h1>
+        {{-- Welcome message for authenticated users --}}
+        <div class="max-w-xl mx-auto mb-6 shadow rounded-md bg-white">
+            <h1 class="text-center text-lg font-medium text-gray-700 py-3 px-4">
+            Welcome {{ auth()->user()->user_name }}, Please click here to put your property up for rent</h1>
+        </div>
     @endauth
 
     {{-- @guest --}}

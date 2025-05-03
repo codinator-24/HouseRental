@@ -59,8 +59,11 @@
 
                         <div class="bg-white shadow-lg absolute top-10 right-0 rounded-lg overflow-hidden font-light"
                             x-show="open" @click.outside="open = false">
-                            <a href="{{ route('dashboard') }}"
-                                class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">@lang('words.Dashboard')</a>
+                            
+                            <a href="{{route('profile.show')}}" class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">Profile</a>
+
+                            <a href="{{ route('dashboard') }}" class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">@lang('words.Dashboard')</a>
+                            
                             <form action="{{ route('logout') }}" method="post">
                                 @csrf
                                 <button
@@ -83,6 +86,11 @@
     <main class="py-8 px-4 mx-auto max-w-screen">
         {{ $slot }}
     </main>
+
+    <footer class="bg-slate-800 text-slate-300 text-center p-4 mt-8 shadow-inner">
+        <p>&copy; {{ date('Y') }} {{ env('APP_NAME') }}. All rights reserved.</p>
+        {{-- You can add more footer content here if needed --}}
+    </footer>
 
 </body>
 
