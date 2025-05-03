@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Password; // Needed for Password facade if using rules like Password::min(8)
+use Illuminate\Validation\Rules\Password as PasswordRules; 
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -139,5 +142,42 @@ class AuthController extends Controller
 
         // Redirect back to the profile page with a success message
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        /** @var \App\Models\User $user */ // Optional: Add PHPDoc to help Intelephense
+        $user = Auth::user();
+
+        try {
+            $validated = $request->validateWithBag('updatePassword', [
+                // ... (keep your validation rules the same)
+                'current_password' => ['required', 'string', function ($attribute, $value, $fail) use ($user) {
+                    if (!$user || !Hash::check($value, $user->password)) { // Added check for $user existence just in case
+                        $fail('The :attribute is incorrect.');
+                    }
+                }],
+                'new_password' => [
+                    'required',
+                    'string',
+                    // PasswordRules::min(4)->mixedCase()->numbers()->symbols(), // Keep your rules
+                    PasswordRules::min(4),
+                    'confirmed'
+                 ],
+                'new_password_confirmation' => ['required'],
+            ]);
+
+            // --- CHANGE HERE ---
+            // Directly assign the hashed password
+            $user->password = Hash::make($validated['new_password']);
+            // Save the changes to the user model
+            $user->save();
+            // --- END CHANGE ---
+
+            return back()->with('password_success', 'Password updated successfully!');
+
+        } catch (ValidationException $e) {
+             return back()->withErrors($e->errors(), 'updatePassword');
+        }
     }
 }

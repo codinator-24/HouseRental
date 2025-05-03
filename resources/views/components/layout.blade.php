@@ -62,6 +62,8 @@
                             
                             <a href="{{route('profile.show')}}" class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">Profile</a>
 
+                            <a href="{{route('Show.house.add')}}" class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">Add House</a>
+
                             <a href="{{ route('dashboard') }}" class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">@lang('words.Dashboard')</a>
                             
                             <form action="{{ route('logout') }}" method="post">
