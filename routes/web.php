@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('lang')->group(function () {
 
-    
-    Route::get('/', [IndexController::class, 'index'])->name('home');
 
+    Route::get('/', [IndexController::class, 'index'])->name('home');
+    Route::get('/houses/details/{house}', [HouseController::class, 'houseDetails'])->name('house.details');
     //Route for Guest Users
     Route::middleware('guest')->group(function () {
 
@@ -34,7 +34,6 @@ Route::middleware('lang')->group(function () {
 
         Route::get('/houses/add', [HouseController::class, 'ShowAddHouse'])->name('Show.house.add');
         Route::post('/houses/add', [HouseController::class, 'AddHouse'])->name('house.add');
-
     });
 });
 

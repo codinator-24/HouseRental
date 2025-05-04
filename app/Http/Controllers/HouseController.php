@@ -14,16 +14,18 @@ use Illuminate\View\View;
 
 class HouseController extends Controller
 {
-public function ShowAddHouse(){
-    return view('posts.AddHouse');
-}
+    public function ShowAddHouse()
+    {
+        return view('posts.AddHouse');
+    }
 
-/**
-     * Store a newly created house listing in storage.
-     *
-     * @param Request $request
-     * @return RedirectResponse
-     */
+    // /**
+    //      * Store a newly created house listing in storage.
+    //      *
+    //      * @param Request $request
+    //      * @return RedirectResponse
+    //      */
+
     public function AddHouse(Request $request): RedirectResponse
     {
         // 1. Validation Rules
@@ -83,7 +85,6 @@ public function ShowAddHouse(){
 
             // 4. Redirect with Success Message
             return redirect()->route('home')->with('success', 'House listing added successfully!');
-
         } catch (\Exception $e) {
             // Rollback Transaction on error
             DB::rollBack();
@@ -95,5 +96,12 @@ public function ShowAddHouse(){
             return back()->withInput()->with('error', 'Failed to add house listing. Please try again. Error: ' . $e->getMessage()); // Show detailed error in development
             // return back()->withInput()->with('error', 'Failed to add house listing. Please try again.'); // Generic error for production
         }
+    }
+
+    public function houseDetails(House $house)
+    {
+        // Eager load pictures if not already loaded by default (good practice)
+        $house->load('pictures');
+        return view('posts.detailsHouse', ['house' => $house]);
     }
 }

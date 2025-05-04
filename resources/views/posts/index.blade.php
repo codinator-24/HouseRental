@@ -104,8 +104,7 @@
                                 <span><i class="fas fa-layer-group mr-1"></i> {{ $house->num_floor }} {{ Str::plural('Floor', $house->num_floor) }}</span>
                                 <span><i class="fas fa-ruler-combined mr-1"></i> {{ $house->square_footage }} sq ft</span>
                             </div>
-                            {{-- You might want to link this to a house details page later --}}
-                            <a href="#" class="block w-full mt-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center transition duration-300">
+                            <a href="{{ route('house.details', $house) }}" class="block w-full mt-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center transition duration-300">
                                 View Details
                             </a>
                         </div>
