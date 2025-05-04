@@ -140,23 +140,24 @@
             </form>
         </div>
 
-        {{-- Button to toggle password section --}}
+        {{-- Button to open password modal --}}
         <div class="max-w-2xl mx-auto mt-8 text-center">
-            <button id="togglePasswordSectionBtn"
+            <button id="openPasswordModalBtn"
                 class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 Change Password
             </button>
         </div>
 
-        {{-- Password Update Section --}}
-        <div id="passwordUpdateSection" class="max-w-2xl mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-8"
-            style="display: none;">
-            <div class="px-6 py-4 bg-gray-100 border-b border-gray-200">
-                <h1 class="text-xl font-semibold text-gray-700">Update Your Password</h1>
-            </div>
+        {{-- Password Update Modal --}}
+        <div id="passwordUpdateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-10" style="display: none;">
+            <div class="bg-white rounded-lg shadow-xl overflow-hidden max-w-md w-full mx-4">
+                <div class="px-6 py-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
+                    <h1 class="text-xl font-semibold text-gray-700">Update Your Password</h1>
+                    <button id="closePasswordModalBtn" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
 
-            <form method="POST" action="{{ route('password.update') }}" class="px-6 py-6">
-                @csrf {{-- CSRF Protection --}}
+                <form method="POST" action="{{ route('password.update') }}" class="px-6 py-6">
+                    @csrf {{-- CSRF Protection --}}
                 @method('PUT') {{-- Method Spoofing for PUT request --}}
 
                 {{-- Current Password --}}
@@ -202,18 +203,40 @@
         </div>
     </div>
 
+            </div> {{-- Close modal content div --}}
+        </div> {{-- Close modal container div --}}
+    </div>
+
     {{-- Add this script at the bottom --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const toggleBtn = document.getElementById('togglePasswordSectionBtn');
-            const passwordSection = document.getElementById('passwordUpdateSection');
+            const openBtn = document.getElementById('openPasswordModalBtn');
+            const closeBtn = document.getElementById('closePasswordModalBtn');
+            const modal = document.getElementById('passwordUpdateModal');
 
-            if (toggleBtn && passwordSection) {
-                toggleBtn.addEventListener('click', function() {
-                    passwordSection.style.display = passwordSection.style.display === 'none' ? 'block' :
-                        'none';
+            if (openBtn && closeBtn && modal) {
+                // Open modal
+                openBtn.addEventListener('click', function() {
+                    modal.style.display = 'flex';
+                });
+
+                // Close modal via button
+                closeBtn.addEventListener('click', function() {
+                    modal.style.display = 'none';
+                });
+
+                // Close modal by clicking outside
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) { // Check if the click is on the background overlay
+                        modal.style.display = 'none';
+                    }
                 });
             }
+
+            // Keep modal open if there are password validation errors
+            @if ($errors->updatePassword->any())
+                modal.style.display = 'flex';
+            @endif
         });
     </script>
 </x-layout>

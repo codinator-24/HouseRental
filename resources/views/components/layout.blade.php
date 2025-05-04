@@ -102,7 +102,7 @@
         </nav>
     </header>
 
-    <main class="mx-auto"> {{-- Removed padding, assuming sections will manage their own --}}
+    <main> {{-- Removed mx-auto to allow full width --}}
         {{ $slot }}
     </main>
 
