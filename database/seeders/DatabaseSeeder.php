@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -11,12 +12,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create a specific tenant
-        Tenant::factory()->create([
+        User::factory()->create([
             'fullName' => 'Test User',
             'email' => 'test@example.com',
         ]);
 
-        // Create 10 random tenants
-        Tenant::factory(10)->create();
+        // Create 10 random Users
+        User::factory(10)->create();
     }
 }

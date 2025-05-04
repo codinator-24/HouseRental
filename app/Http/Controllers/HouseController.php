@@ -82,7 +82,7 @@ public function ShowAddHouse(){
             DB::commit();
 
             // 4. Redirect with Success Message
-            return redirect()->route('dashboard')->with('success', 'House listing added successfully!');
+            return redirect()->route('home')->with('success', 'House listing added successfully!');
 
         } catch (\Exception $e) {
             // Rollback Transaction on error

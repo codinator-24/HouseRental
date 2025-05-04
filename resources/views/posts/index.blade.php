@@ -1,19 +1,36 @@
 <x-layout>
 
-
+@guest
     {{-- Hero Section --}}
-    <section class="relative h-[500px] bg-cover bg-center flex items-center justify-center text-white" style="background-image: url('https://via.placeholder.com/1920x500.png?text=Hero+Background+Image');">
+    <section class="relative h-[500px] bg-cover bg-center flex items-center justify-center text-white" style="background-image: url('https://images.pexels.com/photos/731082/pexels-photo-731082.jpeg');">
         {{-- Overlay --}}
         <div class="absolute inset-0 bg-black opacity-50"></div>
         {{-- Content --}}
         <div class="relative z-10 text-center px-4">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">Find Your Dream Home</h1>
             <p class="text-lg md:text-xl mb-8">Discover the perfect property for your needs</p>
-            <a href="#search" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md text-lg transition duration-300">
-                Search properties
+            <a href="{{route('login')}}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md text-lg transition duration-300">
+                Please login to rent a house
             </a>
         </div>
     </section>
+@endguest
+
+@auth
+    {{-- Hero Section --}}
+    <section class="relative h-[500px] bg-cover bg-center flex items-center justify-center text-white" style="background-image: url('https://images.pexels.com/photos/731082/pexels-photo-731082.jpeg');">
+        {{-- Overlay --}}
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        {{-- Content --}}
+        <div class="relative z-10 text-center px-4">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Find Your Dream Home</h1>
+            <p class="text-lg md:text-xl mb-8">Discover the perfect property for your needs</p>
+            <a href="{{route('Show.house.add')}}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md text-lg transition duration-300">
+                Click here to place your property
+            </a>
+        </div>
+    </section>
+@endauth
 
     
 
@@ -64,68 +81,38 @@
 
             {{-- Property Grid --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {{-- Property Card 1 --}}
-                <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-                    <img src="https://via.placeholder.com/400x250.png?text=Property+1" alt="Modern Luxury Apartment" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">Modern Luxury Apartment</h3>
-                        <p class="text-gray-600 text-sm mb-4">Downtown, New York</p>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-2xl font-bold text-blue-600">$2500</span>
-                            <span class="text-gray-600 text-sm">per month</span>
+                @forelse ($houses as $house)
+                    {{-- Property Card --}}
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 flex flex-col">
+                        {{-- Use first picture if available, otherwise a placeholder --}}
+                        @php
+                            $imageUrl = $house->pictures->first()?->image_url? asset($house->pictures->first()->image_url): 'https://images.pexels.com/photos/731082/pexels-photo-731082.jpeg';
+                        @endphp
+                        <img src="{{ $imageUrl }}" alt="{{ $house->title }}" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold mb-2">{{ $house->title }}</h3>
+                            <p class="text-gray-600 text-sm mb-4 flex-grow">
+                                <i class="fas fa-map-marker-alt mr-1 text-slate-500"></i>
+                                {{ $house->city }}, {{ $house->first_address }} {{ $house->second_address ?? '' }}
+                            </p>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-2xl font-bold text-blue-600">${{ number_format($house->rent_amount) }}</span>
+                                <span class="text-gray-600 text-sm">per month</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-600 border-t pt-4 mb-4">
+                                <span><i class="fas fa-bed mr-1"></i> {{ $house->num_room }} {{ Str::plural('Room', $house->num_room) }}</span>
+                                <span><i class="fas fa-layer-group mr-1"></i> {{ $house->num_floor }} {{ Str::plural('Floor', $house->num_floor) }}</span>
+                                <span><i class="fas fa-ruler-combined mr-1"></i> {{ $house->square_footage }} sq ft</span>
+                            </div>
+                            {{-- You might want to link this to a house details page later --}}
+                            <a href="#" class="block w-full mt-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center transition duration-300">
+                                View Details
+                            </a>
                         </div>
-                        <div class="flex justify-between text-sm text-gray-600 border-t pt-4 mb-4">
-                            <span><i class="fas fa-bed mr-1"></i> 2 Bedrooms</span>
-                            <span><i class="fas fa-bath mr-1"></i> 2 Bathrooms</span>
-                            <span><i class="fas fa-ruler-combined mr-1"></i> 1200 sq ft</span>
-                        </div>
-                        <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center transition duration-300">
-                            View Details
-                        </a>
                     </div>
-                </div>
-
-                {{-- Property Card 2 --}}
-                <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-                    <img src="https://via.placeholder.com/400x250.png?text=Property+2" alt="Cozy Studio in City Center" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">Cozy Studio in City Center</h3>
-                        <p class="text-gray-600 text-sm mb-4">Midtown, Chicago</p>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-2xl font-bold text-blue-600">$1800</span>
-                            <span class="text-gray-600 text-sm">per month</span>
-                        </div>
-                        <div class="flex justify-between text-sm text-gray-600 border-t pt-4 mb-4">
-                            <span><i class="fas fa-bed mr-1"></i> 1 Bedroom</span>
-                            <span><i class="fas fa-bath mr-1"></i> 1 Bathroom</span>
-                            <span><i class="fas fa-ruler-combined mr-1"></i> 750 sq ft</span>
-                        </div>
-                        <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center transition duration-300">
-                            View Details
-                        </a>
-                    </div>
-                </div>
-
-                {{-- Property Card 3 --}}
-                <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-                    <img src="https://via.placeholder.com/400x250.png?text=Property+3" alt="Spacious Family Home" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">Spacious Family Home</h3>
-                        <p class="text-gray-600 text-sm mb-4">Suburb, Boston</p>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-2xl font-bold text-blue-600">$3200</span>
-                            <span class="text-gray-600 text-sm">per month</span>
-                        </div>
-                        <div class="flex justify-between text-sm text-gray-600 border-t pt-4 mb-4">
-                            <span><i class="fas fa-bed mr-1"></i> 4 Bedrooms</span>
-                            <span><i class="fas fa-bath mr-1"></i> 3 Bathrooms</span>
-                            <span><i class="fas fa-ruler-combined mr-1"></i> 2400 sq ft</span>
-                        </div>
-                        <a href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center transition duration-300">
-                            View Details
-                        </a>
-                    </div>
-                </div>
+                @empty
+                    <p class="text-gray-600 md:col-span-2 lg:col-span-3 text-center">No properties found at the moment.</p>
+                @endforelse
             </div>
         </div>
     </section>

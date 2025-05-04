@@ -3,13 +3,15 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HouseController;
+use App\Http\Controllers\IndexController; // Add this line
 use Illuminate\Support\Facades\Route;
 
 
 
 Route::middleware('lang')->group(function () {
 
-    Route::view('/', 'posts.index')->name('home');
+    
+    Route::get('/', [IndexController::class, 'index'])->name('home');
 
     //Route for Guest Users
     Route::middleware('guest')->group(function () {

@@ -1,6 +1,6 @@
 <x-layout>
 <div class="container mx-auto px-4 py-8"> {{-- Basic container and padding --}}
-    <h1 class="text-3xl font-bold mb-6 text-gray-800">Add New House Listing</h1> {{-- Styled heading --}}
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Add New Property Listing</h1> {{-- Styled heading --}}
 
     {{-- Display validation errors if any --}}
     @if ($errors->any())
