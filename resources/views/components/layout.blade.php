@@ -80,25 +80,48 @@
                                 class="text-gray-700 text-sm font-medium hidden sm:block">{{ auth()->user()->user_name }}</span>
                         </button>
 
-                        <div class="bg-white shadow-lg absolute top-10 right-0 rounded-lg overflow-hidden font-light z-10 border border-gray-200"
+                        <div class="bg-white shadow-lg absolute top-10 right-0 rounded-lg overflow-hidden font-light z-10 border border-gray-200 w-56"
                             x-show="open" @click.outside="open = false">
 
 
                             <a href="{{ route('profile.show') }}"
-                                class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">Profile</a>
+                                class="block hover:bg-slate-100 pl-4 pr-8 py-2">Profile</a>
 
-                            <a href="{{ route('Show.house.add') }}"
-                                class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">Add House</a>
+                            <!-- Houses Dropdown -->
+                            <div x-data="{ housesOpen: false }">
+                                <button @click="housesOpen = !housesOpen"
+                                    class="w-full text-left flex justify-between items-center hover:bg-slate-100 pl-4 pr-8 py-2">
+                                    <span>Houses</span>
+                                    <svg class="w-4 h-4 transform transition-transform duration-200"
+                                        :class="{ 'rotate-180': housesOpen }" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div x-show="housesOpen" x-transition class="pl-8">
+                                    <a href="{{ route('Show.house.add') }}"
+                                        class="block hover:bg-slate-100 pl-4 pr-8 py-2 text-sm text-gray-700">Add House</a>
+                                    {{-- You'll need to define this route: route('my.houses') --}}
+                                    <a href="{{ route('my.houses') }}"
+                                        class="block hover:bg-slate-100 pl-4 pr-8 py-2 text-sm text-gray-700">My Houses</a>
+                                    {{-- You'll need to define this route: route('booking.lists') --}}
+                                    <a href="#" {{-- href="{{ route('booking.lists') }}" --}}
+                                        class="block hover:bg-slate-100 pl-4 pr-8 py-2 text-sm text-gray-700">Booking
+                                        Lists</a>
+                                </div>
+                            </div>
+                            <!-- End Houses Dropdown -->
 
                             <a href="{{ route('dashboard') }}"
-                                class="block hover:bg-slate-100 pl-4 pr-8 py-2 mb-1">@lang('words.Dashboard')</a>
+                                class="block hover:bg-slate-100 pl-4 pr-8 py-2">@lang('words.Dashboard')</a>
 
 
-                            <form action="{{ route('logout') }}" method="post">
-                                @csrf
-                                <button
-                                    class="block w-full text-left hover:bg-gray-100 pl-4 pr-8 py-2 text-sm text-gray-700">@lang('words.Logout')</button>
-                            </form>
+                                <form action="{{ route('logout') }}" method="post">
+                                    @csrf
+                                    <button
+                                        class="block w-full text-left hover:bg-gray-100 pl-4 pr-8 py-2 text-sm text-gray-700">@lang('words.Logout')</button>
+                                </form>
                         </div>
                     </div>
                 @endauth

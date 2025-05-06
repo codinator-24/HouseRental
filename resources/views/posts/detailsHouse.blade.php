@@ -82,6 +82,23 @@
                         <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ $house->description }}</p>
                     </div>
 
+                    {{-- Landlord Information --}}
+                    @if ($house->landlord)
+                        <div class="mb-6 border-t pt-6">
+                            <h2 class="text-2xl font-semibold text-gray-800 mb-3">Contact Landlord</h2>
+                            <div class="text-gray-700 space-y-2">
+                                <p>
+                                    <i class="fas fa-user mr-2 text-slate-500"></i>
+                                    <strong>Name:</strong> {{ $house->landlord->full_name ?? 'N/A' }}
+                                </p>
+                                <p>
+                                    <i class="fas fa-phone mr-2 text-slate-500"></i>
+                                    <strong>First Phone Number:</strong> {{ $house->landlord->first_phoneNumber ?? 'N/A'}} - {{$house->landlord->second_phoneNumber ?? 'N/A' }}
+                                </p>
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- Location URL / Map Placeholder --}}
                     @if ($house->location_url)
                         <div class="mb-6">
@@ -89,18 +106,15 @@
                             {{-- Embed Google Map --}}
                             {{-- NOTE: This requires $house->location_url to be a valid Google Maps *embed* URL. --}}
                             {{-- If it's a standard share URL, it might not display correctly. --}}
-                            <div class="aspect-w-16 aspect-h-9 rounded-md overflow-hidden border border-gray-300 shadow-sm"> {{-- Container for aspect ratio --}}
-                                <iframe
-                                    src="{{ $house->location_url }}"
-                                    width="100%" {{-- Tailwind handles sizing via aspect ratio container --}}
-                                    height="100%" {{-- Tailwind handles sizing via aspect ratio container --}}
-                                    style="border:0;"
-                                    allowfullscreen=""
-                                    loading="lazy"
-                                    referrerpolicy="no-referrer-when-downgrade">
+                            <div
+                                class="aspect-w-16 aspect-h-9 rounded-md overflow-hidden border border-gray-300 shadow-sm">
+                                {{-- Container for aspect ratio --}}
+                                <iframe src="{{ $house->location_url }}" width="100%" {{-- Tailwind handles sizing via aspect ratio container --}}
+                                    height="100%" {{-- Tailwind handles sizing via aspect ratio container --}} style="border:0;" allowfullscreen=""
+                                    loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                                 </iframe>
                             </div>
-                             {{-- Optional: Keep the link to view on Google Maps itself --}}
+                            {{-- Optional: Keep the link to view on Google Maps itself --}}
                             <a href="{{ $house->location_url }}" target="_blank" rel="noopener noreferrer"
                                 class="text-blue-600 hover:underline inline-flex items-center mt-2 text-sm">
                                 View Full Map <i class="fas fa-external-link-alt ml-1 text-xs"></i>
@@ -123,8 +137,8 @@
                         {{-- Booking Button --}}
                         <div class="mt-6 mb-8 border-t pt-6">
                             {{-- Link this to your actual booking route when ready --}}
-                            <a href="{{route('login')}}" {{-- href="{{ route('booking.create', $house) }}" --}}
-                                class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-md text-lg transition duration-300">
+                            <a href="{{ route('login') }}" {{-- href="{{ route('booking.create', $house) }}" --}}
+                                class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-md text-lg transition duration-300">
                                 Login Now To Book
                             </a>
                         </div>

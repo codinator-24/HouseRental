@@ -19,13 +19,6 @@ class HouseController extends Controller
         return view('posts.AddHouse');
     }
 
-    // /**
-    //      * Store a newly created house listing in storage.
-    //      *
-    //      * @param Request $request
-    //      * @return RedirectResponse
-    //      */
-
     public function AddHouse(Request $request): RedirectResponse
     {
         // 1. Validation Rules
@@ -100,8 +93,25 @@ class HouseController extends Controller
 
     public function houseDetails(House $house)
     {
-        // Eager load pictures if not already loaded by default (good practice)
-        $house->load('pictures');
+        // Eager load pictures and landlord information
+        $house->load(['pictures', 'landlord']);
         return view('posts.detailsHouse', ['house' => $house]);
+    }
+
+    public function MyHouses()
+    {
+        $query = House::with('pictures');
+
+        // If the user is authenticated, exclude their own houses
+        if (Auth::check()) {
+            $query->where('landlord_id', '=', Auth::id());
+        }
+        $houses = $query->get();
+        return view('users.MyHouses', ['houses' => $houses]); // Pass houses to the view
+    }
+
+    public function editMyHouse(House $house)
+    {
+        return view('users.editMyHouse', ['house' => $house]);
     }
 }

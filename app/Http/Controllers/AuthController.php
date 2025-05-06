@@ -88,7 +88,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         //return to home
-        return redirect('/');
+        return redirect(route('login'));
     }
 
     public function showProfile()
