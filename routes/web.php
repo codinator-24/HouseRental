@@ -34,6 +34,10 @@ Route::middleware('lang')->group(function () {
 
         Route::get('/houses/add', [HouseController::class, 'ShowAddHouse'])->name('Show.house.add');
         Route::post('/houses/add', [HouseController::class, 'AddHouse'])->name('house.add');
+        Route::get('/MyHouses', [HouseController::class, 'MyHouses'])->name('my.houses');
+        Route::get('/MyHouses/{house}', [HouseController::class, 'editMyHouse'])->name('Myhouse.edit');
+        Route::put('/MyHouses/{house}', [HouseController::class, 'updateMyHouse'])->name('Myhouse.update');
+        Route::delete('/MyHouses/{house}', [HouseController::class, 'deleteMyHouse'])->name('Myhouse.delete');
     });
 });
 
