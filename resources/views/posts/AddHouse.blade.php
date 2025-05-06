@@ -32,10 +32,14 @@
 
             {{-- Property Type --}}
             <div class="mb-4">
-                <label for="property_type" class="block text-gray-700 text-sm font-bold mb-2">Property Type:</label>
-                <input type="text" id="property_type" name="property_type" value="{{ old('property_type') }}" placeholder="e.g., Apartment, House, Condo" required
-                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('property_type') border-red-500 @enderror">
-                {{-- Consider using a <select> for predefined types --}}
+                <label for="property_type" class="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
+                <select id="property_type" name="property_type" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white @error('property_type') border-red-500 @enderror" required>
+                    <option value="" {{ old('property_type') == '' ? 'selected' : '' }}>Select Property Type</option>
+                    <option value="apartment" {{ old('property_type') == 'apartment' ? 'selected' : '' }}>Apartment</option>
+                    <option value="house" {{ old('property_type') == 'house' ? 'selected' : '' }}>House</option>
+                    <option value="condo" {{ old('property_type') == 'condo' ? 'selected' : '' }}>Condo</option>
+                    <option value="studio" {{ old('property_type') == 'studio' ? 'selected' : '' }}>Studio</option>
+                </select>
                 @error('property_type') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
             </div>
 

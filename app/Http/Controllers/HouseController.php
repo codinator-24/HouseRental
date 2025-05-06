@@ -100,8 +100,8 @@ class HouseController extends Controller
 
     public function houseDetails(House $house)
     {
-        // Eager load pictures if not already loaded by default (good practice)
-        $house->load('pictures');
+        // Eager load pictures and landlord information
+        $house->load(['pictures', 'landlord']);
         return view('posts.detailsHouse', ['house' => $house]);
     }
 }
