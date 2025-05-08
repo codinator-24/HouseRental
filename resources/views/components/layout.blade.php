@@ -17,7 +17,9 @@
     <header class="bg-white shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-3 flex items-center justify-between">
             <!-- Left side: Logo -->
-            <a href="{{ route('home') }}" class="text-xl font-bold text-blue-600">HouseRental</a>
+            <a href="{{ route('home') }}" class="flex items-center text-xl font-bold text-blue-600">
+                <img src="{{ asset('images/logo.png') }}" alt="ORS Logo" class="h-8 w-auto mr-2"> ORS
+            </a>
 
             <!-- Center: Navigation Links -->
             <div class="hidden md:flex items-center space-x-6">
@@ -140,11 +142,11 @@
     </main>
 
 
-    <footer class="bg-gray-900 text-gray-300 py-12">
-        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
-            <!-- HouseRental Info -->
+    <footer class="bg-slate-800 text-slate-300 py-12">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- ORS Info -->
             <div>
-                <h3 class="text-lg font-semibold text-white mb-4">HouseRental</h3>
+                <h3 class="text-lg font-semibold text-white mb-4">ORS</h3>
                 <p class="text-sm">
                     Finding your perfect home has never been easier. Browse our wide selection of properties and find
                     the one that suits your needs.
@@ -155,8 +157,8 @@
             <div>
                 <h3 class="text-lg font-semibold text-white mb-4">NAVIGATION</h3>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="{{ route('home') }}" class="hover:text-white">Home</a></li>
-                    <li><a href="#" class="hover:text-white">About</a></li>
+                    <li><a href="{{ route('home') }}" class="hover:text-blue-400">Home</a></li>
+                    <li><a href="#" class="hover:text-blue-400">About</a></li>
                     {{-- Add other footer navigation links here --}}
                 </ul>
             </div>
@@ -165,19 +167,14 @@
             <div>
                 <h3 class="text-lg font-semibold text-white mb-4">LEGAL</h3>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-white">Terms of Service</a></li>
-                    <li><a href="#" class="hover:text-white">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-blue-400">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-blue-400">Terms of Service</a></li>
+                    <li><a href="#" class="hover:text-blue-400">Contact Us</a></li>
                 </ul>
             </div>
-
-            <!-- Placeholder for potential 4th column -->
-            <div>
-                {{-- You can add social media links or other content here --}}
-            </div>
         </div>
-        <div class="container mx-auto px-6 mt-8 pt-8 border-t border-gray-700 text-center text-sm">
-            &copy; {{ date('Y') }} HouseRental. All Rights Reserved.
+        <div class="container mx-auto px-6 mt-8 pt-8 border-t border-slate-600 text-center text-sm">
+            &copy; {{ date('Y') }} ORS. All Rights Reserved.
         </div>
     </footer>
 

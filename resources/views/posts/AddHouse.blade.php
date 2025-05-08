@@ -93,7 +93,7 @@
 
             {{-- Square Footage --}}
             <div class="mb-4">
-                <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">Square Footage (sq ft):</label>
+                <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">Sqaure Meter (m<sup>2</sup>):</label>
                 <input type="number" id="square_footage" name="square_footage" value="{{ old('square_footage') }}" min="0" required
                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('square_footage') border-red-500 @enderror">
                 @error('square_footage') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror

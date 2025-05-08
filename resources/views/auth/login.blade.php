@@ -1,6 +1,6 @@
 <x-layout>
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
-        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <div class="w-full max-w-lg p-12 space-y-6 bg-white rounded-lg shadow-md">
             <h2 class="text-2xl font-bold text-center">Login</h2>
             <form action="{{ route('login') }}" method="post" class="space-y-6">
                 @csrf
