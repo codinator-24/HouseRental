@@ -17,20 +17,63 @@
             <div class="bg-white shadow-lg rounded-lg overflow-hidden">
                 {{-- Image Gallery/Carousel Section --}}
                 @if ($house->pictures->isNotEmpty())
-                    {{-- Simple Grid for now, could be replaced with a carousel library --}}
-                    <div
-                        class="grid grid-cols-1 @if ($house->pictures->count() > 1) md:grid-cols-2 @endif @if ($house->pictures->count() > 2) lg:grid-cols-3 @endif gap-1">
-                        @foreach ($house->pictures as $picture)
-                            <div class="aspect-w-16 aspect-h-9">
-                                <img src="{{ asset($picture->image_url) }}"
-                                    alt="{{ $picture->caption ?? $house->title }}" class="object-cover w-full h-full">
+                    <div id="imageCarousel" class="relative w-full overflow-hidden" data-carousel="slide">
+                        {{-- Carousel wrapper --}}
+                        <div class="relative h-96 md:h-[500px] overflow-hidden rounded-lg">
+                            @foreach ($house->pictures as $index => $picture)
+                                <div class="opacity-0 transition-opacity duration-700 ease-in-out absolute inset-0" data-carousel-item
+                                    @if ($loop->first) data-active @endif>
+                                    <img src="{{ asset($picture->image_url) }}"
+                                        class="block w-full h-full object-cover"
+                                        alt="{{ $picture->caption ?? $house->title . ' - Image ' . ($index + 1) }}">
+                                </div>
+                            @endforeach
+                        </div>
+                        {{-- Slider indicators --}}
+                        @if ($house->pictures->count() > 1)
+                            <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2">
+                                @foreach ($house->pictures as $index => $picture)
+                                    <button type="button" class="w-3 h-3 rounded-full {{ $loop->first ? 'bg-white' : 'bg-white/30 hover:bg-white/50' }}"
+                                        aria-current="{{ $loop->first ? 'true' : 'false' }}"
+                                        aria-label="Slide {{ $index + 1 }}"
+                                        data-carousel-slide-to="{{ $index }}"></button>
+                                @endforeach
                             </div>
-                        @endforeach
+                        @endif
+                        {{-- Slider controls --}}
+                        @if ($house->pictures->count() > 1)
+                            <button type="button"
+                                class="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+                                data-carousel-prev>
+                                <span
+                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+                                    <svg class="w-4 h-4 text-white" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="M5 1 1 5l4 4" />
+                                    </svg>
+                                    <span class="sr-only">Previous</span>
+                                </span>
+                            </button>
+                            <button type="button"
+                                class="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+                                data-carousel-next>
+                                <span
+                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+                                    <svg class="w-4 h-4 text-white" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m1 9 4-4-4-4" />
+                                    </svg>
+                                    <span class="sr-only">Next</span>
+                                </span>
+                            </button>
+                        @endif
                     </div>
                 @else
-                    <div class="aspect-w-16 aspect-h-9 bg-gray-200 flex items-center justify-center">
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-200 flex items-center justify-center rounded-lg">
                         <img src="https://via.placeholder.com/800x450.png?text=No+Image+Available"
-                            alt="No Image Available" class="object-cover w-full h-full">
+                            alt="No Image Available" class="object-cover w-full h-full rounded-lg">
                     </div>
                 @endif
 
@@ -154,7 +197,92 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
             integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
             crossorigin="anonymous" referrerpolicy="no-referrer" />
-        {{-- Add Tailwind Aspect Ratio plugin if needed for image containers --}}
-        {{-- <script src="https://cdn.tailwindcss.com?plugins=aspect-ratio"></script> --}}
+    @endpush
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const carouselElement = document.getElementById('imageCarousel');
+            if (!carouselElement) return;
+
+            const items = Array.from(carouselElement.querySelectorAll('[data-carousel-item]'));
+            const prevButton = carouselElement.querySelector('[data-carousel-prev]');
+            const nextButton = carouselElement.querySelector('[data-carousel-next]');
+            const indicators = Array.from(carouselElement.querySelectorAll('[data-carousel-slide-to]'));
+
+            if (items.length === 0) return;
+
+            let activeIndex = items.findIndex(item => item.hasAttribute('data-active'));
+            if (activeIndex === -1) { // If no item is marked active by Blade, default to the first one
+                activeIndex = 0;
+                // items[0].setAttribute('data-active', ''); // Blade should set this for the first item
+            }
+
+            function showItem(indexToShow) {
+                if (indexToShow < 0 || indexToShow >= items.length) {
+                    console.warn(`Carousel: Invalid index ${indexToShow}`);
+                    return;
+                }
+
+                items.forEach((item, idx) => {
+                    if (idx === indexToShow) {
+                        item.classList.remove('opacity-0');
+                        item.classList.add('opacity-100');
+                        item.setAttribute('data-active', '');
+                    } else {
+                        item.classList.remove('opacity-100');
+                        item.classList.add('opacity-0');
+                        item.removeAttribute('data-active');
+                    }
+                });
+
+                indicators.forEach((indicator, idx) => {
+                    indicator.setAttribute('aria-current', idx === indexToShow ? 'true' : 'false');
+                    if (idx === indexToShow) {
+                        indicator.classList.add('bg-white');
+                        indicator.classList.remove('bg-white/30', 'hover:bg-white/50');
+                    } else {
+                        indicator.classList.remove('bg-white');
+                        indicator.classList.add('bg-white/30', 'hover:bg-white/50');
+                    }
+                });
+                activeIndex = indexToShow;
+            }
+
+            if (prevButton) {
+                prevButton.addEventListener('click', () => {
+                    let newIndex = activeIndex - 1;
+                    if (newIndex < 0) {
+                        newIndex = items.length - 1;
+                    }
+                    showItem(newIndex);
+                });
+            }
+
+            if (nextButton) {
+                nextButton.addEventListener('click', () => {
+                    let newIndex = activeIndex + 1;
+                    if (newIndex >= items.length) {
+                        newIndex = 0;
+                    }
+                    showItem(newIndex);
+                });
+            }
+
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', () => {
+                    const slideToIndex = parseInt(indicator.getAttribute('data-carousel-slide-to'));
+                    showItem(slideToIndex);
+                });
+            });
+
+            // Initialize the carousel to show the correct active item
+            if (items.length > 0) {
+                // activeIndex should be 0 if Blade set data-active on the first item,
+                // or if it defaulted because no data-active was found.
+                showItem(activeIndex);
+            }
+        });
+    </script>
     @endpush
 </x-layout>
