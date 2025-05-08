@@ -1,9 +1,10 @@
 <x-layout>
-    <section class="py-12 bg-gray-50">
+    <div class="px-25 bg-gray-50">
+    <section class="py-12">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Back Button --}}
-            <div class="mb-6">
+            <div class="mb-6 py-2">
                 <a href="{{ url()->previous() }}" class="text-blue-600 hover:text-blue-800 inline-flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
@@ -107,7 +108,7 @@
                         </div>
                         <div class="text-center">
                             <i class="fas fa-ruler-combined text-blue-500 text-2xl mb-1"></i>
-                            <p class="text-sm text-gray-600">{{ $house->square_footage }} sq ft</p>
+                            <p class="text-sm text-gray-600">{{ $house->square_footage }} m<sup>2</sup></p>
                         </div>
                         <div class="text-center">
                             <i class="fas fa-home text-blue-500 text-2xl mb-1"></i>
@@ -191,7 +192,7 @@
             </div>
         </div>
     </section>
-
+</div>
     {{-- Ensure Font Awesome is loaded if not globally available --}}
     @push('head')
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"

@@ -103,7 +103,7 @@
                             <div class="flex justify-between text-sm text-gray-600 border-t pt-4 mb-4">
                                 <span><i class="fas fa-bed mr-1"></i> {{ $house->num_room }} {{ Str::plural('Room', $house->num_room) }}</span>
                                 <span><i class="fas fa-layer-group mr-1"></i> {{ $house->num_floor }} {{ Str::plural('Floor', $house->num_floor) }}</span>
-                                <span><i class="fas fa-ruler-combined mr-1"></i> {{ $house->square_footage }} sq ft</span>
+                                <span><i class="fas fa-ruler-combined mr-1"></i> {{ $house->square_footage }}  m<sup>2</sup></span>
                             </div>
                             <a href="{{ route('house.details', $house) }}" class="block w-full mt-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center transition duration-300">
                                 View Details
