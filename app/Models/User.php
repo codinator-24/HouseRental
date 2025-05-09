@@ -4,6 +4,7 @@ namespace App\Models;
 
 // Add these if they are not already present, especially Authenticatable
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable; // Use the base User class
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // If using Sanctum
@@ -59,4 +60,14 @@ class User extends Authenticatable // <-- Changed from Tenant
         'email_verified_at' => 'datetime', // Standard cast for email verification
         'password' => 'hashed', // Use the 'hashed' cast for automatic hashing
     ];
+
+    public function houses(): HasMany
+    {
+        return $this->hasMany(House::class);
+    }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

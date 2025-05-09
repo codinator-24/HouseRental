@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\House;
 use App\Models\HousePicture;
 use Illuminate\Http\Request;
@@ -242,5 +243,63 @@ class HouseController extends Controller
             }
             return back()->with('error', 'Failed to delete picture. Please try again or contact support.');
         }
+    }
+
+    public function sendBooking(Request $request, House $house)
+    {
+        // The 'auth' middleware (which should be on your route) handles unauthenticated users.
+        // If Auth::id() is used, an authenticated user is assumed.
+
+        // Validate the request data.
+        // If validation fails, Laravel automatically redirects back to the previous page.
+        // Errors will be in the 'bookingMessageErrors' bag, and old input will be flashed.
+        // Your JavaScript in detailsHouse.blade.php should then reopen the modal.
+        $validatedData = $request->validateWithBag('bookingMessageErrors', [
+            'booking_message' => 'nullable|string|max:2000', // Message is optional as per your modal
+        ], [
+            // Optional: Custom validation messages
+            'booking_message.max' => 'Your message is too long (maximum 2000 characters).',
+        ]);
+
+        try {
+            Booking::create([
+                'house_id' => $house->id,
+                'tenant_id' => Auth::id(), // Gets the ID of the currently authenticated user
+                'message' => $validatedData['booking_message'] ?? null, // Use validated data, default to null if empty
+                'status' => 'pending', // Set a default status like 'inquiry' or 'pending_confirmation'
+                // 'start_date' and 'end_date' are not collected by this modal.
+                // Ensure these columns in your 'bookings' table are nullable or have default values.
+            ]);
+
+            // Redirect back to the house details page with a success message.
+            // You'll need to have a way to display this 'booking_inquiry_success' flash message in your Blade layout/view.
+            return redirect()->back()->with('success', 'Your Booking has been sent successfully to the landlord!');
+        } catch (\Exception $e) {
+            // Log the detailed error for debugging purposes
+            Log::error("Booking Submission Failed for House ID {$house->id} by User ID " . Auth::id() . ": " . $e->getMessage());
+
+            // Redirect back with a general error message, using the 'bookingMessageErrors' bag.
+            // This ensures the modal reopens and displays the error.
+            return redirect()->back()
+                ->withInput() // Flash the submitted input (the message) back to the form
+                ->withErrors(['_form' => 'We couldn\'t send your Booking at this moment. Please try again later.'], 'bookingMessageErrors');
+        }
+    }
+
+    public function MyBookings()
+    {
+      // Get the ID of the currently authenticated landlord
+      $landlordId = Auth::id();
+
+      // Fetch bookings for houses owned by this landlord
+      // Eager load the 'house' and 'tenant' relationships for efficiency
+      $bookings = Booking::with(['house', 'tenant'])
+          ->whereHas('house', function ($query) use ($landlordId) {
+              $query->where('landlord_id', $landlordId);
+          })
+          ->orderBy('created_at', 'desc') // Optional: Order by newest first
+          ->get();
+
+      return view('users.MyHousesBookings', ['bookings' => $bookings]);
     }
 }

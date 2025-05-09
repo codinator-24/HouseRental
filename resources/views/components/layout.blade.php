@@ -112,7 +112,7 @@
                                     <a href="{{ route('my.houses') }}"
                                         class="block hover:bg-slate-100 pl-4 pr-8 py-2 text-sm text-gray-700">My Houses</a>
                                     {{-- You'll need to define this route: route('booking.lists') --}}
-                                    <a href="#" {{-- href="{{ route('booking.lists') }}" --}}
+                                    <a href="{{ route('my.bookings') }}" {{-- href="{{ route('booking.lists') }}" --}}
                                         class="block hover:bg-slate-100 pl-4 pr-8 py-2 text-sm text-gray-700">Booking
                                         Lists</a>
                                 </div>
