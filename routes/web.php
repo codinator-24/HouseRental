@@ -38,6 +38,8 @@ Route::middleware('lang')->group(function () {
         Route::get('/MyHouses/{house}', [HouseController::class, 'editMyHouse'])->name('Myhouse.edit');
         Route::put('/MyHouses/{house}', [HouseController::class, 'updateMyHouse'])->name('Myhouse.update');
         Route::delete('/MyHouses/{house}', [HouseController::class, 'deleteMyHouse'])->name('Myhouse.delete');
+        Route::delete('/myhouse/picture/{picture}', [HouseController::class, 'destroyPicture'])
+    ->name('myhouse.picture.destroy');
     });
 });
 

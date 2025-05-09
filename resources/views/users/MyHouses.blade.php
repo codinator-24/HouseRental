@@ -39,10 +39,22 @@
                                     <span><i class="fas fa-ruler-combined mr-1"></i> {{ $house->square_footage }}
                                         m<sup>2</sup></span>
                                 </div>
-                                <a href="{{ route('Myhouse.edit', $house) }}"
-                                    class="block w-full mt-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center transition duration-300">
-                                    View Details
-                                </a>
+                                {{-- Action Buttons --}}
+                                <div class="flex justify-end space-x-3 mt-auto">
+                                    <a href="{{ route('Myhouse.edit', $house) }}"
+                                        class="w-25 bg-blue-600 hover:bg-blue-700 text-white py-1 px-1 rounded text-center transition duration-300" title="Update Property">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <form action="{{ route('Myhouse.delete', $house) }}" method="POST" class="">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            onclick="return confirm('Are you sure you want to delete this property? This action cannot be undone.');"
+                                            class="w-12 bg-red-600 hover:bg-red-700 text-white py-1 px-1 rounded text-center transition duration-300" title="Delete Property">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     @empty
