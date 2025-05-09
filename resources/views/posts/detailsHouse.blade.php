@@ -187,14 +187,16 @@
 
                         @auth
                             {{-- Booking Button - MODIFIED --}}
-                            <div class="mt-6 mb-8 border-t pt-6">
-                                <button type="button" id="openBookingMessageModalBtn"
-                                    class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-md text-lg transition duration-300">
-                                    Book This Property Now
-                                </button>
-                            </div>
+                            {{-- Show booking button only if the authenticated user is NOT the landlord of this house --}}
+                            @if ($house->landlord && auth()->id() !== $house->landlord->id)
+                                <div class="mt-6 mb-8 border-t pt-6">
+                                    <button type="button" id="openBookingMessageModalBtn"
+                                        class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-md text-lg transition duration-300">
+                                        Book This Property Now
+                                    </button>
+                                </div>
+                            @endif
                         @endauth
-
                         @guest
                             {{-- Login to Book Button --}}
                             <div class="mt-6 mb-8 border-t pt-6">
@@ -261,13 +263,6 @@
             </form>
         </div>
     </div>
-
-    {{-- Ensure Font Awesome is loaded if not globally available --}}
-    {{-- @push('head')
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-            integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-            crossorigin="anonymous" referrerpolicy="no-referrer" />
-    @endpush --}}
 
     @push('scripts')
         <script>
