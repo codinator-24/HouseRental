@@ -1,0 +1,67 @@
+<x-layout>
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">My Sent Bookings</h1>
+
+        @if($sentBookings->isEmpty())
+            <div class="text-center text-gray-500 py-10">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                </svg>
+                <p class="mt-3 text-xl font-semibold">You haven't sent any bookings yet.</p>
+                <p class="mt-2 text-sm">When you book a property, your sent bookings will appear here.</p>
+                <div class="mt-6">
+                    <a href="{{ route('home') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Explore Properties
+                    </a>
+                </div>
+            </div>
+        @else
+            <div class="space-y-6">
+                @foreach($sentBookings as $booking)
+                    <div class="bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <div class="p-6">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-start">
+                                <div>
+                                    @if($booking->house)
+                                        <h2 class="text-xl sm:text-2xl font-semibold text-indigo-700 mb-1">
+                                            <a href="{{ route('house.details', $booking->house->id) }}" class="hover:underline">{{ $booking->house->title ?? 'Property Title N/A' }}</a>
+                                        </h2>
+                                        <p class="text-sm text-gray-500 mb-1">{{ $booking->house->address ?? 'Address not available' }}</p>
+                                        @if($booking->house->landlord)
+                                            <p class="text-sm text-gray-600">
+                                                <strong>landlord:</strong> {{ $booking->house->landlord->full_name ?? $booking->house->landlord->user_name ?? 'landlord N/A' }}
+                                            </p>
+                                        @endif
+                                    @else
+                                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-1">Booking for Deleted/Unavailable Property</h2>
+                                    @endif
+                                </div>
+                                <a href="#" class="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out">
+                                    View Details
+                                </a>
+                                {{-- <a href="{{ route('bookings.details.show', $booking->id) }}" class="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out">
+                                    View Details
+                                </a> --}}
+                            </div>
+
+                            <hr class="my-4 border-gray-200">
+
+                            <div>
+                                <p class="text-sm font-medium text-gray-800 mb-1">Your Message:</p>
+                                <div class="bg-gray-50 p-3 rounded-md shadow-inner max-h-28 overflow-y-auto prose prose-sm">
+                                    <p class="text-gray-700 whitespace-pre-line">{{ $booking->message ?? 'No message provided.' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @if($sentBookings->hasPages())
+                <div class="mt-8">
+                    {{ $sentBookings->links() }}
+                </div>
+            @endif
+        @endif
+    </div>
+</x-layout>

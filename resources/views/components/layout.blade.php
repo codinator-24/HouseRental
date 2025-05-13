@@ -11,7 +11,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     @stack('head')
 </head>
 
@@ -115,6 +116,10 @@
                                     <a href="{{ route('my.bookings') }}" {{-- href="{{ route('booking.lists') }}" --}}
                                         class="block hover:bg-slate-100 pl-4 pr-8 py-2 text-sm text-gray-700">Booking
                                         Lists</a>
+
+                                    <a href="{{ route('bookings.sent') }}"
+                                        class="block hover:bg-slate-100 pl-4 pr-8 py-2 text-sm text-gray-700">Bookings
+                                        sent</a>
                                 </div>
                             </div>
                             <!-- End Houses Dropdown -->

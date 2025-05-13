@@ -16,6 +16,8 @@ use Illuminate\View\View;
 
 class HouseController extends Controller
 {
+
+
     public function ShowAddHouse()
     {
         return view('posts.AddHouse');
@@ -288,18 +290,63 @@ class HouseController extends Controller
 
     public function MyBookings()
     {
-      // Get the ID of the currently authenticated landlord
-      $landlordId = Auth::id();
+        // Get the ID of the currently authenticated landlord
+        $landlordId = Auth::id();
 
-      // Fetch bookings for houses owned by this landlord
-      // Eager load the 'house' and 'tenant' relationships for efficiency
-      $bookings = Booking::with(['house', 'tenant'])
-          ->whereHas('house', function ($query) use ($landlordId) {
-              $query->where('landlord_id', $landlordId);
-          })
-          ->orderBy('created_at', 'desc') // Optional: Order by newest first
-          ->get();
+        // Fetch bookings for houses owned by this landlord
+        // Eager load the 'house' and 'tenant' relationships for efficiency
+        $bookings = Booking::with(['house', 'tenant'])
+            ->whereHas('house', function ($query) use ($landlordId) {
+                $query->where('landlord_id', $landlordId);
+            })
+            ->orderBy('created_at', 'desc') // Optional: Order by newest first
+            ->get();
 
-      return view('users.MyHousesBookings', ['bookings' => $bookings]);
+        return view('users.MyHousesBookings', ['bookings' => $bookings]);
+    }
+
+    public function showBooking(Booking $booking)
+    {
+        // Eager load relationships to prevent N+1 queries and for easy access in the view
+        $booking->load(['tenant', 'house']);
+
+        // Authorization: Ensure the authenticated user is the landlord of the house for this booking.
+        if (Auth::id() !== $booking->house->landlord_id) {
+            abort(403, 'Unauthorized action. You do not own the house associated with this booking.');
+        }
+
+        return view('users.showBooking', compact('booking'));
+    }
+
+    public function showSentBookings()
+    {
+        $user = Auth::user();
+
+        // Fetch bookings where the authenticated user is the 'tenant_id' (the sender of the booking)
+        // Eager load the 'house' relationship and then the 'landlord' relationship on the 'house'
+        // Assumes Booking model has 'tenant_id' and a 'house' relationship.
+        // Assumes House model has an 'landlord' relationship to the User model.
+        $sentBookings = Booking::where('tenant_id', $user->id)
+            ->with(['house.landlord']) // Eager load house and its landlord
+            ->latest() // Order by the most recent bookings first
+            ->paginate(10); // Paginate the results, 10 per page
+
+        return view('users.sentBookings', compact('sentBookings'));
+    }
+
+    public function showDetailSentBooking(Booking $booking)
+    {
+        // Authorization: Ensure the logged-in user is either the tenant or the property landlord
+        if (Auth::id() !== $booking->tenant_id && (! $booking->house || Auth::id() !== $booking->house->landlord_id)) {
+            // If you have an AuthorizationException imported:
+            // throw new \Illuminate\Auth\Access\AuthorizationException('You are not authorized to view this booking.');
+            // Otherwise, a simple abort:
+            abort(403, 'You are not authorized to view this booking.');
+        }
+
+        // Eager load relationships for efficiency if not already globally eager-loaded in Booking model
+        $booking->load(['house.landlord', 'tenant']);
+
+        return view('users.showBooking', compact('booking'));
     }
 }
