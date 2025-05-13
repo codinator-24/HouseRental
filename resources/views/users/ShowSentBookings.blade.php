@@ -88,21 +88,21 @@
                     {{-- Actions (e.g., Cancel booking, Contact landlord). These are examples and would require backend logic. --}}
                     <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
                         {{-- Example: Cancel button for the tenant if booking is pending/accepted --}}
-                        {{-- @if(Auth::id() == $booking->tenant_id && in_array($booking->status, ['pending', 'accepted']))
-                            <form action="{{-- route('bookings.cancel', $booking->id) --}}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-red-500 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                    Cancel Booking
-                                </button>
-                            </form>
-                        @endif --}}
+                        {{-- @if(Auth::id() == $booking->tenant_id && in_array($booking->status, ['pending', 'accepted'])) --}}
+                            {{-- <form action="route('bookings.cancel', $booking->id)" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?');"> --}}
+                                {{-- @csrf --}}
+                                {{-- @method('PATCH') --}}
+                                {{-- <button type="submit" class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-red-500 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"> --}}
+                                    {{-- Cancel Booking --}}
+                                {{-- </button> --}}
+                            {{-- </form> --}}
+                        {{-- @endif --}}
 
                         {{-- Example: Accept/Reject buttons for the property landlord if booking is pending --}}
-                        {{-- @if($booking->house && Auth::id() == $booking->house->landlord_id && $booking->status == 'pending')
-                            <form action="{{-- route('bookings.respond', [$booking->id, 'accept']) --}}" method="POST" class="inline"> @csrf @method('PATCH') <button type="submit" class="w-full sm:w-auto ... bg-green-600 hover:bg-green-700 ...">Accept</button></form>
-                            <form action="{{-- route('bookings.respond', [$booking->id, 'reject']) --}}" method="POST" class="inline"> @csrf @method('PATCH') <button type="submit" class="w-full sm:w-auto ... bg-red-600 hover:bg-red-700 ...">Reject</button></form>
-                        @endif --}}
+                        {{-- @if($booking->house && Auth::id() == $booking->house->landlord_id && $booking->status == 'pending') --}}
+                            {{-- <form action="route('bookings.respond', [$booking->id, 'accept'])" method="POST" class="inline"> @csrf @method('PATCH') <button type="submit" class="w-full sm:w-auto ... bg-green-600 hover:bg-green-700 ...">Accept</button></form> --}}
+                            {{-- <form action="route('bookings.respond', [$booking->id, 'reject'])" method="POST" class="inline"> @csrf @method('PATCH') <button type="submit" class="w-full sm:w-auto ... bg-red-600 hover:bg-red-700 ...">Reject</button></form> --}}
+                        {{-- @endif --}}
                     </div>
 
                 </div>

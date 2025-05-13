@@ -42,9 +42,9 @@ Route::middleware('lang')->group(function () {
         Route::post('/booking/{house}/send-message', [HouseController::class, 'sendBooking'])->name('send.booking');
         Route::get('/MyBookings', [HouseController::class, 'MyBookings'])->name('my.bookings');
         Route::get('/bookings/{booking}', [HouseController::class, 'showBooking'])->name('bookings.show');
-        // Example route definition (you'll need to create the controller and method)
         Route::get('/my-sent-bookings', [HouseController::class, 'showSentBookings'])->name('bookings.sent');
         // Route::get('/bookings/{booking}', [HouseController::class, 'showDetailSentBooking'])->name('bookings.details.show');
+        Route::delete('/my-bookings/sent/{booking}/delete', [HouseController::class, 'destroySentBooking'])->name('bookings.sent.destroy');
     });
 });
 

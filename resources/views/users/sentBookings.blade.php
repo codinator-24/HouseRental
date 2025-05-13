@@ -36,9 +36,18 @@
                                         <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-1">Booking for Deleted/Unavailable Property</h2>
                                     @endif
                                 </div>
-                                <a href="#" class="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out">
-                                    View Details
-                                </a>
+                                <div class="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center space-x-2">
+                                    <a href="#" class="bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
+                                        View Details
+                                    </a>
+                                    <form method="POST" action="{{ route('bookings.sent.destroy', $booking->id) }}" onsubmit="return confirm('Are you sure you want to delete this booking request? This action cannot be undone.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                                 {{-- <a href="{{ route('bookings.details.show', $booking->id) }}" class="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out">
                                     View Details
                                 </a> --}}

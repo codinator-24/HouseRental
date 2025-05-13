@@ -185,16 +185,48 @@
                             </div>
                         @endif
 
+                        {{-- MODIFIED Booking Button Logic --}}
                         @auth
-                            {{-- Booking Button - MODIFIED --}}
-                            {{-- Show booking button only if the authenticated user is NOT the landlord of this house --}}
-                            @if ($house->landlord && auth()->id() !== $house->landlord->id)
-                                <div class="mt-6 mb-8 border-t pt-6">
-                                    <button type="button" id="openBookingMessageModalBtn"
-                                        class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-md text-lg transition duration-300">
-                                        Book This Property Now
-                                    </button>
-                                </div>
+                            @if ($house->landlord) {{-- Ensure landlord exists for this house --}}
+                                @if (auth()->id() === $house->landlord->id) {{-- User IS the landlord --}}
+                                    <div class="mt-6 mb-8 border-t pt-6">
+                                        <p class="text-lg text-gray-700">This is your property. You cannot book it.</p>
+                                        {{-- Optionally, add a link to manage this property or view its bookings --}}
+                                    </div>
+                                @else {{-- User is authenticated and is NOT the landlord --}}
+                                    {{-- Assumes $userBookingForThisHouse is passed from controller --}}
+                                    {{-- $userBookingForThisHouse = Booking::where('tenant_id', auth()->id())->where('house_id', $house->id)->first(); --}}
+                                    @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
+                                        {{-- User has already booked this house --}}
+                                        <div class="mt-6 mb-8 border-t pt-6">
+                                            <p class="text-lg text-gray-700 mb-3">You have already sent a booking request for this property.</p>
+                                            <a href="#"
+                                               class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-md text-lg transition duration-300 ease-in-out">
+                                                View Your Booking Details
+                                            </a>
+                                            {{-- <a href="{{ route('bookings.show.sent', $userBookingForThisHouse->id) }}"
+                                               class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-md text-lg transition duration-300 ease-in-out">
+                                                View Your Booking Details
+                                            </a> --}}
+                                        </div>
+                                    @else
+                                        {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
+                                        <div class="mt-6 mb-8 border-t pt-6">
+                                            <button type="button" id="openBookingMessageModalBtn"
+                                                class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-md text-lg transition duration-300">
+                                                Book This Property Now
+                                            </button>
+                                        </div>
+                                    @endif
+                                @endif
+                            @else
+                                {{-- Optional: Handle case where house has no landlord. 
+                                     Currently, no booking-related button will be shown for authenticated users if no landlord.
+                                     You might want to show the "Book This Property Now" button or a message.
+                                --}}
+                                {{-- <div class="mt-6 mb-8 border-t pt-6">
+                                    <p class="text-lg text-gray-700">Booking is currently unavailable for this property.</p>
+                                </div> --}}
                             @endif
                         @endauth
                         @guest
@@ -211,58 +243,54 @@
             </div>
         </section>
     </div>
-
-    {{-- Booking Modal--}}
-    <div id="bookingMessageModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
-        style="display: none;" role="dialog" aria-modal="true" aria-labelledby="bookingMessageModalTitle">
-        <div class="bg-white rounded-lg shadow-xl overflow-hidden max-w-md w-full mx-4">
-            <div class="px-6 py-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
-                <h1 id="bookingMessageModalTitle" class="text-xl font-semibold text-gray-700">Send Booking
-                </h1>
-                <button id="closeBookingMessageModalBtn" aria-label="Close booking modal"
-                    class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
-            </div>
-
-            {{-- Replace 'booking.sendMessage' with your actual route name --}}
-            {{-- Make sure this route can handle $house parameter if needed, or add a hidden input for house_id --}}
-            <form method="POST" action="{{ route('send.booking', ['house' => $house->id]) }}" class="px-6 py-6">
-                @csrf
-
-                {{-- Display Validation Errors for Booking Message --}}
-                {{-- Ensure your controller uses 'bookingMessageErrors' as the named error bag if validation fails --}}
-                @if ($errors->bookingMessageErrors->any())
-                    <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded" role="alert">
-                        <p class="font-bold">Please correct the following error(s):</p>
-                        <ul class="list-disc list-inside">
-                            @foreach ($errors->bookingMessageErrors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+    
+    {{-- Booking Modal (Only shown if user hasn't booked yet, is not the landlord, and house has a landlord) --}}
+    @auth
+        @if ($house->landlord && auth()->id() !== $house->landlord->id && (!isset($userBookingForThisHouse) || !$userBookingForThisHouse))
+            <div id="bookingMessageModal"
+                class="fixed inset-0 z-[60] flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
+                style="display: none;" role="dialog" aria-modal="true" aria-labelledby="bookingMessageModalTitle">
+                <div class="bg-white rounded-lg shadow-xl overflow-hidden max-w-md w-full mx-4">
+                    <div class="px-6 py-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
+                        <h1 id="bookingMessageModalTitle" class="text-xl font-semibold text-gray-700">Send Booking Request
+                        </h1>
+                        <button id="closeBookingMessageModalBtn" aria-label="Close booking modal"
+                            class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
                     </div>
-                @endif
 
-                {{-- Message --}}
-                <div class="mb-4">
-                    <label for="booking_message" class="block text-sm font-medium text-gray-700 mb-1">Your Message
-                        (Optional)</label>
-                    <textarea name="booking_message" id="booking_message" rows="5"
-                        placeholder="E.g., I'm interested in viewing this property. What are the next steps?"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('booking_message', 'bookingMessageErrors') border-red-500 @enderror">{{ old('booking_message') }}</textarea>
-                    @error('booking_message', 'bookingMessageErrors')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                    <form method="POST" action="{{ route('send.booking', ['house' => $house->id]) }}" class="px-6 py-6">
+                        @csrf
+                        @if ($errors->bookingMessageErrors->any())
+                            <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded" role="alert">
+                                <p class="font-bold">Please correct the following error(s):</p>
+                                <ul class="list-disc list-inside">
+                                    @foreach ($errors->bookingMessageErrors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        <div class="mb-4">
+                            <label for="booking_message" class="block text-sm font-medium text-gray-700 mb-1">Your Message
+                                (Optional)</label>
+                            <textarea name="booking_message" id="booking_message" rows="5"
+                                placeholder="E.g., I'm interested in viewing this property. What are the next steps?"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('booking_message', 'bookingMessageErrors') border-red-500 @enderror">{{ old('booking_message') }}</textarea>
+                            {{-- @error('booking_message', 'bookingMessageErrors')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror --}}
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                Send Booking Request
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                {{-- Submit Button --}}
-                <div class="flex justify-end">
-                    <button type="submit"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        Send Booking
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+            </div>
+        @endif
+    @endauth
 
     @push('scripts')
         <script>
@@ -340,7 +368,9 @@
                     }
                 }
 
-                // --- Booking Message Modal Script (NEW) ---
+                // --- Booking Message Modal Script (MODIFIED) ---
+                // Only attach listeners if the modal and its trigger button exist
+                // (i.e., user hasn't booked yet, is not the landlord, and the modal HTML is rendered)
                 const openBookingBtn = document.getElementById('openBookingMessageModalBtn');
                 const closeBookingBtn = document.getElementById('closeBookingMessageModalBtn');
                 const bookingModal = document.getElementById('bookingMessageModal');
@@ -371,7 +401,7 @@
                 // Keep booking modal open if there are validation errors for it
                 // Ensure your controller redirects back with errors in the 'bookingMessageErrors' bag
                 @if ($errors->hasBag('bookingMessageErrors') && $errors->bookingMessageErrors->any())
-                    if (bookingModal) {
+                    if (bookingModal) { // Check if modal exists on the page (it should if errors are present for it)
                         bookingModal.style.display = 'flex';
                     }
                 @endif

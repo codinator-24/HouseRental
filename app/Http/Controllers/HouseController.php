@@ -97,9 +97,14 @@ class HouseController extends Controller
 
     public function houseDetails(House $house)
     {
-        // Eager load pictures and landlord information
-        $house->load(['pictures', 'landlord']);
-        return view('posts.detailsHouse', ['house' => $house]);
+        $userBookingForThisHouse = null;
+        if (Auth::check() && $house && $house->id) {
+            $userBookingForThisHouse = Booking::where('tenant_id', Auth::id())
+                ->where('house_id', $house->id)
+                // Optional: Add conditions like ->where('status', '!=', 'cancelled')
+                ->first();
+        }
+        return view('posts.detailsHouse', compact('house', 'userBookingForThisHouse'));
     }
 
     public function MyHouses()
@@ -194,7 +199,7 @@ class HouseController extends Controller
     public function deleteMyHouse(House $house)
     {
         // Authorization: Ensure the authenticated user owns this house
-        if (Auth::id() !== $house->landlord_id) {
+        if (Auth::check() && Auth::id() !== $house->landlord_id) {
             // Or use Laravel Policies: $this->authorize('delete', $house);
             // return redirect()->route('Myhouse.index')->with('error', 'You are not authorized to delete this property.');
             return redirect()->route('Myhouse.index')->with('error', 'You are not authorized to delete this property.');
@@ -348,5 +353,21 @@ class HouseController extends Controller
         $booking->load(['house.landlord', 'tenant']);
 
         return view('users.showBooking', compact('booking'));
+    }
+
+
+    public function destroySentBooking(Request $request, Booking $booking)
+    {
+        // Authorization: Ensure the authenticated user is the one who sent the booking
+        if ($booking->tenant_id !== Auth::id()) {
+            return back()->with('error', 'You are not authorized to delete this booking.');
+        }
+
+        // Optional: Add logic here if there are conditions under which a booking cannot be deleted
+        // (e.g., if it's already accepted and past a certain point)
+
+        $booking->delete();
+
+        return redirect()->back()->with('success', 'Booking request deleted successfully.');
     }
 }
