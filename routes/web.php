@@ -66,7 +66,7 @@ Route::get('/set/lang/{lang}', function ($lang) {
 });
 
 //Routes bo bashy Admin 
-Route::get('/dashboard', function(){
+Route::get('admin/dashboard', function(){
     return view('admin/dashboard');
 });
 Route::get('/users', function(){
