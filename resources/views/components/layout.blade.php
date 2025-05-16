@@ -68,6 +68,52 @@
                 </div>
 
                 @auth
+                    <!-- Notification Icon with Dropdown -->
+                    <div class="relative" x-data="notificationsComponent()" x-init="init()">
+                        <button @click="toggleDropdown()" type="button" title="Notifications"
+                            class="relative p-2 text-gray-600 hover:text-blue-600 focus:outline-none rounded-full hover:bg-gray-100">
+                            <span class="sr-only">View notifications</span>
+                            <i class="fas fa-bell text-xl"></i>
+                            <template x-if="unreadCount > 0">
+                                <span x-text="unreadCount > 9 ? '9+' : unreadCount"
+                                    class="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 border-white flex items-center justify-center text-xs text-white"></span>
+                            </template>
+                        </button>
+
+                        <div x-show="notifOpen" @click.outside="notifOpen = false"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"                            
+                            class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg border border-gray-200 z-10 max-h-96 overflow-y-auto">
+                            <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-sm font-semibold text-gray-700">Notifications</h3>
+                                <button x-show="notifications.length > 0 && unreadCount > 0" @click="markAllRead()" class="text-xs text-blue-600 hover:underline">Mark all as read</button>
+                            </div>
+                            <div class="divide-y divide-gray-100">
+                                <template x-if="loading">
+                                    <p class="p-4 text-sm text-gray-500 text-center">Loading...</p>
+                                </template>
+                                <template x-if="!loading && notifications.length === 0">
+                                    <p class="p-4 text-sm text-gray-500 text-center">No new notifications.</p>
+                                </template>
+                                <template x-for="notification in notifications" :key="notification.id">
+                                    <a :href="notification.link" @click.prevent="handleNotificationClick(notification)"
+                                       class="block p-3 hover:bg-gray-50 cursor-pointer">
+                                        <p class="text-sm text-gray-700" x-text="notification.message"></p>
+                                        <p class="text-xs text-gray-400" x-text="timeAgo(notification.created_at)"></p>
+                                    </a>
+                                </template>
+                            </div>
+                             <div x-show="!loading && (notifications.length > 0 || unreadCount > 0)" class="p-2 border-t border-gray-200 text-center">
+                                {{-- You might want a dedicated page for all notifications e.g. /notifications --}}
+                                <a href="#" class="text-sm text-blue-600 hover:underline">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Profile Dropdown -->
                     <div class="relative grid place-items-center" x-data="{ open: false }">
                         <button type="button"
@@ -187,6 +233,102 @@
     </footer>
 
     @stack('scripts')
+    @auth
+    <script>
+        function notificationsComponent() {
+            return {
+                notifOpen: false,
+                notifications: [],
+                unreadCount: 0,
+                loading: true,
+                init() {
+                    this.fetchNotifications();
+                    // Optional: Poll for new notifications every 60 seconds
+                    // setInterval(() => {
+                    //     if (document.visibilityState === 'visible') { // Only fetch if tab is active
+                    //        this.fetchNotifications(false); // false to not show loading indicator for background refresh
+                    //     }
+                    // }, 60000);
+                },
+                fetchNotifications(showLoading = true) {
+                    if (showLoading) this.loading = true;
+                    fetch('{{ route("notifications.data") }}', {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        this.notifications = data.notifications;
+                        this.unreadCount = data.unread_count;
+                        if (showLoading) this.loading = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching notifications:', error);
+                        if (showLoading) this.loading = false;
+                    });
+                },
+                toggleDropdown() {
+                    this.notifOpen = !this.notifOpen;
+                    if (this.notifOpen) {
+                        // Fetch fresh notifications when dropdown is opened
+                        this.fetchNotifications();
+                    }
+                },
+                async handleNotificationClick(notification) {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    try {
+                        await fetch(`/notifications/${notification.id}/mark-as-read`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json',
+                            },
+                        });
+                        this.fetchNotifications(false); // Refresh list without full loading indicator
+                        if (notification.link && notification.link !== '#') {
+                            window.location.href = notification.link;
+                        }
+                    } catch (error) {
+                        console.error('Error marking notification as read:', error);
+                    }
+                    this.notifOpen = false; // Close dropdown after click
+                },
+                async markAllRead() {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    try {
+                        await fetch('{{ route("notifications.markAllAsRead") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json',
+                            },
+                        });
+                        this.fetchNotifications(false); // Refresh list
+                    } catch (error) {
+                        console.error('Error marking all notifications as read:', error);
+                    }
+                },
+                timeAgo(timestamp) { // Simple time ago function
+                    const now = new Date();
+                    const past = new Date(timestamp);
+                    const msPerMinute = 60 * 1000;
+                    const msPerHour = msPerMinute * 60;
+                    const msPerDay = msPerHour * 24;
+                    const elapsed = now - past;
+
+                    if (elapsed < msPerMinute) return Math.round(elapsed/1000) + 's ago';
+                    else if (elapsed < msPerHour) return Math.round(elapsed/msPerMinute) + 'm ago';
+                    else if (elapsed < msPerDay ) return Math.round(elapsed/msPerHour ) + 'h ago';
+                    else return Math.round(elapsed/msPerDay) + 'd ago';
+                }
+            }
+        }
+    </script>
+    @endauth
 </body>
 
 </html>

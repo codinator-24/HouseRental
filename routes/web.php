@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HouseController;
 use App\Http\Controllers\IndexController; // Add this line
+
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NotificationController;
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -40,12 +44,18 @@ Route::middleware('lang')->group(function () {
         Route::put('/MyHouses/{house}', [HouseController::class, 'updateMyHouse'])->name('Myhouse.update');
         Route::delete('/MyHouses/{house}', [HouseController::class, 'deleteMyHouse'])->name('Myhouse.delete');
         Route::delete('/myhouse/picture/{picture}', [HouseController::class, 'destroyPicture'])->name('myhouse.picture.destroy');
-        Route::post('/booking/{house}/send-message', [HouseController::class, 'sendBooking'])->name('send.booking');
-        Route::get('/MyBookings', [HouseController::class, 'MyBookings'])->name('my.bookings');
-        Route::get('/bookings/{booking}', [HouseController::class, 'showBooking'])->name('bookings.show');
-        Route::get('/my-sent-bookings', [HouseController::class, 'showSentBookings'])->name('bookings.sent');
-        // Route::get('/bookings/{booking}', [HouseController::class, 'showDetailSentBooking'])->name('bookings.details.show');
-        Route::delete('/my-bookings/sent/{booking}/delete', [HouseController::class, 'destroySentBooking'])->name('bookings.sent.destroy');
+        Route::post('/booking/{house}/send-message', [BookingController::class, 'sendBooking'])->name('send.booking');
+        Route::get('/MyBookings', [BookingController::class, 'MyBookings'])->name('my.bookings');
+        Route::get('/bookings/{booking}', [BookingController::class, 'showBooking'])->name('bookings.show');
+        Route::get('/my-sent-bookings', [BookingController::class, 'showSentBookings'])->name('bookings.sent');
+        // Route::get('/bookings/{booking}', [BookingController::class, 'showDetailSentBooking'])->name('bookings.details.show');
+        Route::delete('/my-bookings/sent/{booking}/delete', [BookingController::class, 'destroySentBooking'])->name('bookings.sent.destroy');
+        Route::patch('/bookings/{booking}/accept', [BookingController::class, 'acceptBooking'])->name('bookings.accept');
+        Route::patch('/bookings/{booking}/reject', [BookingController::class, 'rejectBooking'])->name('bookings.reject');
+
+            Route::get('/notifications-data', [NotificationController::class, 'index'])->name('notifications.data');
+    Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     });
 });
 
@@ -59,7 +69,8 @@ Route::get('/set/lang/{lang}', function ($lang) {
 });
 
 //Routes bo bashy Admin 
-Route::get('/dashboardAdmin', function(){
+
+Route::get('admin/dashboard', function(){
     return view('admin/dashboard');
 });
 Route::get('/users', function(){
