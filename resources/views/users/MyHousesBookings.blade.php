@@ -26,6 +26,26 @@
                         @else
                             <p class="text-gray-700 mb-1"><strong>From:</strong> Tenant information not available</p>
                         @endif
+                        <p class="text-gray-700 mb-1">
+                            <strong>Status:</strong>
+                            @if ($booking->status === 'pending')
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Pending
+                                </span>
+                            @elseif ($booking->status === 'accepted')
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Accepted
+                                </span>
+                            @elseif ($booking->status === 'rejected')
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                    Rejected
+                                </span>
+                            @else
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    {{ ucfirst($booking->status) }}
+                                </span>
+                            @endif
+                        </p>
                         <hr class="my-2 border-gray-300">
                         <p class="text-gray-700">
                             <strong>Message:</strong><br>{{ $booking->message ?? 'No message provided.' }}</p>

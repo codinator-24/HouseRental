@@ -64,10 +64,68 @@
                     </div>
                 </section>
 
+                <!-- Booking Status -->
+                <section aria-labelledby="booking-status-display-heading" class="mt-6">
+                    <h2 id="booking-status-display-heading" class="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 border-b border-gray-300 pb-2">
+                        Current Status
+                    </h2>
+                    <div class="bg-gray-100 p-4 rounded-md shadow">
+                        <p class="text-lg text-center font-medium">
+                            @if($booking->status === 'pending')
+                                Status: <span class="text-yellow-600 font-bold">Pending Landlord Action</span>
+                            @elseif($booking->status === 'accepted')
+                                Status: <span class="text-green-600 font-bold">Accepted</span>
+                            @elseif($booking->status === 'rejected')
+                                Status: <span class="text-red-600 font-bold">Rejected</span>
+                            @else
+                                Status: <span class="text-gray-700 font-bold">{{ ucfirst($booking->status) }}</span>
+                            @endif
+                        </p>
+                    </div>
+                </section>
+
+                {{-- Landlord Actions --}}
+                @if($booking->house && Auth::check() && Auth::id() === $booking->house->landlord_id && $booking->status === 'pending')
+                    <section aria-labelledby="landlord-actions-heading" class="mt-8 pt-6 border-t border-gray-200">
+                        <h2 id="landlord-actions-heading" class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 text-center">
+                            Manage Booking Request
+                        </h2>
+                        <div class="flex justify-center items-center space-x-3 sm:space-x-4">
+                            <form action="{{ route('bookings.accept', $booking) }}" method="POST" onsubmit="return confirm('Are you sure you want to accept this booking?');">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition duration-150 ease-in-out text-sm sm:text-base">
+                                    Accept Booking
+                                </button>
+                            </form>
+                            <form action="{{ route('bookings.reject', $booking) }}" method="POST" onsubmit="return confirm('Are you sure you want to reject this booking?');">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition duration-150 ease-in-out text-sm sm:text-base">
+                                    Reject Booking
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                @endif
+
                 <div class="mt-8 pt-6 border-t border-gray-200 text-center">
-                    <a href="{{ route('my.bookings') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-150 ease-in-out">
-                        Back to My Bookings
-                    </a>
+                    @if(Auth::check())
+                        @if($booking->house && Auth::id() === $booking->house->landlord_id)
+                            <a href="{{ route('my.bookings') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-150 ease-in-out">
+                                Back to Received Bookings
+                            </a>
+                        @elseif(Auth::id() === $booking->tenant_id)
+                            <a href="{{ route('bookings.sent') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-150 ease-in-out">
+                                Back to Sent Bookings
+                            </a>
+                        @else
+                             {{-- Fallback, though authorization should ideally prevent reaching here without a defined role --}}
+                            <a href="{{ url()->previous() }}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-150 ease-in-out">
+                                Go Back
+                            </a>
+                        @endif
+                    @endif
                 </div>
             </div>
         </div>

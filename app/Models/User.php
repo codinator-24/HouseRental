@@ -1,34 +1,46 @@
 <?php
-
 namespace App\Models;
 
-// Add these if they are not already present, especially Authenticatable
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable; // Use the base User class
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // If using Sanctum
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 
-// Change class name from Tenant to User
-// Make sure it extends Authenticatable for Auth functionality
-class User extends Authenticatable // <-- Changed from Tenant
+/**
+ * App\Models\User
+ *
+ * @property string $id
+ * @property string $full_name
+ * @property string $user_name
+ * @property string $first_phoneNumber
+ * @property string|null $second_phoneNumber
+ * @property string $email
+ * @property string $password
+ * @property string $role
+ * @property string|null $address
+ * @property string|null $picture
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * 
+ * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
+ * @property-read DatabaseNotificationCollection|DatabaseNotification[] $readNotifications
+ * @property-read DatabaseNotificationCollection|DatabaseNotification[] $unreadNotifications
+ * @property-read int|null $notifications_count
+ * @property-read int|null $read_notifications_count
+ * @property-read int|null $unread_notifications_count
+ * 
+ * @method DatabaseNotificationCollection notifications()
+ * @method DatabaseNotificationCollection unreadNotifications()
+ */
+class User extends Authenticatable
 {
-    // Keep HasFactory if you use factories
-    use HasFactory, Notifiable;
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    // protected $table = 'tenants'; // Remove or comment out this line if present
-                                     // Laravel will infer 'users' from the class name 'User'
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    use HasFactory, Notifiable, HasApiTokens; 
+    
     protected $fillable = [
         'full_name',
         'user_name',
