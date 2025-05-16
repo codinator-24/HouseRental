@@ -64,3 +64,17 @@ Route::get('/set/lang/{lang}', function ($lang) {
         return redirect()->back()->cookie('lang', $lang, 60 * 24 * 365);
     }
 });
+
+//Routes bo bashy Admin 
+Route::get('/dashboard', function(){
+    return view('admin/dashboard');
+});
+Route::get('/users', function(){
+    return view('admin/users');
+});
+Route::get('/feedback', function(){
+    return view('admin/feedback');
+});
+Route::get('/aprove', function(){
+    return view('admin/aprove');
+});
