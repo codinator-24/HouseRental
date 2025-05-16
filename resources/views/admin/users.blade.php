@@ -31,7 +31,7 @@
     <div class="brand">
 	<p class="logo"><span >House</span>Rental</p>
     </div>
-  <a href="/dashboard" class="icon-a active"><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
+  <a href="/dashboardAdmin" class="icon-a active"><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
   <a href="/aprove"class="icon-a"><i class="fa-solid fa-thumbs-up"></i>&nbsp;&nbsp;Approve Rent</a>
   <a href="/users"class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Users Management</a>
   <a href="/feedback"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Feedback</a>
@@ -50,35 +50,40 @@
 
 <table class="table">
   <thead>
-    <th>ناو</th>
+    <th>ناوی تەواو</th>
+    <th>ناوی هەژمار</th>
     <th>ئیمەیل</th>
     <th>ژمارەی مۆبایل</th>
     <th>ناونیشان</th>
     <th>جۆری بەکارهێنەر</th>
-    <th>گۆرینی ڕۆڵ یان سڕینەوە</th>
+    <th>سڕینەوەی بەكارهێنەر</th>
   </thead>
   <tbody>
+    @foreach($data as $user)
     <tr>
       <td data-label="ناو">
-        <p>Ashkan</p>
+        <p>{{$user->full_name}}</p>
+      </td>
+      <td data-label="ناو">
+        <p>{{$user->user_name}}</p>
       </td>
       <td data-label="ئیمەیل">
-        ashkan@gmail.com
+        {{$user->email}}
       </td>
       <td data-label="مۆبایل">
-        07701112233
+        {{$user->first_phoneNumber}}
       </td>
       <td data-label="ناونیشان">
-        هەواری شار
+         {{$user->address}}
       </td>
       <td data-label="جۆری بەکارهێنەر">
-    <p>خاوەن خانوو </p>
+          {{$user->role}} 
       </td>
       <td data-label="گۆرینی ڕؤڵ یان سڕینەوە">
-      <a href=""><button class="changeuser-btn">كرێگر</button></a>
       <a href=""><button class="delete-btn">سڕینەوە</button></a>
       </td>
     </tr>
+    @endforeach
   </tbody>
 </table>
 

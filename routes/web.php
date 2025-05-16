@@ -5,7 +5,10 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HouseController;
 use App\Http\Controllers\IndexController; // Add this line
+
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NotificationController;
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -66,6 +69,7 @@ Route::get('/set/lang/{lang}', function ($lang) {
 });
 
 //Routes bo bashy Admin 
+
 Route::get('admin/dashboard', function(){
     return view('admin/dashboard');
 });
@@ -78,3 +82,7 @@ Route::get('/feedback', function(){
 Route::get('/aprove', function(){
     return view('admin/aprove');
 });
+
+//Route bo pishandany data bo Admin
+Route::get('/aprove',[AdminController::class,'viewaprove']);
+Route::get('/users',[AdminController::class,'viewusers']);

@@ -203,9 +203,9 @@ body{
 
 
 .table{
-  width: 60%!important;
+  width: 75%!important;
   border-collapse: collapse;
-  margin-left: 30%;
+  margin-left: 23%;
   margin-top: 10%;
 }
 .table td, .table th{
@@ -344,12 +344,17 @@ body{
   color: white;
   transform: scale(1.1);
 }
-.img-delete{
+.check{
   transition: 0.3s ease-in-out;
 }
-.img-delete:hover{
+.check:hover{
   transform: scale(1.2);
   
+}
+.check{
+  width: 24%;
+  height: 15%;
+  margin: 5px;
 }
 
 @media(max-width:850px){

@@ -40,7 +40,7 @@
         <div class="brand">
         <p class="logo"><span >House</span>Rental</p>
         </div>
-      <a href="/dashboard" class="icon-a active"><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
+      <a href="/dashboardAdmin" class="icon-a active"><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
       <a href="/aprove"class="icon-a"><i class="fa-solid fa-thumbs-up"></i>&nbsp;&nbsp;Approve Rent</a>
       <a href="/users"class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Users Management</a>
       <a href="/feedback"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Feedback</a>
@@ -60,32 +60,36 @@
 <table class="table">
   <thead>
     <th>جۆری خانوو</th>
-    <th>ناونیشانی 1</th>
-    <th>ناونیشانی 2</th>
+    <th>ناونیشانی <br>1</th>
+    <th>ناونیشانی<br>2</th>
     <th>شار</th>
-    <th>ژمارەی ژور</th>
     <th>ژمارەی قات</th>
-    <th>نرخ</th>
-    <th>پەیام</th>
+    <th>ژمارەی ژور</th>
+    <th>قەبارە بە مەتر</th>
+    <th>نرخی كرێ</th>
+    <th> باسكردنی خانوو</th>
     <th>ڕەسم</th>
     <th>ئەپروف</th>
   </thead>
   <tbody>
+    @foreach($data as $house)
     <tr>
-      <td data-label="ناو">فێلا</td>
-      <td data-label="داواکاری">هەواری شار</td>
-      <td data-label="کۆی گشتی"> گەسی ئامانج</td>
-      <td data-label="ژمارەی مۆبایل">سلێمانی</td>
-      <td data-label="داواکاریەکی تایبەت">6</td>
-      <td data-label="داواکاریەکی تایبەت">2</td>
-      <td data-label="گەیشتووە بەدەستی">500،000</td>
-      <td data-label="داواکاریەکی تایبەت">ڕووە قیبلەیە</td>
-      <td data-label="ناونیشان">ڕەسمەكە</td>
+      <td data-label="ناو">{{$house->title}}</td>
+      <td data-label="داواکاری">{{$house->first_address}}</td>
+      <td data-label="کۆی گشتی">{{$house->second_address}}</td>
+      <td data-label="ژمارەی مۆبایل">{{$house->city}}</td>
+      <td data-label="داواکاریەکی تایبەت">{{$house->num_floor}}</td>
+      <td data-label="داواکاریەکی تایبەت">{{$house->num_room}}</td>
+      <td data-label="قەبارە بە مەتر">{{$house->square_footage}}</td>
+      <td data-label="گەیشتووە بەدەستی">{{$house->rent_amount}}$</td>
+      <td data-label="داواکاریەکی تایبەت">{{$house->description}}</td>
+      <td data-label="ناونیشان"></td>
       <td data-label="وەرگرتن" style="width: 16%;">
-      <a href=""><button class="changeuser-btn" style="width: 50%;">وەرگرتن</button></a><br>
-      <a href=""><button class="delete-btn" style="width: 50%;">سڕینەوە</button></a>
+      <a href=""><img class="check" src="images/check.png" alt=""></a><a href=""><img class="check" src="images/reject.png" alt=""></a>
+      
       </td>
     </tr>
+    @endforeach
   </tbody>
 </table>
 
