@@ -8,10 +8,9 @@ use App\Http\Controllers\IndexController; // Add this line
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NotificationController;
-
+use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
-
-
+use Stripe\Stripe;
 
 Route::middleware('lang')->group(function () {
 
@@ -68,8 +67,14 @@ Route::get('/set/lang/{lang}', function ($lang) {
     }
 });
 
-//Routes bo bashy Admin 
+//Route bo payment
+Route::get('/pay',[StripeController::class,'pay'])->name('pay');
+Route::post('/checkout',[StripeController::class,'checkout'])->name('checkout');
+Route::get('/success',[StripeController::class,'success'])->name('success');
 
+
+
+//Routes bo bashy Admin 
 Route::get('admin/dashboard', function(){
     return view('admin/dashboard');
 });
