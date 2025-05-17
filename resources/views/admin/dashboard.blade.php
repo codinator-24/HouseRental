@@ -57,7 +57,7 @@
 	
 	<div class="col-div-4" style="margin-top: 3%;">
 		<div class="box">
-			<p style="margin-left: 10%;">246<br/><span>بەكارهێنەران</span></p>
+			<p style="margin-left: 10%;">{{$users}}<br/><span>بەكارهێنەران</span></p>
 			<img src="images/team.png" class="box-icon" style="width:20%; height:65px;">
 		</div>
 	</div>
@@ -66,28 +66,28 @@
 	<div class="col-div-4" style="margin-top: 3%;">
 		<div class="box">
 			<p style="margin-left: 0%;">20<br/><span>وەرگرتنی خانوو</span></p>
-			<img src="images/house.png" class="box-icon" style="width:20%; height:50px;">
-		</div>
-	</div>
-
-
-	<div class="col-div-4" style="margin-top:3%;">
-		<div class="box">
-			<p style="margin-left: 10%;">5<br/><span>مۆركردن خانوو</span></p>
 			<img src="images/stamp.png" class="box-icon" style="width:20%; height:50px;">
 		</div>
 	</div>
 
+
 	<div class="col-div-4" style="margin-top:3%;">
 		<div class="box">
-			<p style="margin-left: 8%;">1,200,000<br/><span>قازانج</span></p>
+			<p style="">{{$houses}}<br/><span>ژمارەی خانووەكان</span></p>
+			<img src="images/house.png" class="box-icon" style="width:20%; height:50px;">
+		</div>
+	</div>
+
+	<div class="col-div-4" style="margin-top:3%;">
+		<div class="box">
+			<p style="">1,200,000<br/><span>قازانج</span></p>
 			<img src="images/compensation.png" class="box-icon" style="width:20%; height:50px;">
 		</div>
 	</div>
 
 	<div class="col-div-4" style="margin-top:3%;">
 		<div class="box">
-			<p style="margin-left: 10%;">13<br/><span>فیدباك</span></p>
+			<p style="margin-left: 6%;">13<br/><span>فیدباكەكان</span></p>
 			<img src="images/satisfaction.png" class="box-icon" style="width:20%; height:50px;">
 		</div>
 	</div>

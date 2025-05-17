@@ -73,9 +73,13 @@ Route::post('/checkout',[StripeController::class,'checkout'])->name('checkout');
 Route::get('/success',[StripeController::class,'success'])->name('success');
 
 
+Route::get('/dashboardAdmin', function(){
+
+
 
 //Routes bo bashy Admin 
 Route::get('admin/dashboard', function(){
+
     return view('admin/dashboard');
 });
 Route::get('/users', function(){
@@ -89,5 +93,11 @@ Route::get('/aprove', function(){
 });
 
 //Route bo pishandany data bo Admin
-Route::get('/aprove',[AdminController::class,'viewaprove']);
-Route::get('/users',[AdminController::class,'viewusers']);
+Route::get('/aprove',[AdminController::class,'view_aprove']);
+Route::get('/users',[AdminController::class,'view_users']);
+Route::get('/dashboardAdmin',[AdminController::class,'view_counts']);
+
+//bo srinaway datakan la table
+Route::get('/delete_aprove/{id}',[AdminController::class,'delete_aprove']);
+Route::get('/delete_user/{id}',[AdminController::class,'delete_user']);
+// Route::get('/approveHouse/{id}',[AdminController::class,'approve_house']);
