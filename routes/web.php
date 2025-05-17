@@ -73,15 +73,13 @@ Route::post('/checkout',[StripeController::class,'checkout'])->name('checkout');
 Route::get('/success',[StripeController::class,'success'])->name('success');
 
 
-Route::get('/dashboardAdmin', function(){
-
-
 
 //Routes bo bashy Admin 
-Route::get('admin/dashboard', function(){
 
+Route::get('/dashboardAdmin', function(){
     return view('admin/dashboard');
 });
+
 Route::get('/users', function(){
     return view('admin/users');
 });
