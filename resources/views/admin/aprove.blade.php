@@ -40,8 +40,8 @@
         <div class="brand">
         <p class="logo"><span >House</span>Rental</p>
         </div>
-      <a href="/dashboardAdmin" class="icon-a active"><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
-      <a href="/aprove"class="icon-a"><i class="fa-solid fa-thumbs-up"></i>&nbsp;&nbsp;Approve Rent</a>
+      <a href="/dashboardAdmin" class="icon-a "><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
+      <a href="/aprove"class="icon-a active"><i class="fa-solid fa-thumbs-up"></i>&nbsp;&nbsp;Approve Rent</a>
       <a href="/users"class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Users Management</a>
       <a href="/feedback"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Feedback</a>
     
@@ -83,13 +83,13 @@
       <td data-label="قەبارە بە مەتر">{{$house->square_footage}}</td>
       <td data-label="گەیشتووە بەدەستی">{{$house->rent_amount}}$</td>
       <td data-label="داواکاریەکی تایبەت">{{$house->description}}</td>
-      <td data-label="ناونیشان"></td>
+      <td data-label="ڕەسم"><img src="" alt=""></td>
       <td data-label="وەرگرتن" style="width: 16%;">
-      <a href=""><img class="check" src="images/check.png" alt=""></a><a href=""><img class="check" src="images/reject.png" alt=""></a>
-      
+      <a href=""><img class="check" src="images/check.png" alt=""></a><a href="{{url('delete_aprove',$house->id)}}"><img class="check" src="images/reject.png" alt=""></a>
+        </form>
       </td>
     </tr>
-    @endforeach
+     @endforeach($data as $house)
   </tbody>
 </table>
 
