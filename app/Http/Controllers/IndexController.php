@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class IndexController extends Controller
 {
     // Handle the homepage request
-   public function index(Request $request)
+    public function index(Request $request)
     {
         $query = House::query()->with('pictures'); // Start a query and eager load pictures
 
@@ -18,8 +18,8 @@ class IndexController extends Controller
             $location = $request->input('location');
             $query->where(function ($q) use ($location) {
                 $q->where('city', 'LIKE', "%{$location}%")
-                  ->orWhere('first_address', 'LIKE', "%{$location}%")
-                  ->orWhere('second_address', 'LIKE', "%{$location}%");
+                    ->orWhere('first_address', 'LIKE', "%{$location}%")
+                    ->orWhere('second_address', 'LIKE', "%{$location}%");
             });
         }
 
@@ -54,6 +54,9 @@ class IndexController extends Controller
             // If it's 'user_id', change 'landlord_id' to 'user_id'.
             $query->where('landlord_id', '!=', Auth::id());
         }
+
+        // 5. Filter by status: only show 'available' houses
+        $query->where('status', 'available');
 
         // Get the results (you might want to paginate)
         $houses = $query->latest()->paginate(9); // Example: Paginate with 9 items per page

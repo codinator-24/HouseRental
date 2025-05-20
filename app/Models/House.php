@@ -25,11 +25,18 @@ class House extends Model
         'city',
         'location_url',
         'property_type',
-        'num_room',
-        'num_floor',
         'square_footage',
         'rent_amount',
         'status',
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'status' => 'disagree', // Or 'pending_approval', 'inactive', etc. as you prefer
     ];
 
     /**
@@ -46,5 +53,10 @@ class House extends Model
     public function pictures(): HasMany
     {
         return $this->hasMany(HousePicture::class);
+    }
+
+      public function floors(): HasMany // <-- Add this method
+    {
+        return $this->hasMany(Floor::class);
     }
 }

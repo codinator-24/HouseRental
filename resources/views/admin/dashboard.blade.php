@@ -30,10 +30,11 @@
     <div class="brand">
 	<p class="logo"><span >House</span>Rental</p>
     </div>
-  <a href="/dashboardAdmin" class="icon-a active"><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
-  <a href="/aprove"class="icon-a"><i class="fa-solid fa-thumbs-up"></i>&nbsp;&nbsp;Approve Rent</a>
-  <a href="/users"class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Users Management</a>
-  <a href="/feedback"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Feedback</a>
+  <a href="{{route('AdminDashboard')}}" class="icon-a active"><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
+  <a href="{{route('aprove')}}"class="icon-a"><i class="fa-solid fa-thumbs-up"></i>&nbsp;&nbsp;Approve Rent</a>
+  <a href="{{route('users')}}"class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Users Management</a>
+  <a href="{{route('feedback')}}"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Feedback</a>
+  <a href="/register"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Register</a>
 
 </div>
 

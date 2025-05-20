@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->alias([
             'lang' => Lang::class,
+            'admin.auth' => \App\Http\Middleware\AdminAuthenticated::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

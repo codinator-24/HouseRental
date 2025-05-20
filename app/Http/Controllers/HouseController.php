@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\House;
 use App\Models\HousePicture;
+use App\Models\Floor; // Import the Floor model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,12 +35,14 @@ class HouseController extends Controller
             'city' => 'required|string|max:100',
             'location_url' => 'nullable|url|max:500',
             'property_type' => 'required|string|max:100',
-            'num_room' => 'required|integer|min:0',
-            'num_floor' => 'required|integer|min:0',
             'square_footage' => 'required|numeric|min:0',
             'rent_amount' => 'required|numeric|min:0',
             'pictures' => 'nullable|array', // Ensure pictures is an array if present
-            'pictures.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10048' // Validate each file in the array
+            'pictures.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10048', // Validate each file in the array
+            'floors' => 'required|array|min:1', // Ensure at least one floor is provided
+            'floors.*.number_of_rooms' => 'required|integer|min:0',
+            'floors.*.bathrooms' => 'required|boolean', // Or 'in:0,1' if values are strictly '0' or '1'
+
         ]);
 
         // Start Database Transaction
@@ -56,12 +59,21 @@ class HouseController extends Controller
                 'city' => $validatedData['city'],
                 'location_url' => $validatedData['location_url'],
                 'property_type' => $validatedData['property_type'],
-                'num_room' => $validatedData['num_room'],
-                'num_floor' => $validatedData['num_floor'],
                 'square_footage' => $validatedData['square_footage'],
                 'rent_amount' => $validatedData['rent_amount'],
-                'status' => 'available', // Default status
+                'status' => 'disagree', // Default status
             ]);
+
+            // 3. Create Floor records
+            if (isset($validatedData['floors']) && is_array($validatedData['floors'])) {
+                foreach ($validatedData['floors'] as $floorData) {
+                    $house->floors()->create([
+                        'num_room' => $floorData['number_of_rooms'],
+                        'bathroom' => $floorData['bathrooms'],
+                        // house_id is automatically set by the relationship
+                    ]);
+                }
+            }
 
             // 3. Handle Image Uploads
             if ($request->hasFile('pictures')) {
@@ -80,7 +92,7 @@ class HouseController extends Controller
             // Commit Transaction
             DB::commit();
 
-            // 4. Redirect with Success Message
+            // 5. Redirect with Success Message
             return redirect()->route('home')->with('success', 'House listing added successfully!');
         } catch (\Exception $e) {
             // Rollback Transaction on error
@@ -97,6 +109,8 @@ class HouseController extends Controller
 
     public function houseDetails(House $house)
     {
+        $house->load('pictures', 'floors'); // Eager load floors along with pictures
+
         $userBookingForThisHouse = null;
         if (Auth::check() && $house && $house->id) {
             $userBookingForThisHouse = Booking::where('tenant_id', Auth::id())
@@ -125,6 +139,8 @@ class HouseController extends Controller
         if (Auth::id() !== $house->landlord_id) {
             abort(403, 'Unauthorized action. You do not own this property.');
         }
+        // Eager load pictures and floors
+        $house->load('pictures', 'floors');
         return view('users.EditMyHouse', ['house' => $house]);
     }
 
@@ -136,8 +152,7 @@ class HouseController extends Controller
         }
 
         // 2. Validation Rules
-        // These are similar to AddHouse, but pictures.* is not 'required'
-        // as new pictures are optional during an update.
+        // Similar to AddHouse, but pictures.* is not 'required' for updates.
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -146,12 +161,13 @@ class HouseController extends Controller
             'city' => 'required|string|max:100',
             'location_url' => 'nullable|url|max:500',
             'property_type' => 'required|string|max:100',
-            'num_room' => 'required|integer|min:0',
-            'num_floor' => 'required|integer|min:0',
             'square_footage' => 'required|numeric|min:0',
             'rent_amount' => 'required|numeric|min:0',
             'pictures' => 'nullable|array', // Pictures array is optional
-            'pictures.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10048' // Each file in array must be an image
+            'pictures.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10048', // Each file in array must be an image
+            'floors' => 'required|array|min:1', // Ensure at least one floor is provided
+            'floors.*.number_of_rooms' => 'required|integer|min:0',
+            'floors.*.bathrooms' => 'required|boolean',
         ]);
 
         DB::beginTransaction();
@@ -159,8 +175,7 @@ class HouseController extends Controller
         try {
             // 3. Update the House details
             // The update method will only update fields present in $validatedData
-            // and defined as fillable in the House model.
-            $house->update([
+            $houseDataToUpdate = [
                 'title' => $validatedData['title'],
                 'description' => $validatedData['description'],
                 'first_address' => $validatedData['first_address'],
@@ -168,12 +183,23 @@ class HouseController extends Controller
                 'city' => $validatedData['city'],
                 'location_url' => $validatedData['location_url'],
                 'property_type' => $validatedData['property_type'],
-                'num_room' => $validatedData['num_room'],
-                'num_floor' => $validatedData['num_floor'],
                 'square_footage' => $validatedData['square_footage'],
                 'rent_amount' => $validatedData['rent_amount'],
-            ]);
+            ];
+            $house->update($houseDataToUpdate);
 
+            // 4. Update Floor records
+            // Strategy: Delete existing floors and recreate them from the request.
+            $house->floors()->delete(); // Delete all existing floors for this house
+
+            if (isset($validatedData['floors']) && is_array($validatedData['floors'])) {
+                foreach ($validatedData['floors'] as $floorData) {
+                    $house->floors()->create([
+                        'num_room' => $floorData['number_of_rooms'],
+                        'bathroom' => $floorData['bathrooms'],
+                    ]);
+                }
+            }
             // 4. Handle New Image Uploads (adds to existing pictures)
             // As per the blade file, new pictures are additional.
             if ($request->hasFile('pictures')) {

@@ -114,28 +114,34 @@
                             {{ $house->city }}
                         </div>
 
-                        {{-- Key Features (Rooms, Floors, Size) --}}
-                        <div class="grid grid-cols-2 gap-4 py-4 mb-6 border-t border-b border-gray-200 sm:grid-cols-3">
+                        {{-- Key Features (Total Rooms, Total Floors, Size, etc.) --}}
+                        @php
+                            $totalRooms = $house->floors->sum('num_room');
+                            $totalFloors = $house->floors->count();
+                        @endphp
+                        <div class="grid grid-cols-2 gap-4 py-4 mb-6 border-t border-b border-gray-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                             <div class="text-center">
-                                <i class="mb-1 text-2xl text-blue-500 fas fa-bed"></i>
-                                <p class="text-sm text-gray-600">{{ $house->num_room }}
-                                    {{ Str::plural('Room', $house->num_room) }}</p>
+                                <i class="mb-1 text-2xl text-blue-500 fas fa-door-open"></i>
+                                <p class="text-sm text-gray-600">{{ $totalRooms }}
+                                    {{ Str::plural('Room', $totalRooms) }} (Total)</p>
                             </div>
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-layer-group"></i>
-                                <p class="text-sm text-gray-600">{{ $house->num_floor }}
-                                    {{ Str::plural('Floor', $house->num_floor) }}</p>
+                                <p class="text-sm text-gray-600">{{ $totalFloors }}
+                                    {{ Str::plural('Floor', $totalFloors) }}</p>
                             </div>
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-ruler-combined"></i>
                                 <p class="text-sm text-gray-600">{{ $house->square_footage }} m<sup>2</sup></p>
                             </div>
                             <div class="text-center">
-                                <i class="mb-1 text-2xl text-blue-500 fas fa-home"></i>
+                                <i class="mb-1 text-2xl text-blue-500 fas fa-building"></i> {{-- Changed icon for property type --}}
                                 <p class="text-sm text-gray-600 capitalize">{{ $house->property_type ?? 'N/A' }}</p>
                             </div>
                             <div class="text-center">
-                                <i class="mb-1 text-2xl text-blue-500 fas fa-check-circle"></i>
+                                {{-- Status: 'agree' or 'disagree' (approval status) --}}
+                                {{-- Consider if this status is relevant for tenants or how to present it --}}
+                                <i class="mb-1 text-2xl text-blue-500 fas {{ $house->status === 'available' ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500' }}"></i>
                                 <p class="text-sm text-gray-600 capitalize">{{ $house->status ?? 'N/A' }}</p>
                             </div>
                         </div>
@@ -145,6 +151,23 @@
                             <h2 class="mb-3 text-2xl font-semibold text-gray-800">Description</h2>
                             <p class="leading-relaxed text-gray-700 whitespace-pre-line">{{ $house->description }}</p>
                         </div>
+
+                        {{-- Floor by Floor Details --}}
+                        @if ($house->floors->isNotEmpty())
+                            <div class="mb-6">
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Floor Details</h2>
+                                <div class="space-y-4">
+                                    @foreach ($house->floors as $index => $floor)
+                                        <div class="p-4 border rounded-md bg-gray-50">
+                                            <h3 class="text-lg font-semibold text-gray-700">Floor {{ $index + 1 }}:</h3>
+                                            <p class="text-sm text-gray-600">
+                                                {{ $floor->num_room }} Rooms and Bathroom is {{ $floor->bathroom ? 'Exists' : 'not Exists' }}.
+                                            </p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
 
                         {{-- Landlord Information --}}
                         @if ($house->landlord)
@@ -220,7 +243,7 @@
                                     @endif
                                 @endif
                             @else
-                                {{-- Optional: Handle case where house has no landlord. 
+                                {{-- Optional: Handle case where house has no landlord.
                                      Currently, no booking-related button will be shown for authenticated users if no landlord.
                                      You might want to show the "Book This Property Now" button or a message.
                                 --}}
@@ -243,7 +266,7 @@
             </div>
         </section>
     </div>
-    
+
     {{-- Booking Modal (Only shown if user hasn't booked yet, is not the landlord, and house has a landlord) --}}
     @auth
         @if ($house->landlord && auth()->id() !== $house->landlord->id && (!isset($userBookingForThisHouse) || !$userBookingForThisHouse))

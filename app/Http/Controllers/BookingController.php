@@ -69,7 +69,7 @@ class BookingController extends Controller
             })
             ->orderBy('created_at', 'desc') // Optional: Order by newest first
             ->get();
-        return view('users.MyHousesBookings', ['bookings' => $bookings]);
+        return view('bookings.MyHousesBookings', ['bookings' => $bookings]);
     }
 
     public function showBooking(Booking $booking): View
@@ -80,7 +80,7 @@ class BookingController extends Controller
         if (Auth::id() !== $booking->house->landlord_id) {
             abort(403, 'Unauthorized action. You do not own the house associated with this booking.');
         }
-        return view('users.showBooking', compact('booking'));
+        return view('bookings.showBooking', compact('booking'));
     }
 
     public function showSentBookings(): View
@@ -94,7 +94,7 @@ class BookingController extends Controller
             ->with(['house.landlord']) // Eager load house and its landlord
             ->latest() // Order by the most recent bookings first
             ->paginate(10); // Paginate the results, 10 per page
-        return view('users.sentBookings', compact('sentBookings'));
+        return view('bookings.sentBookings', compact('sentBookings'));
     }
 
     public function showDetailSentBooking(Booking $booking): View
@@ -109,7 +109,7 @@ class BookingController extends Controller
 
         // Eager load relationships for efficiency if not already globally eager-loaded in Booking model
         $booking->load(['house.landlord', 'tenant']);
-        return view('users.showBooking', compact('booking'));
+        return view('bookings.showBooking', compact('booking'));
     }
 
     public function destroySentBooking(Request $request, Booking $booking): RedirectResponse

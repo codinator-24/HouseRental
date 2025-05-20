@@ -6,7 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HouseController;
 use App\Http\Controllers\IndexController; // Add this line
 
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminControllers\AdminController;
+use App\Http\Controllers\AdminControllers\AuthAdminController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
@@ -52,9 +53,9 @@ Route::middleware('lang')->group(function () {
         Route::patch('/bookings/{booking}/accept', [BookingController::class, 'acceptBooking'])->name('bookings.accept');
         Route::patch('/bookings/{booking}/reject', [BookingController::class, 'rejectBooking'])->name('bookings.reject');
 
-            Route::get('/notifications-data', [NotificationController::class, 'index'])->name('notifications.data');
-    Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+        Route::get('/notifications-data', [NotificationController::class, 'index'])->name('notifications.data');
+        Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+        Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     });
 });
 
@@ -68,26 +69,32 @@ Route::get('/set/lang/{lang}', function ($lang) {
 });
 
 //Route bo payment
-Route::get('/pay',[StripeController::class,'pay'])->name('pay');
-Route::post('/checkout',[StripeController::class,'checkout'])->name('checkout');
-Route::get('/success',[StripeController::class,'success'])->name('success');
+Route::get('/pay', [StripeController::class, 'pay'])->name('pay');
+Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
+Route::get('/success', [StripeController::class, 'success'])->name('success');
 
 
 
-//Routes bo bashy Admin 
-Route::get('admin/dashboard', function(){
-    return view('admin/dashboard');
-});
-Route::get('/users', function(){
-    return view('admin/users');
-});
-Route::get('/feedback', function(){
-    return view('admin/feedback');
-});
-Route::get('/aprove', function(){
-    return view('admin/aprove');
+// Admin Routes
+// Admin Guest Routes (for login and registration)
+// Accessible when not logged in as admin. 'guest:admin' redirects if admin is already logged in.
+// Route::middleware('guest:admin')->group(function () {
+    Route::get('/admin/login', [AuthAdminController::class, 'showLoginForm'])->name('AdminLogin.form');
+    Route::post('/admin/login', [AuthAdminController::class, 'login'])->name('AdminLogin');
+// });
+
+// Authenticated Admin Routes
+// These routes are protected by the 'admin.auth' middleware
+Route::middleware('admin.auth')->group(function () {
+    Route::get('/admin/register', [AuthAdminController::class, 'showRegistrationForm'])->name('AdminRegister.form');
+    Route::post('/admin/register', [AuthAdminController::class, 'register'])->name('AdminRegister');
+    Route::post('/admin/logout', [AuthAdminController::class, 'logout'])->name('AdminLogout'); // Renamed from 'logout'
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
+    Route::get('/approve', [AdminController::class, 'viewaprove'])->name('aprove');
+    Route::get('/users', [AdminController::class, 'viewusers'])->name('users');
+    Route::get('/feedback', [AdminController::class, 'viewfeedback'])->name('feedback');
 });
 
 //Route bo pishandany data bo Admin
-Route::get('/aprove',[AdminController::class,'viewaprove']);
-Route::get('/users',[AdminController::class,'viewusers']);
+// Route::get('/aprove',[AdminController::class,'viewaprove']);
+// Route::get('/users',[AdminController::class,'viewusers']);

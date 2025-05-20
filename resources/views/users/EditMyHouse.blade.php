@@ -105,28 +105,6 @@
                     @enderror
                 </div>
 
-                {{-- Number of Rooms --}}
-                <div class="mb-4">
-                    <label for="num_room" class="block text-gray-700 text-sm font-bold mb-2">Number of Rooms:</label>
-                    <input type="number" id="num_room" name="num_room" value="{{ old('num_room', $house->num_room) }}"
-                        min="0" required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('num_room') border-red-500 @enderror">
-                    @error('num_room')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Number of Floors --}}
-                <div class="mb-4">
-                    <label for="num_floor" class="block text-gray-700 text-sm font-bold mb-2">Number of Floors:</label>
-                    <input type="number" id="num_floor" name="num_floor" value="{{ old('num_floor', $house->num_floor) }}"
-                        min="0" required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('num_floor') border-red-500 @enderror">
-                    @error('num_floor')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 {{-- Square Footage --}}
                 <div class="mb-4">
                     <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">Square Meter (m<sup>2</sup>):</label>
@@ -149,6 +127,62 @@
                     @enderror
                 </div>
 
+                {{-- Floors Details Section --}}
+                <div class="mb-2 md:col-span-2 border-t pt-6 mt-4">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">Floor Details</h2>
+                    <div id="floors_container" class="space-y-6">
+                        @php
+                            // Prepare default floor data from existing house floors
+                            $defaultFloorsData = $house->floors->map(function ($floor) {
+                                return [
+                                    'number_of_rooms' => $floor->num_room,
+                                    'bathrooms' => (string)$floor->bathroom, // Ensure string for select comparison
+                                ];
+                            })->all();
+
+                            // If the house has no floors, and it's the initial load (not a validation error redirect),
+                            // provide one default empty floor structure.
+                            if (empty($defaultFloorsData) && !old('floors') && request()->isMethod('get')) {
+                                $defaultFloorsData = [['number_of_rooms' => '', 'bathrooms' => '0']];
+                            }
+
+                            // Use old input for floors if available (validation failed), otherwise use the prepared default data.
+                            $floorEntries = old('floors', $defaultFloorsData);
+                        @endphp
+
+                        @foreach($floorEntries as $index => $floorData)
+                            <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50" data-index="{{ $index }}">
+                                <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor {{ $index + 1 }}</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="floor_{{ $index }}_number_of_rooms" class="block text-gray-700 text-sm font-bold mb-1">Number of Rooms:</label>
+                                        <input type="number" id="floor_{{ $index }}_number_of_rooms" name="floors[{{ $index }}][number_of_rooms]"
+                                               value="{{ $floorData['number_of_rooms'] ?? '' }}" min="0" required
+                                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('floors.'.$index.'.number_of_rooms') border-red-500 @enderror">
+                                        @error('floors.'.$index.'.number_of_rooms') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label for="floor_{{ $index }}_bathrooms" class="block text-gray-700 text-sm font-bold mb-1">Bathrooms:</label>
+                                        <select id="floor_{{ $index }}_bathrooms" name="floors[{{ $index }}][bathrooms]"
+                                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('floors.'.$index.'.bathrooms') border-red-500 @enderror" required>
+                                            <option value="0" {{ (isset($floorData['bathrooms']) && $floorData['bathrooms'] == '0') ? 'selected' : '' }}>Not Exists</option>
+                                            <option value="1" {{ (isset($floorData['bathrooms']) && $floorData['bathrooms'] == '1') ? 'selected' : '' }}>Exists</option>
+                                        </select>
+                                        @error('floors.'.$index.'.bathrooms') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
+                                    </div>
+                                </div>
+                                {{-- Always allow removing floors in edit mode, backend validation will check for min 1 floor --}}
+                                <div class="mt-3 text-right">
+                                    <button type="button" class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove Floor</button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="mt-6">
+                        <button type="button" id="addFloorButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Another Floor</button>
+                    </div>
+                </div>
+
                 {{-- Description --}}
                 <div class="mb-4 md:col-span-2">
                     <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
@@ -160,7 +194,7 @@
                 </div>
 
                 {{-- House Pictures --}}
-                <div class="mb-6 md:col-span-2">
+                <div class="mb-6 md:col-span-2 border-t pt-6 mt-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Current Pictures:</label>
                     @if ($house->pictures && $house->pictures->count() > 0)
                         {{-- Container for pictures, used by JS to check if it's empty --}}
@@ -218,6 +252,7 @@
     @push('scripts')
     <script>
     function confirmDeletePicture(buttonElement) {
+        // ... (existing picture deletion JS - no changes here)
         if (confirm('Are you sure you want to delete this picture? This action cannot be undone.')) {
             const url = buttonElement.dataset.deleteUrl;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -274,6 +309,71 @@
             });
         }
     }
+
+    // JavaScript for adding/removing floors (similar to AddHouse.blade.php)
+    document.addEventListener('DOMContentLoaded', function () {
+        const addFloorButton = document.getElementById('addFloorButton');
+        const floorsContainer = document.getElementById('floors_container');
+        
+        // Initialize floorCounter based on already rendered floors
+        let floorCounter = {{ count($floorEntries) }};
+
+        addFloorButton.addEventListener('click', function () {
+            const newIndex = floorCounter; // Use current counter as the index for the new floor
+
+            const floorSectionHtml = `
+                <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50" data-index="${newIndex}">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor ${newIndex + 1}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="floor_${newIndex}_number_of_rooms" class="block text-gray-700 text-sm font-bold mb-1">Number of Rooms:</label>
+                            <input type="number" id="floor_${newIndex}_number_of_rooms" name="floors[${newIndex}][number_of_rooms]"
+                                   value="" min="0" required
+                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        </div>
+                        <div>
+                            <label for="floor_${newIndex}_bathrooms" class="block text-gray-700 text-sm font-bold mb-1">Bathrooms:</label>
+                            <select id="floor_${newIndex}_bathrooms" name="floors[${newIndex}][bathrooms]"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white" required>
+                                <option value="0" selected>Not Exists</option>
+                                <option value="1">Exists</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-right">
+                        <button type="button" class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove Floor</button>
+                    </div>
+                </div>
+            `;
+            
+            floorsContainer.insertAdjacentHTML('beforeend', floorSectionHtml);
+            floorCounter++; // Increment counter for the next floor
+        });
+
+        // Event delegation for remove buttons
+        floorsContainer.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('remove-floor-btn')) {
+                const floorSectionToRemove = event.target.closest('.floor-section');
+                if (floorSectionToRemove) {
+                    floorSectionToRemove.remove();
+                    updateFloorTitlesAndCounter();
+                }
+            }
+        });
+
+        function updateFloorTitlesAndCounter() {
+            const allFloorSections = floorsContainer.querySelectorAll('.floor-section');
+            allFloorSections.forEach((section, idx) => {
+                const titleElement = section.querySelector('h3');
+                if (titleElement) {
+                    titleElement.textContent = `Floor ${idx + 1}`;
+                }
+                // Note: Input names (floors[index][field]) are not re-indexed here.
+                // PHP handles non-sequential array keys fine.
+            });
+            floorCounter = allFloorSections.length; // Reset counter to current number of floors
+        }
+    });
     </script>
     @endpush
 </x-layout>
