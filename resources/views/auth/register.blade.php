@@ -105,14 +105,13 @@
                     </div>
 
                     {{-- Picture --}}
-                    <div class="md:col-span-2">
+                    <div>
                         <label for="picture" class="block text-sm font-medium text-gray-700">@lang('words.Profile_Picture')</label>
                         <div class="flex items-center mt-2">
                             <label
                                 class="px-4 py-3 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer">
                                 <span>Choose File</span>
-                                <input type="file" name="picture" id="picture" class="sr-only"
-                                    onchange="document.getElementById('picture-filename').textContent = this.files[0] ? this.files[0].name : 'No file chosen';">
+                                <input type="file" name="picture" id="picture" class="sr-only">
                             </label>
                             <span id="picture-filename" class="ml-4 text-sm text-gray-500 self-center">No file
                                 chosen</span>
@@ -121,8 +120,25 @@
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
 
+                    {{-- ID Card --}}
+                    <div>
+                        <label for="IdCard" class="block text-sm font-medium text-gray-700">@lang('words.IdCard')</label> {{-- Assuming you have a translation key 'words.IdCard' --}}
+                        <div class="flex items-center mt-2">
+                            <label
+                                class="px-4 py-3 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer">
+                                <span>Choose File</span>
+                                <input type="file" name="IdCard" id="IdCard" class="sr-only">
+                            </label>
+                            <span id="idcard-filename" class="ml-4 text-sm text-gray-500 self-center">No file
+                                chosen</span>
+                        </div>
+                        @error('picture')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                
                 {{-- Submit Button --}}
                 <div class="pt-5">
                     <button type="submit"
@@ -146,6 +162,8 @@
     <script>
         const pictureInput = document.getElementById('picture');
         const pictureFilenameSpan = document.getElementById('picture-filename');
+        const idCardInput = document.getElementById('IdCard');
+        const idCardFilenameSpan = document.getElementById('idcard-filename');
 
         if (pictureInput) {
             pictureInput.addEventListener('change', function() {
@@ -153,6 +171,16 @@
                     pictureFilenameSpan.textContent = this.files[0].name;
                 } else {
                     pictureFilenameSpan.textContent = 'No file chosen';
+                }
+            });
+        }
+
+        if (idCardInput) {
+            idCardInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    idCardFilenameSpan.textContent = this.files[0].name;
+                } else {
+                    idCardFilenameSpan.textContent = 'No file chosen';
                 }
             });
         }

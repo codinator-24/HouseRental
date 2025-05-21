@@ -120,6 +120,39 @@
                     @enderror
                 </div>
 
+                {{-- ID Card --}}
+                <div class="mb-6">
+                    <label for="IdCard" class="block text-sm font-medium text-gray-700 mb-2">ID Card</label>
+                    @if ($user->IdCard)
+                        @php
+                            $idCardPath = $user->IdCard;
+                            $idCardUrl = Storage::url($idCardPath);
+                            $idCardExtension = strtolower(pathinfo($idCardPath, PATHINFO_EXTENSION));
+                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                        @endphp
+                        <div class="mb-2">
+                            <p class="block text-xs font-medium text-gray-500">Current ID Card:</p>
+                            @if (in_array($idCardExtension, $imageExtensions))
+                                <img src="{{ $idCardUrl }}" alt="Current ID Card"
+                                    class="mt-1 max-w-xs max-h-48 border border-gray-300 rounded">
+                            @elseif ($idCardExtension === 'pdf')
+                                <a href="{{ $idCardUrl }}" target="_blank"
+                                    class="mt-1 text-blue-600 hover:underline">View ID Card (PDF)</a>
+                            @else
+                                <a href="{{ $idCardUrl }}" target="_blank"
+                                    class="mt-1 text-blue-600 hover:underline">Download ID Card</a>
+                            @endif
+                        </div>
+                    @else
+                        <p class="text-sm text-gray-500 mt-1">No ID Card uploaded.</p>
+                    @endif
+                    <input type="file" name="IdCard" id="IdCard"
+                        class="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                    @error('IdCard')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 {{-- Address --}}
                 <div class="mb-6">
                     <label for="address" class="block text-sm font-medium text-gray-700">Address</label>

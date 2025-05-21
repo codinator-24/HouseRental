@@ -119,7 +119,8 @@
                             $totalRooms = $house->floors->sum('num_room');
                             $totalFloors = $house->floors->count();
                         @endphp
-                        <div class="grid grid-cols-2 gap-4 py-4 mb-6 border-t border-b border-gray-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                        <div
+                            class="grid grid-cols-2 gap-4 py-4 mb-6 border-t border-b border-gray-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-door-open"></i>
                                 <p class="text-sm text-gray-600">{{ $totalRooms }}
@@ -141,7 +142,8 @@
                             <div class="text-center">
                                 {{-- Status: 'agree' or 'disagree' (approval status) --}}
                                 {{-- Consider if this status is relevant for tenants or how to present it --}}
-                                <i class="mb-1 text-2xl text-blue-500 fas {{ $house->status === 'available' ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500' }}"></i>
+                                <i
+                                    class="mb-1 text-2xl text-blue-500 fas {{ $house->status === 'available' ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500' }}"></i>
                                 <p class="text-sm text-gray-600 capitalize">{{ $house->status ?? 'N/A' }}</p>
                             </div>
                         </div>
@@ -159,9 +161,11 @@
                                 <div class="space-y-4">
                                     @foreach ($house->floors as $index => $floor)
                                         <div class="p-4 border rounded-md bg-gray-50">
-                                            <h3 class="text-lg font-semibold text-gray-700">Floor {{ $index + 1 }}:</h3>
+                                            <h3 class="text-lg font-semibold text-gray-700">Floor {{ $index + 1 }}:
+                                            </h3>
                                             <p class="text-sm text-gray-600">
-                                                {{ $floor->num_room }} Rooms and Bathroom is {{ $floor->bathroom ? 'Exists' : 'not Exists' }}.
+                                                {{ $floor->num_room }} Rooms and Bathroom is
+                                                {{ $floor->bathroom ? 'Exists' : 'not Exists' }}.
                                             </p>
                                         </div>
                                     @endforeach
@@ -208,50 +212,53 @@
                             </div>
                         @endif
 
-                        {{-- MODIFIED Booking Button Logic --}}
+                        {{-- Booking Buttons Logic --}}
                         @auth
-                            @if ($house->landlord) {{-- Ensure landlord exists for this house --}}
-                                @if (auth()->id() === $house->landlord->id) {{-- User IS the landlord --}}
-                                    <div class="pt-6 mt-6 mb-8 border-t">
-                                        <p class="text-lg text-gray-700">This is your property. You cannot book it.</p>
-                                        {{-- Optionally, add a link to manage this property or view its bookings --}}
-                                    </div>
-                                @else {{-- User is authenticated and is NOT the landlord --}}
-                                    {{-- Assumes $userBookingForThisHouse is passed from controller --}}
-                                    {{-- $userBookingForThisHouse = Booking::where('tenant_id', auth()->id())->where('house_id', $house->id)->first(); --}}
-                                    @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
-                                        {{-- User has already booked this house --}}
+                            @if (auth()->user()->status === 'disagree')
+                                <div class="pt-6 mt-6 mb-8 border-t">
+                                    <p class="text-lg text-orange-600">Wait until your account is verified.</p>
+                                </div>
+                            @else
+                                @if ($house->landlord) {{-- Ensure landlord exists for this house --}}
+                                    @if (auth()->id() === $house->landlord->id)
+                                        {{-- User IS the landlord --}}
                                         <div class="pt-6 mt-6 mb-8 border-t">
-                                            <p class="mb-3 text-lg text-gray-700">You have already sent a booking request for this property.</p>
-                                            <a href="#"
-                                               class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                                                View Your Booking Details
-                                            </a>
-                                            {{-- <a href="{{ route('bookings.show.sent', $userBookingForThisHouse->id) }}"
-                                               class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                                                View Your Booking Details
-                                            </a> --}}
+                                            <p class="text-lg text-gray-700">This is your property. You cannot book it.</p>
+                                            {{-- Optionally, add a link to manage this property or view its bookings --}}
                                         </div>
                                     @else
-                                        {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
-                                        <div class="pt-6 mt-6 mb-8 border-t">
-                                            <button type="button" id="openBookingMessageModalBtn"
-                                                class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
-                                                Book This Property Now
-                                            </button>
-                                        </div>
+                                        {{-- User is authenticated and is NOT the landlord --}}
+                                        {{-- Assumes $userBookingForThisHouse is passed from controller --}}
+                                        {{-- $userBookingForThisHouse = Booking::where('tenant_id', auth()->id())->where('house_id', $house->id)->first(); --}}
+                                        @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
+                                            {{-- User has already booked this house --}}
+                                            <div class="pt-6 mt-6 mb-8 border-t">
+                                                <p class="mb-3 text-lg text-gray-700">You have already sent a booking
+                                                    request for this property.</p>
+                                                <a href="#"
+                                                    class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
+                                                    View Your Booking Details
+                                                </a>
+                                                {{-- <a href="{{ route('bookings.show.sent', $userBookingForThisHouse->id) }}"
+                           class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
+                            View Your Booking Details
+                        </a> --}}
+                                            </div>
+                                        @else
+                                            {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
+                                            <div class="pt-6 mt-6 mb-8 border-t">
+                                                <button type="button" id="openBookingMessageModalBtn"
+                                                    class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
+                                                    Book This Property Now
+                                                </button>
+                                            </div>
+                                        @endif
                                     @endif
+                                @else
                                 @endif
-                            @else
-                                {{-- Optional: Handle case where house has no landlord.
-                                     Currently, no booking-related button will be shown for authenticated users if no landlord.
-                                     You might want to show the "Book This Property Now" button or a message.
-                                --}}
-                                {{-- <div class="pt-6 mt-6 mb-8 border-t">
-                                    <p class="text-lg text-gray-700">Booking is currently unavailable for this property.</p>
-                                </div> --}}
                             @endif
                         @endauth
+
                         @guest
                             {{-- Login to Book Button --}}
                             <div class="pt-6 mt-6 mb-8 border-t">
@@ -269,7 +276,10 @@
 
     {{-- Booking Modal (Only shown if user hasn't booked yet, is not the landlord, and house has a landlord) --}}
     @auth
-        @if ($house->landlord && auth()->id() !== $house->landlord->id && (!isset($userBookingForThisHouse) || !$userBookingForThisHouse))
+        @if (
+            $house->landlord &&
+                auth()->id() !== $house->landlord->id &&
+                (!isset($userBookingForThisHouse) || !$userBookingForThisHouse))
             <div id="bookingMessageModal"
                 class="fixed inset-0 z-[60] flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
                 style="display: none;" role="dialog" aria-modal="true" aria-labelledby="bookingMessageModalTitle">
@@ -281,7 +291,8 @@
                             class="text-2xl text-gray-500 hover:text-gray-700">×</button>
                     </div>
 
-                    <form method="POST" action="{{ route('send.booking', ['house' => $house->id]) }}" class="px-6 py-6">
+                    <form method="POST" action="{{ route('send.booking', ['house' => $house->id]) }}"
+                        class="px-6 py-6">
                         @csrf
                         @if ($errors->bookingMessageErrors->any())
                             <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
