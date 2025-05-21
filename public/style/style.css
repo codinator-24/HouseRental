@@ -87,9 +87,9 @@ body{
 }
 .box{
 	width: 85%;
-	height: 100px;
+	height: 150px;
 	background-color: white;
-	margin-left: 27%;
+	margin-left: 20%;
 	padding:10px;
 }
 .box p{

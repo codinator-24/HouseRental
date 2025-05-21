@@ -42,8 +42,7 @@
         <div class="brand">
             <p class="logo"><span>House</span>Rental</p>
         </div>
-        <a href="/dashboardAdmin" class="icon-a active"><i
-                class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
+        <a href="{{route('AdminDashboard')}}" class="icon-a active"><i class="fa-sharp fa-thin fa-grid-horizontal"></i>&nbsp;&nbsp;Dashboard</a>
         <a href="/aprove"class="icon-a"><i class="fa-solid fa-thumbs-up"></i>&nbsp;&nbsp;Approve Rent</a>
         <a href="/users"class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Users Management</a>
         <a href="/feedback"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Feedback</a>
@@ -93,6 +92,44 @@
         </tbody>
     </table>
 
+<table class="table">
+  <thead>
+    <th>جۆری خانوو</th>
+    <th>ناونیشانی <br>1</th>
+    <th>ناونیشانی<br>2</th>
+    <th>شار</th>
+    <th>ژمارەی قات</th>
+    <th>ژمارەی ژور</th>
+    <th>قەبارە بە مەتر</th>
+    <th>نرخی كرێ</th>
+    <th> باسكردنی خانوو</th>
+    <th>ڕەسم</th>
+    <th>ئەپروف</th>
+  </thead>
+  <tbody>
+    @foreach($data as $house)
+    <tr>
+      <td data-label="ناو">{{$house->title}}</td>
+      <td data-label="داواکاری">{{$house->first_address}}</td>
+      <td data-label="کۆی گشتی">{{$house->second_address}}</td>
+      <td data-label="ژمارەی مۆبایل">{{$house->city}}</td>
+      <td data-label="داواکاریەکی تایبەت">{{$house->num_floor}}</td>
+      <td data-label="داواکاریەکی تایبەت">{{$house->num_room}}</td>
+      <td data-label="قەبارە بە مەتر">{{$house->square_footage}}</td>
+      <td data-label="گەیشتووە بەدەستی">{{$house->rent_amount}}$</td>
+      <td data-label="داواکاریەکی تایبەت">{{$house->description}}</td>
+      <td data-label="ڕەسم"><img src="" alt=""></td>
+      <td data-label="وەرگرتن" style="width: 16%;">
+      <a href=""><img class="check" src="images/check.png" alt=""></a><a href="{{url('delete_aprove',$house->id)}}"><img class="check" src="images/reject.png" alt=""></a>
+        </form>
+      </td>
+    </tr>
+     @endforeach($data as $house)
+  </tbody>
+</table>
+
+
+           
 </body>
 
 </html>

@@ -31,4 +31,36 @@ class AdminController extends  Controller
     {
         return view('admin/feedback');
     }
+
+    //      public function approve_house($id)
+    // {
+    //     $house = Booking::findOrFail($id);
+    //     $house->status='accepted';
+    //     $house->save();
+    //     return redirect('/aprove');
+    // }
+
+
+    public function delete_aprove($id)
+    {
+
+        $data = House::find($id);
+        $data->delete();
+        return redirect()->back();
+    }
+
+    public function delete_user($id)
+    {
+
+        $data = User::find($id);
+        $data->delete();
+        return redirect()->back();
+    }
+
+    public function view_counts()
+    {
+        $users = User::count();
+        $houses = House::count();
+        return view('admin.dashboard', compact('users', 'houses'));
+    }
 }
