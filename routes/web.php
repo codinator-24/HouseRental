@@ -79,13 +79,13 @@ Route::get('/success', [StripeController::class, 'success'])->name('success');
 // Admin Guest Routes (for login and registration)
 // Accessible when not logged in as admin. 'guest:admin' redirects if admin is already logged in.
 // Route::middleware('guest:admin')->group(function () {
-    Route::get('/admin/login', [AuthAdminController::class, 'showLoginForm'])->name('AdminLogin.form');
-    Route::post('/admin/login', [AuthAdminController::class, 'login'])->name('AdminLogin');
+Route::get('/admin/login', [AuthAdminController::class, 'showLoginForm'])->name('AdminLogin.form');
+Route::post('/admin/login', [AuthAdminController::class, 'login'])->name('AdminLogin');
 // });
 
 // Authenticated Admin Routes
 // These routes are protected by the 'admin.auth' middleware
-// Route::middleware('admin.auth')->group(function () {
+Route::middleware('admin.auth')->group(function () {
     Route::get('/admin/register', [AuthAdminController::class, 'showRegistrationForm'])->name('AdminRegister.form');
     Route::post('/admin/register', [AuthAdminController::class, 'register'])->name('AdminRegister');
     Route::post('/admin/logout', [AuthAdminController::class, 'logout'])->name('AdminLogout'); // Renamed from 'logout'
@@ -94,7 +94,7 @@ Route::get('/success', [StripeController::class, 'success'])->name('success');
     Route::get('approve', [AdminController::class, 'viewaprove'])->name('aprove');
     Route::get('users', [AdminController::class, 'viewusers'])->name('users');
     Route::get('feedback', [AdminController::class, 'viewfeedback'])->name('feedback');
-// });
+});
 
 //Route bo pishandany data bo Admin
 // Route::get('/aprove',[AdminController::class,'viewaprove']);
