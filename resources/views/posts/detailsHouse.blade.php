@@ -214,7 +214,7 @@
 
                         {{-- Booking Buttons Logic --}}
                         @auth
-                            @if (auth()->user()->status === 'disagree')
+                            @if (auth()->user()->status === 'Not Verified')
                                 <div class="pt-6 mt-6 mb-8 border-t">
                                     <p class="text-lg text-orange-600">Wait until your account is verified.</p>
                                 </div>
