@@ -12,38 +12,6 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthAdminController extends Controller
 {
-
-    public function showRegistrationForm()
-    {
-        return view('admin.AdminRegister');
-    }
-
-    public function register(Request $request)
-    {
-        $request->validate([
-            'full_name' => ['required', 'string', 'max:255'],
-            'user_name' => ['required', 'string', 'max:255', 'unique:admins,user_name'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:admins,email'],
-            'phoneNumber' => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'string','min:4','confirmed'],
-            'picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:8048'],
-        ]);
-
-        $data = $request->only(['full_name', 'user_name', 'email', 'phoneNumber']);
-        $data['password'] = Hash::make($request->password);
-
-        if ($request->hasFile('picture')) {
-            $path = $request->file('picture')->store('admin_pictures', 'public');
-            $data['picture'] = $path;
-        }
-
-        $admin = Admin::create($data);
-
-        Auth::guard('admin')->login($admin);
-
-        return redirect()->route('AdminLogin.form')->with('success', 'Admin account created successfully!');
-    }
-
     public function showLoginForm()
     {
         return view('admin.AdminLogin');
