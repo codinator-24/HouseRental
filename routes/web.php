@@ -99,3 +99,8 @@ Route::middleware('admin.auth')->group(function () {
 //Route bo pishandany data bo Admin
 // Route::get('/aprove',[AdminController::class,'viewaprove']);
 // Route::get('/users',[AdminController::class,'viewusers']);
+
+
+
+// Lerawa Route dika zia bkan
+
