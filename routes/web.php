@@ -85,12 +85,12 @@ Route::get('/success', [StripeController::class, 'success'])->name('success');
 
 // Authenticated Admin Routes
 // These routes are protected by the 'admin.auth' middleware
-  Route::middleware('admin.auth')->group(function () {
+Route::middleware('admin.auth')->group(function () {
     Route::get('/admin/register', [AuthAdminController::class, 'showRegistrationForm'])->name('AdminRegister.form');
     Route::post('/admin/register', [AuthAdminController::class, 'register'])->name('AdminRegister');
     Route::post('/admin/logout', [AuthAdminController::class, 'logout'])->name('AdminLogout'); // Renamed from 'logout'
 
-    Route::get('dashboardAdmin', [AdminController::class, 'dashboard'])->name('AdminDashboard');
+    Route::get('dashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
     Route::get('approve', [AdminController::class, 'viewaprove'])->name('aprove');
     Route::get('users', [AdminController::class, 'viewusers'])->name('users');
     Route::get('feedback', [AdminController::class, 'viewfeedback'])->name('feedback');

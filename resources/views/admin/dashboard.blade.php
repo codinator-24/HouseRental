@@ -34,7 +34,7 @@
   <a href="{{route('aprove')}}"class="icon-a"><i class="fa-solid fa-thumbs-up"></i>&nbsp;&nbsp;Approve Rent</a>
   <a href="{{route('users')}}"class="icon-a"><i class="fa fa-users icons"></i> &nbsp;&nbsp;Users Management</a>
   <a href="{{route('feedback')}}"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Feedback</a>
-  <a href="/register"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Register</a>
+  <a href="{{route('AdminRegister.form')}}"class="icon-a"><i class="fa-sharp fa-solid fa-comment-dots"></i> &nbsp;&nbsp;Register</a>
 
 </div>
 
