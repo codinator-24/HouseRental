@@ -19,7 +19,7 @@ class AdminController extends  Controller
     public function viewaprove()
     {
         $houses = House::all();
-        return view('admin.aprove', compact('houses'));
+        return view('admin/aprove', compact('houses'));
     }
 
     public function viewusers()

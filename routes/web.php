@@ -90,14 +90,17 @@ Route::middleware('admin.auth')->group(function () {
     Route::post('/admin/register', [AuthAdminController::class, 'register'])->name('AdminRegister');
     Route::post('/admin/logout', [AuthAdminController::class, 'logout'])->name('AdminLogout'); // Renamed from 'logout'
 
-    Route::get('admin/dashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
-    Route::get('approve', [AdminController::class, 'viewaprove'])->name('aprove');
+    Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('aprove', [AdminController::class, 'viewaprove'])->name('aprove');
     Route::get('users', [AdminController::class, 'viewusers'])->name('users');
     Route::get('feedback', [AdminController::class, 'viewfeedback'])->name('feedback');
    });
 //Route bo pishandany data bo Admin
-// Route::get('/aprove',[AdminController::class,'viewaprove']);
-// Route::get('/users',[AdminController::class,'viewusers']);
+//Route::get('/aprove',[AdminController::class,'viewaprove']);
+//Route::get('/users',[AdminController::class,'viewusers']);
+
+
+
 
 
 
