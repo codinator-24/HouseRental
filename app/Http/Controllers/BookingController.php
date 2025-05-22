@@ -189,4 +189,22 @@ class BookingController extends Controller
 
         return redirect()->route('bookings.show', $booking)->with('success', 'Booking rejected successfully.');
     }
+
+    public function scheduleCashAppointment(Request $request)
+{
+    $request->validate([
+        'booking_id' => 'required|exists:bookings,id',
+        'date' => 'required|date',
+        'time' => 'required',
+    ]);
+
+    $booking = Booking::findOrFail($request->booking_id);
+    $booking->appointment_date = $request->date;
+    $booking->appointment_time = $request->time;
+    $booking->save();
+
+    return redirect()->back()->with('success', 'Appointment scheduled successfully!');
+}
+
+
 }
