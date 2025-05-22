@@ -107,4 +107,8 @@ Route::middleware('admin.auth')->group(function () {
 
 
 // Lerawa Route dika zia bkan
+Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
+
+
+
 
