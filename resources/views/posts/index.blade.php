@@ -28,10 +28,16 @@
             <div class="relative z-10 px-4 text-center">
                 <h1 class="mb-4 text-4xl font-bold md:text-5xl">Find Your Dream Home</h1>
                 <p class="mb-8 text-lg md:text-xl">Discover the perfect property for your needs</p>
-                <a href="{{ route('Show.house.add') }}"
-                    class="px-6 py-3 text-lg font-bold text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
-                    Click here to place your property
-                </a>
+                @if (auth()->user()->status === 'Not Verified')
+                    <p class="px-6 py-3 text-lg font-bold text-white bg-orange-500 rounded-md">
+                        Wait until your account is verified.
+                    </p>
+                @else
+                    <a href="{{ route('Show.house.add') }}"
+                        class="px-6 py-3 text-lg font-bold text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
+                        Click here to place your property
+                    </a>
+                @endif
             </div>
         </section>
     @endauth
@@ -92,7 +98,8 @@
             <div class="container px-6 mx-auto">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-3xl font-bold text-gray-800">Featured Properties</h2>
-                    <a href="{{route('home')}}" class="font-medium text-blue-600 hover:text-blue-800">View All Properties</a>
+                    <a href="{{ route('home') }}" class="font-medium text-blue-600 hover:text-blue-800">View All
+                        Properties</a>
                 </div>
 
                 {{-- Property Grid --}}

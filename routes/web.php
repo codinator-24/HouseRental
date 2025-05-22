@@ -89,11 +89,15 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/admin/register', [AuthAdminController::class, 'showRegistrationForm'])->name('AdminRegister.form');
     Route::post('/admin/register', [AuthAdminController::class, 'register'])->name('AdminRegister');
     Route::post('/admin/logout', [AuthAdminController::class, 'logout'])->name('AdminLogout'); // Renamed from 'logout'
-
-    Route::get('dashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
+    Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
     Route::get('approve', [AdminController::class, 'viewaprove'])->name('aprove');
     Route::get('users', [AdminController::class, 'viewusers'])->name('users');
     Route::get('feedback', [AdminController::class, 'viewfeedback'])->name('feedback');
+    Route::get('/approve-user', [AdminController::class, 'view_aprove_user'])->name('approve-user');
+    Route::get('/delete-aprove/{id}', [AdminController::class, 'delete_aprove']);
+    Route::get('/approve-house/{id}', [AdminController::class, 'approve_house']);
+    Route::get('/delete-user/{id}', [AdminController::class, 'delete_user']);
+    Route::get('/approve-user/{id}', [AdminController::class, 'approve_user']);
    });
 
 //Route bo pishandany data bo Admin

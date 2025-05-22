@@ -181,8 +181,23 @@
                 gap: 8px;
                 justify-content: center;
             }
+            .btn-accept {
+                background-color: #218838;
+                color: white;
+                border:none;
+                padding: 6px 12px;
+                border-radius: 5px;
+                font-size: 12px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            
+            .btn-accept:hover {
+                background-color: #218838;
+            }
 
-            .btn-remove {
+            .btn-delete {
                 background-color: #dc3545;
                 border: none;
                 color: white;
@@ -194,7 +209,7 @@
                 transition: background-color 0.3s ease;
             }
 
-            .btn-remove:hover {
+            .btn-delete:hover {
                 background-color: #c82333;
             }
         </style>
@@ -228,13 +243,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="{{route('approve-user')}}">
+                        <a class="nav-link activee" href="{{route('approve-user')}}">
                             <i class="bi bi-person-exclamation"></i>
-                            <span>Verify User</span>
+                            <span>Verify Users</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link activee" href="{{route('feedback')}}">
+                        <a class="nav-link" href="{{route('feedback')}}">
                             <i class="bi bi-chat-dots"></i>
                             <span>Feedback</span>
                         </a>
@@ -243,8 +258,8 @@
             </nav>
 
             <div class="main-content" id="mainContent">
-                <h1>Feedbacks</h1>
-                <p>Grow with feedback.</p>
+                <h1>User Management</h1>
+                <p>Manage your users.</p>
 
                 <div class="">
                     <div class="container py-5">
@@ -254,31 +269,48 @@
                                 <table class="table table-hover mb-0" style="font-size: 12px;">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
+                                            <th>Full name</th>
+                                            <th>Username</th>
                                             <th>Email</th>
-                                            <th>About</th>
-                                            <th>Message</th>
-                                            <th></th>
+                                            <th>Phone number</th>
+                                            <th>Address</th>
+                                            <th>Role</th>
+                                            <th>ID Card</th>
+                                            <th>Approve User ?</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @foreach($data as $user)
+                                        @if($user->status == 'Not Verified')
                                         <tr>
-                                            <td>
-                                                Ali Khalid
+                                            <td data-label="ناو">
+                                                <p>{{$user->full_name}}</p>
                                             </td>
-                                            <td>
-                                                alikhalidahmed1@gmail.com
+                                            <td data-label="ناو">
+                                                <p>{{$user->user_name}}</p>
                                             </td>
-                                            <td>
-                                                Tenant
+                                            <td data-label="ئیمەیل">
+                                                <p>{{$user->email}}</p>
                                             </td>
-                                            <td>
-                                                Best Regards
+                                            <td data-label="مۆبایل">
+                                                <p>{{$user->first_phoneNumber}}</p>
                                             </td>
-                                            <td>
-                                                <button class="btn-remove" >Remove</button>
+                                            <td data-label="ناونیشان">
+                                                <p>{{$user->address}}</p>
+                                            </td>
+                                            <td data-label="جۆری بەکارهێنەر">
+                                                <p>{{$user->role}}</p>
+                                            </td>
+                                            <td data-label="جۆری بەکارهێنەر">
+                                                <img src="{{$user->IdCard}}" alt="">
+                                            </td>
+                                            <td data-label="گۆرینی ڕؤڵ یان سڕینەوە">
+                                                <a href="{{url('approve-user/'.$user->id)}}" onclick="return confirm('Are you sure you want to approve this house rental?')"><button class="btn-accept">Accept</button></a>
+                                                <a href="{{url('delete-user',$user->id)}}"  onclick="return confirm('Are you sure you want to reject this house rental?')"><button class="btn-delete">Reject</button></a>
                                             </td>
                                         </tr>
+                                        @endif
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -306,13 +338,13 @@
                 }
             });
 
-            function removeFeedback(feedbackId) {
-                if (confirm('Are you sure you want to remove this feedback? This action cannot be undone.')) {
-                    // Add your remove feedback logic here
-                    console.log('Removing feedback with ID:', feedbackId);
+            function deleteUser(userId) {
+                if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                    // Add your delete logic here
+                    console.log('Deleting user with ID:', userId);
                     // You can make an AJAX call to your Laravel route here Example:
-                    // fetch('/remove-feedback/' + feedbackId, {     method: 'DELETE',     headers:
-                    // {         'X-CSRF-TOKEN':
+                    // fetch('/delete-user/' + userId, {     method: 'DELETE',     headers: {
+                    // 'X-CSRF-TOKEN':
                     // document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     // 'Content-Type': 'application/json'     } }) .then(response =>
                     // response.json()) .then(data => {     if(data.success) {          Remove the
