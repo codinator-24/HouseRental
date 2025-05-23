@@ -98,6 +98,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/approve-house/{id}', [AdminController::class, 'approve_house']);
     Route::get('/delete-user/{id}', [AdminController::class, 'delete_user']);
     Route::get('/approve-user/{id}', [AdminController::class, 'approve_user']);
+    Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
    });
 
 //Route bo pishandany data bo Admin
@@ -108,7 +109,7 @@ Route::middleware('admin.auth')->group(function () {
 
 // Lerawa Route dika zia bkan
 Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
-
-
+Route::get('/contactUs', [DashboardController::class, 'show_contact'])->name('contact');
+Route::post('/add_contact', [DashboardController::class, 'insert_contact'])->name('submit.contact');
 
 

@@ -182,7 +182,7 @@
                 justify-content: center;
             }
 
-            .btn-remove {
+             .btn-reject {
                 background-color: #dc3545;
                 border: none;
                 color: white;
@@ -193,8 +193,8 @@
                 cursor: pointer;
                 transition: background-color 0.3s ease;
             }
-
-            .btn-remove:hover {
+            
+            .btn-reject:hover {
                 background-color: #c82333;
             }
         </style>
@@ -262,23 +262,25 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @foreach($data as $feedback)
                                         <tr>
                                             <td>
-                                                Ali Khalid
+                                                {{$feedback->name}}
                                             </td>
                                             <td>
-                                                alikhalidahmed1@gmail.com
+                                                {{$feedback->email}}
                                             </td>
                                             <td>
-                                                Tenant
+                                                {{$feedback->title}}
                                             </td>
                                             <td>
-                                                Best Regards
+                                                {{$feedback->description}}
                                             </td>
                                             <td>
-                                                <button class="btn-remove" >Remove</button>
+                                                <a href="{{url('delete-feedback',$feedback->id)}}"  onclick="return confirm('Are you sure you want to reject this house rental?')"><button class="btn-reject">Delete</button></a>
                                             </td>
                                         </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>

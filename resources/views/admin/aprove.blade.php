@@ -276,7 +276,6 @@
                             <th scope="col">Address 1</th>
                             <th scope="col">Address 2</th>
                             <th scope="col">City</th>
-                            <th scope="col">No. floor</th>
                             <th scope="col">No. Rooms</th>
                             <th scope="col">Area</th>
                             <th scope="col">Rent price</th>
@@ -288,18 +287,31 @@
                 <tbody>
                     
                     @foreach ($houses as $house)
-                    @if($house->status == 'disagree')
+                    @if($house->status == 'unavailable')
                     <tr>
                             <td>{{ $house->title }}</td>
                             <td>{{ $house->first_address }}</td>
                             <td>{{ $house->second_address }}</td>
                             <td>{{ $house->city }}</td>
-                            <td>{{ $house->num_floor }}</td>
-                            <td>{{ $house->num_room }}</td>
-                            <td>{{ $house->square_footage }}</td>
+                            <td>
+                            @foreach($floors as $floor)
+                             @if($floor->house_id == $house->id)
+                                <p>floor:  {{$floor->num_room}}</p>
+                             @endif
+                             @endforeach
+                            </td>
+                            <td>{{ $house->square_footage }}m&sup2;</td>
                             <td>${{ $house->rent_amount }}</td>
                             <td>{{ $house->description }}</td>
-                            <td>--</td>
+                            <td>
+
+                                @foreach($images as $image)
+                            @if($image->house_id==$house->id) 
+                            
+                            <img src="{{$image->image_url}}" width="80px" height="80px" alt="">
+                            @endif
+                        @endforeach
+                        </td>
                             <td>
                                 <div class="action-buttons">
                                     <a href="{{url('approve-house/'.$house->id)}}" onclick="return confirm('Are you sure you want to approve this house rental?')"><button class="btn-accept">Accept</button></a>
@@ -308,7 +320,7 @@
                             </td>
                         </tr>
                         @endif
-                    @endforeach            
+                    @endforeach                  
                 </tbody>
             </table>
         </div>

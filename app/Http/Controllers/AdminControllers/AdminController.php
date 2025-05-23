@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\House;
 use App\Models\User;
 use App\Models\HousePicture;
+use App\Models\Floor;
+use App\Models\Feedback;
 
 class AdminController extends  Controller
 {
@@ -26,7 +28,9 @@ class AdminController extends  Controller
     public function viewaprove()
     {
         $houses = House::all();
-        return view('admin/aprove', compact('houses'));
+        $images= HousePicture::all();
+        $floors = Floor::all();
+        return view('admin/aprove', compact('houses','images','floors'));
     }
 
     public function viewusers()
@@ -36,7 +40,8 @@ class AdminController extends  Controller
     }
     public function viewfeedback()
     {
-        return view('admin/feedback');
+        $data = Feedback::all();
+        return view('admin/feedback',compact('data'));
     }
     public function view_aprove_user()
     {
@@ -65,6 +70,14 @@ class AdminController extends  Controller
     {
 
         $data = User::find($id);
+        $data->delete();
+        return redirect()->back();
+    }
+
+    public function delete_feedback($id)
+    {
+
+        $data = Feedback::find($id);
         $data->delete();
         return redirect()->back();
     }

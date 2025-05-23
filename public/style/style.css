@@ -357,6 +357,8 @@ body{
   margin: 5px;
 }
 
+   
+
 @media(max-width:850px){
   .update-btn,.delete-btn{
     width: 50%;

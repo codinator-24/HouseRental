@@ -14,6 +14,51 @@
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     @stack('head')
+      <style>
+    main {
+      background-color: #f5f8fa;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .register-form {
+        font-size:29px;
+      max-width: 900px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .form-title {
+      font-weight: bold;
+      color: #1a1a2e;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .form-control, .form-select {
+      border-radius: 8px;
+    }
+    .custom-btn {
+      background-color: #4a90e2;
+      color: white;
+      padding: 12px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .custom-btn:hover {
+      background-color: #3a78c2;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .custom-btn:active {
+      transform: scale(0.98);
+    }
+  </style>
+
 </head>
 
 <body class="text-gray-800 bg-white">
@@ -31,8 +76,7 @@
                     class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('words.Home')</a>
                 <a href="#"
                     class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('words.About')</a>
-                     <div class="items-center hidden space-x-6 md:flex">
-                <a href="{{ route('contact') }}"
+                <a href="{{ route('contact')}}"
                     class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('Feedback')</a>
                 {{-- Add other navigation links here if needed --}}
             </div>
@@ -194,8 +238,38 @@
         </nav>
     </header>
 
+     <!-- Feedback Form -->
     <main>
-        {{ $slot }}
+<div class="container register-form">
+  <h2 class="form-title">Register</h2>
+  <form method="POST" action="{{url('add_contact')}}">
+   @csrf
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label for="fullName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+      <div class="col-md-6">
+        <label for="username" class="form-label">Email</label>
+        <input type="text" class="form-control" id="email" name="email" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="phone1" class="form-label">Title</label>
+        <input type="tel" class="form-control" id="title" name="title" required>
+      </div>
+      <div class="col-md-6">
+        <label for="phone2" class="form-label">Description</label>
+        <input type="tel" class="form-control" id="description" name="description">
+      </div>
+    </div>
+
+    <div class="mt-4 text-center">
+      <button type="submit" class="custom-btn">Submit</button>
+    </div>
+  </form>
+</div>
+
     </main>
 
 
