@@ -104,7 +104,7 @@ Route::middleware('admin.auth')->group(function () {
 // Route::get('/aprove',[AdminController::class,'viewaprove']);
 // Route::get('/users',[AdminController::class,'viewusers']);
 
-
+//Stable
 
 // Lerawa Route dika zia bkan
 Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
