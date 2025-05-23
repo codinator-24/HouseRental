@@ -60,7 +60,17 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-
+                <div class="mb-4">
+                    <p>Status:
+                        @if ($user->status === 'Not Verified')
+                            <span class="font-semibold text-yellow-600">Not Verified</span>
+                        @elseif ($user->status === 'Verified')
+                            <span class="font-semibold text-green-600">Verified</span>
+                        @else
+                            <span class="font-semibold text-green-600">{{ ucfirst($user->status) }}</span>
+                        @endif
+                    </p>
+                </div>
                 {{-- Full Name --}}
                 <div class="mb-4">
                     <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
@@ -120,6 +130,39 @@
                     @enderror
                 </div>
 
+                {{-- ID Card --}}
+                <div class="mb-6">
+                    <label for="IdCard" class="block text-sm font-medium text-gray-700 mb-2">ID Card</label>
+                    @if ($user->IdCard)
+                        @php
+                            $idCardPath = $user->IdCard;
+                            $idCardUrl = Storage::url($idCardPath);
+                            $idCardExtension = strtolower(pathinfo($idCardPath, PATHINFO_EXTENSION));
+                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                        @endphp
+                        <div class="mb-2">
+                            <p class="block text-xs font-medium text-gray-500">Current ID Card:</p>
+                            @if (in_array($idCardExtension, $imageExtensions))
+                                <img src="{{ $idCardUrl }}" alt="Current ID Card"
+                                    class="mt-1 max-w-xs max-h-48 border border-gray-300 rounded">
+                            @elseif ($idCardExtension === 'pdf')
+                                <a href="{{ $idCardUrl }}" target="_blank"
+                                    class="mt-1 text-blue-600 hover:underline">View ID Card (PDF)</a>
+                            @else
+                                <a href="{{ $idCardUrl }}" target="_blank"
+                                    class="mt-1 text-blue-600 hover:underline">Download ID Card</a>
+                            @endif
+                        </div>
+                    @else
+                        <p class="text-sm text-gray-500 mt-1">No ID Card uploaded.</p>
+                    @endif
+                    <input type="file" name="IdCard" id="IdCard"
+                        class="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                    @error('IdCard')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 {{-- Address --}}
                 <div class="mb-6">
                     <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
@@ -149,62 +192,66 @@
         </div>
 
         {{-- Password Update Modal --}}
-        <div id="passwordUpdateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-10" style="display: none;">
+        <div id="passwordUpdateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-10"
+            style="display: none;">
             <div class="bg-white rounded-lg shadow-xl overflow-hidden max-w-md w-full mx-4">
                 <div class="px-6 py-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
                     <h1 class="text-xl font-semibold text-gray-700">Update Your Password</h1>
-                    <button id="closePasswordModalBtn" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    <button id="closePasswordModalBtn"
+                        class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
                 </div>
 
                 <form method="POST" action="{{ route('password.update') }}" class="px-6 py-6">
                     @csrf {{-- CSRF Protection --}}
-                @method('PUT') {{-- Method Spoofing for PUT request --}}
+                    @method('PUT') {{-- Method Spoofing for PUT request --}}
 
-                {{-- Current Password --}}
-                <div class="mb-4">
-                    <label for="current_password" class="block text-sm font-medium text-gray-700">Current
-                        Password</label>
-                    <input type="password" name="current_password" id="current_password" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('current_password', 'updatePassword') border-red-500 @enderror">
-                    @error('current_password', 'updatePassword')
-                        {{-- Specify the error bag --}}
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                    {{-- Current Password --}}
+                    <div class="mb-4">
+                        <label for="current_password" class="block text-sm font-medium text-gray-700">Current
+                            Password</label>
+                        <input type="password" name="current_password" id="current_password" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('current_password', 'updatePassword') border-red-500 @enderror">
+                        @error('current_password', 'updatePassword')
+                            {{-- Specify the error bag --}}
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                {{-- New Password --}}
-                <div class="mb-4">
-                    <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
-                    <input type="password" name="new_password" id="new_password" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('new_password', 'updatePassword') border-red-500 @enderror">
-                    @error('new_password', 'updatePassword')
-                        {{-- Specify the error bag --}}
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                    {{-- New Password --}}
+                    <div class="mb-4">
+                        <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
+                        <input type="password" name="new_password" id="new_password" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('new_password', 'updatePassword') border-red-500 @enderror">
+                        @error('new_password', 'updatePassword')
+                            {{-- Specify the error bag --}}
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                {{-- Confirm New Password --}}
-                <div class="mb-6">
-                    <label for="new_password_confirmation" class="block text-sm font-medium text-gray-700">Confirm New
-                        Password</label>
-                    <input type="password" name="new_password_confirmation" id="new_password_confirmation" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    {{-- No specific error needed here as 'confirmed' rule handles it on 'new_password' --}}
-                </div>
+                    {{-- Confirm New Password --}}
+                    <div class="mb-6">
+                        <label for="new_password_confirmation" class="block text-sm font-medium text-gray-700">Confirm
+                            New
+                            Password</label>
+                        <input type="password" name="new_password_confirmation" id="new_password_confirmation"
+                            required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        {{-- No specific error needed here as 'confirmed' rule handles it on 'new_password' --}}
+                    </div>
 
-                {{-- Submit Button --}}
-                <div class="flex justify-end">
-                    <button type="submit"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Update Password
-                    </button>
-                </div>
-            </form>
+                    {{-- Submit Button --}}
+                    <div class="flex justify-end">
+                        <button type="submit"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-            </div> {{-- Close modal content div --}}
-        </div> {{-- Close modal container div --}}
+    </div> {{-- Close modal content div --}}
+    </div> {{-- Close modal container div --}}
     </div>
 
     {{-- Add this script at the bottom --}}

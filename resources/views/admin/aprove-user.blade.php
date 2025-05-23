@@ -140,12 +140,12 @@
                 background: white;
                 border: none;
             }
-            
+
             .table {
                 margin-bottom: 0;
                 font-size: 14px;
             }
-            
+
             .table thead th {
                 background: linear-gradient(to right, rgb(50, 149, 235), rgb(73, 185, 219));
                 color: white;
@@ -154,7 +154,7 @@
                 border: none;
                 font-size: 13px;
             }
-            
+
             .table tbody td {
                 padding: 12px;
                 border: none;
@@ -162,26 +162,25 @@
                 color: #333;
                 border-bottom: 1px solid #f0f0f0;
             }
-            
+
             .table tbody tr:hover {
                 background-color: rgba(50, 149, 235, 0.05);
                 transition: background-color 0.3s ease;
             }
-            
+
             .table tbody tr:nth-child(even) {
                 background-color: #f8f9fa;
             }
-            
+
             .table tbody tr:nth-child(even):hover {
                 background-color: rgba(50, 149, 235, 0.08);
             }
-            
+
             .action-buttons {
                 display: flex;
                 gap: 8px;
                 justify-content: center;
             }
-            
             .btn-accept {
                 background-color: #218838;
                 color: white;
@@ -197,8 +196,8 @@
             .btn-accept:hover {
                 background-color: #218838;
             }
-            
-            .btn-reject {
+
+            .btn-delete {
                 background-color: #dc3545;
                 border: none;
                 color: white;
@@ -209,11 +208,10 @@
                 cursor: pointer;
                 transition: background-color 0.3s ease;
             }
-            
-            .btn-reject:hover {
+
+            .btn-delete:hover {
                 background-color: #c82333;
             }
-  
         </style>
     </head>
 
@@ -233,7 +231,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link activee" href="{{route('aprove')}}">
+                        <a class="nav-link" href="{{route('aprove')}}">
                             <i class="bi bi-check-circle"></i>
                             <span>Approve Rents</span>
                         </a>
@@ -245,9 +243,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="{{route('approve-user')}}">
+                        <a class="nav-link activee" href="{{route('approve-user')}}">
                             <i class="bi bi-person-exclamation"></i>
-                            <span>Verify User</span>
+                            <span>Verify Users</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -260,103 +258,101 @@
             </nav>
 
             <div class="main-content" id="mainContent">
-                <h1>Approve Rents</h1>
-                <p>This is your main content section.</p>
+                <h1>User Management</h1>
+                <p>Manage your users.</p>
 
                 <div class="">
                     <div class="container py-5">
-    <div class="card custom-table">
-        
-        
-        <div class="table-responsive">
-            <table class="table table-hover mb-0" style="font-size: 12px;">
-                <thead>
-                    <tr>
-                            <th scope="col">House type</th>
-                            <th scope="col">Address 1</th>
-                            <th scope="col">Address 2</th>
-                            <th scope="col">City</th>
-                            <th scope="col">No. floor</th>
-                            <th scope="col">No. Rooms</th>
-                            <th scope="col">Area</th>
-                            <th scope="col">Rent price</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Photo</th>
-                            <th scope="col">Approve?</th>
-                        </tr>
-                </thead>
-                <tbody>
-                    
-                    @foreach ($houses as $house)
-                    @if($house->status == 'disagree')
-                    <tr>
-                            <td>{{ $house->title }}</td>
-                            <td>{{ $house->first_address }}</td>
-                            <td>{{ $house->second_address }}</td>
-                            <td>{{ $house->city }}</td>
-                            <td>{{ $house->num_floor }}</td>
-                            <td>{{ $house->num_room }}</td>
-                            <td>{{ $house->square_footage }}</td>
-                            <td>${{ $house->rent_amount }}</td>
-                            <td>{{ $house->description }}</td>
-                            <td>--</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="{{url('approve-house/'.$house->id)}}" onclick="return confirm('Are you sure you want to approve this house rental?')"><button class="btn-accept">Accept</button></a>
-                                    <a href="{{url('delete-aprove',$house->id)}}"  onclick="return confirm('Are you sure you want to reject this house rental?')"><button class="btn-reject">Reject</button></a>
-                                </div>
-                            </td>
-                        </tr>
-                        @endif
-                    @endforeach            
-                </tbody>
-            </table>
-        </div>
-        
-        
-    </div>
-</div>
+                        <div class="card custom-table">
+
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" style="font-size: 12px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Full name</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Phone number</th>
+                                            <th>Address</th>
+                                            <th>Role</th>
+                                            <th>ID Card</th>
+                                            <th>Approve User ?</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($data as $user)
+                                        @if($user->status == 'Not Verified')
+                                        <tr>
+                                            <td data-label="ناو">
+                                                <p>{{$user->full_name}}</p>
+                                            </td>
+                                            <td data-label="ناو">
+                                                <p>{{$user->user_name}}</p>
+                                            </td>
+                                            <td data-label="ئیمەیل">
+                                                <p>{{$user->email}}</p>
+                                            </td>
+                                            <td data-label="مۆبایل">
+                                                <p>{{$user->first_phoneNumber}}</p>
+                                            </td>
+                                            <td data-label="ناونیشان">
+                                                <p>{{$user->address}}</p>
+                                            </td>
+                                            <td data-label="جۆری بەکارهێنەر">
+                                                <p>{{$user->role}}</p>
+                                            </td>
+                                            <td data-label="جۆری بەکارهێنەر">
+                                                <img src="{{$user->IdCard}}" alt="">
+                                            </td>
+                                            <td data-label="گۆرینی ڕؤڵ یان سڕینەوە">
+                                                <a href="{{url('approve-user/'.$user->id)}}" onclick="return confirm('Are you sure you want to approve this house rental?')"><button class="btn-accept">Accept</button></a>
+                                                <a href="{{url('delete-user',$user->id)}}"  onclick="return confirm('Are you sure you want to reject this house rental?')"><button class="btn-delete">Reject</button></a>
+                                            </td>
+                                        </tr>
+                                        @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        const toggleBtn = document.getElementById('toggleBtn');
-        const sidebar = document.getElementById('sidebar');
-        const activeLink = document.querySelector('.nav-link.activee');
+        <script>
+            const toggleBtn = document.getElementById('toggleBtn');
+            const sidebar = document.getElementById('sidebar');
+            const activeLink = document.querySelector('.nav-link.activee');
 
-        toggleBtn.addEventListener('click', () => {
-            sidebar
-                .classList
-                .toggle('collapsed');
-
-            if (activeLink) {
-                activeLink
+            toggleBtn.addEventListener('click', () => {
+                sidebar
                     .classList
-                    .toggle('collapsed-active');
+                    .toggle('collapsed');
+
+                if (activeLink) {
+                    activeLink
+                        .classList
+                        .toggle('collapsed-active');
+                }
+            });
+
+            function deleteUser(userId) {
+                if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                    // Add your delete logic here
+                    console.log('Deleting user with ID:', userId);
+                    // You can make an AJAX call to your Laravel route here Example:
+                    // fetch('/delete-user/' + userId, {     method: 'DELETE',     headers: {
+                    // 'X-CSRF-TOKEN':
+                    // document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    // 'Content-Type': 'application/json'     } }) .then(response =>
+                    // response.json()) .then(data => {     if(data.success) {          Remove the
+                    // row from table or reload page         location.reload();     } })
+                    // .catch(error => console.error('Error:', error));
+                }
             }
-        });
-
-        function approveHouse(houseId) {
-    if (confirm('Are you sure you want to approve this house rental?')) {
-        console.log('Approving house with ID:', houseId);
-        // Example AJAX call:
-        // fetch('/approve-house/' + houseId, { method: 'POST' })
-        //     .then(response => response.json())
-        //     .then(data => console.log(data));
-    }
-}
-
-function rejectHouse(houseId) {
-    if (confirm('Are you sure you want to reject this house rental?')) {
-        console.log('Rejecting house with ID:', houseId);
-        // Example AJAX call:
-        // fetch('/reject-house/' + houseId, { method: 'POST' })
-        //     .then(response => response.json())
-        //     .then(data => console.log(data));
-    }
-}
-    </script>
-</body>
+        </script>
+    </body>
 
 </html>
