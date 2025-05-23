@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\House;
 use App\Models\User;
 use App\Models\HousePicture;
+use App\Notifications\AccountVerified;
+use App\Notifications\HouseApproved;
 use App\Models\Floor;
 use App\Models\Feedback;
 
@@ -25,6 +27,7 @@ class AdminController extends  Controller
         $verify = User::where('status', 'Not Verified')->count();
         $bosses = User::where('role', 'both')->count();
         return view('admin.dashboard', compact('users', 'houses','landlords','tenants','bosses','aproves','verify','feedbacks'));
+        return view('admin.dashboard', compact('users', 'houses', 'landlords', 'tenants', 'aproves', 'verify'));
     }
 
     public function viewaprove()
@@ -48,15 +51,21 @@ class AdminController extends  Controller
     public function view_aprove_user()
     {
         $data = User::all();
-        return view('admin/aprove-user',compact('data'));
+        return view('admin/aprove-user', compact('data'));
     }
 
     public function approve_house($id)
     {
-         $house = House::findOrFail($id);
-         $house->status='available';
-         $house->save();
-         return redirect('/approve');
+        $house = House::findOrFail($id);
+        $house->status = 'available';
+        $house->save();
+
+        // Notify the landlord
+        if ($house->landlord) {
+            $house->landlord->notify(new HouseApproved($house));
+        }
+
+        return redirect('/approve');
     }
 
 
@@ -86,11 +95,13 @@ class AdminController extends  Controller
 
     public function approve_user($id)
     {
-         $user = User::findOrFail($id);
-         $user->status='Verified';
-         $user->save();
-         return redirect('/approve-user');
-    }
+        $user = User::findOrFail($id);
+        $user->status = 'Verified';
+        $user->save();
 
-    
+        // Notify the user
+        $user->notify(new AccountVerified($user));
+
+        return redirect('/approve-user');
+    }
 }
