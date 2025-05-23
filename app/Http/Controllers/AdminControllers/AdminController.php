@@ -18,11 +18,13 @@ class AdminController extends  Controller
         //this is to count all tables data
         $users = User::count();
         $houses = House::count();
+        $feedbacks = Feedback::count();
         $aproves = User::where('status', 'unavailable')->count();
         $landlords = User::where('role', 'Landlord')->count();
         $tenants = User::where('role', 'Tenant')->count();
         $verify = User::where('status', 'Not Verified')->count();
-        return view('admin.dashboard', compact('users', 'houses','landlords','tenants','aproves','verify'));
+        $bosses = User::where('role', 'boss')->count();
+        return view('admin.dashboard', compact('users', 'houses','landlords','tenants','bosses','aproves','verify','feedbacks'));
     }
 
     public function viewaprove()

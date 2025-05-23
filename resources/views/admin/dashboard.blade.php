@@ -192,9 +192,17 @@
 
                         <div class="col">
                             <div class="card shadow rounded-4 p-3">
-                                <i class="bi bi-people text-secondary"></i>
+                                <i class="bi bi-person-vcard text-secondary"></i>
                                 <h5 class="mt-2">Total Users</h5>
                                 <h3>{{$users}}</h3>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card shadow rounded-4 p-3">
+                                <i class="bi bi-people" style="color:#900C3F;"></i>
+                                <h5 class="mt-2">Boss Users</h5>
+                                <h3>{{$bosses}}</h3>
                             </div>
                         </div>
 
@@ -250,7 +258,7 @@
                             <div class="card shadow rounded-4 p-3">
                                 <i class="bi bi-chat-dots text-dark"></i>
                                 <h5 class="mt-2">Feedback</h5>
-                                <h3>342</h3>
+                                <h3>{{$feedbacks}}</h3>
                             </div>
                         </div>
 
