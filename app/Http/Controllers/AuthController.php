@@ -27,7 +27,7 @@ class AuthController extends Controller
             'role' => ['required', 'string', 'max:50'], // Added validation for role
             'address' => ['required', 'max:255'],
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Added max size
-            'IdCard' => 'nullable|file|mimes:pdf,jpeg,png,jpg,gif,webp|max:8048', // Added IdCard validation
+            'IdCard' => 'required|nullable|file|mimes:pdf,jpeg,png,jpg,gif,webp|max:8048', // Added IdCard validation
         ], [
             'first_phoneNumber' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',
             'second_phoneNumber' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',

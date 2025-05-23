@@ -133,9 +133,7 @@
                             <span id="idcard-filename" class="ml-4 text-sm text-gray-500 self-center">No file
                                 chosen</span>
                         </div>
-                        @error('picture')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        @error('IdCard') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 
