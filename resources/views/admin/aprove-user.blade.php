@@ -302,7 +302,7 @@
                                                 <p>{{$user->role}}</p>
                                             </td>
                                             <td data-label="جۆری بەکارهێنەر">
-                                                <img src="{{$user->IdCard}}" alt="">
+                                                <img src="{{ asset('id_cards/'.$user->IdCard) }}" width="150px" height="80px">
                                             </td>
                                             <td data-label="گۆرینی ڕؤڵ یان سڕینەوە">
                                                 <a href="{{url('approve-user/'.$user->id)}}" onclick="return confirm('Are you sure you want to approve this house rental?')"><button class="btn-accept">Accept</button></a>

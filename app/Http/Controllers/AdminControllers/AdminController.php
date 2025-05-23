@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\HousePicture;
 use App\Notifications\AccountVerified;
 use App\Notifications\HouseApproved;
+use App\Models\Floor;
+use App\Models\Feedback;
 
 class AdminController extends  Controller
 {
@@ -18,17 +20,22 @@ class AdminController extends  Controller
         //this is to count all tables data
         $users = User::count();
         $houses = House::count();
+        $feedbacks = Feedback::count();
         $aproves = User::where('status', 'unavailable')->count();
-        $landlords = User::where('role', 'Landlord')->count();
+        $landlords = User::where('role', 'lordland')->count();
         $tenants = User::where('role', 'Tenant')->count();
         $verify = User::where('status', 'Not Verified')->count();
+        $bosses = User::where('role', 'both')->count();
+        return view('admin.dashboard', compact('users', 'houses','landlords','tenants','bosses','aproves','verify','feedbacks'));
         return view('admin.dashboard', compact('users', 'houses', 'landlords', 'tenants', 'aproves', 'verify'));
     }
 
     public function viewaprove()
     {
         $houses = House::all();
-        return view('admin/aprove', compact('houses'));
+        $images= HousePicture::all();
+        $floors = Floor::all();
+        return view('admin/aprove', compact('houses','images','floors'));
     }
 
     public function viewusers()
@@ -38,7 +45,8 @@ class AdminController extends  Controller
     }
     public function viewfeedback()
     {
-        return view('admin/feedback');
+        $data = Feedback::all();
+        return view('admin/feedback',compact('data'));
     }
     public function view_aprove_user()
     {
@@ -73,6 +81,14 @@ class AdminController extends  Controller
     {
 
         $data = User::find($id);
+        $data->delete();
+        return redirect()->back();
+    }
+
+    public function delete_feedback($id)
+    {
+
+        $data = Feedback::find($id);
         $data->delete();
         return redirect()->back();
     }

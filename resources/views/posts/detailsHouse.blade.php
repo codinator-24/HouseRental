@@ -190,6 +190,10 @@
                                             / {{ $house->landlord->second_phoneNumber }}
                                         @endif
                                     </p>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                    <i class="fas fa-envelope mr-2 fas fa-phone text-slate-500" style="margin-bottom:8px;"></i>
+                                    <a href="{{ route('contact') }}" ><h2 class="mb-3 font-bold text-gray-800 color color-primary" style="color:#007bff;">For Feedback</h2></a>
+                                    </div>
                                 </div>
                             </div>
                         @endif
