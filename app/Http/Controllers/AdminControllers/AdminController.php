@@ -26,8 +26,7 @@ class AdminController extends  Controller
         $tenants = User::where('role', 'Tenant')->count();
         $verify = User::where('status', 'Not Verified')->count();
         $bosses = User::where('role', 'both')->count();
-        return view('admin.dashboard', compact('users', 'houses','landlords','tenants','bosses','aproves','verify','feedbacks'));
-        return view('admin.dashboard', compact('users', 'houses', 'landlords', 'tenants', 'aproves', 'verify'));
+        return view('admin.dashboard', compact('users', 'houses', 'landlords', 'tenants', 'aproves', 'verify', 'bosses', 'feedbacks'));
     }
 
     public function viewaprove()

@@ -22,10 +22,14 @@ class BookingController extends Controller
         // If validation fails, Laravel automatically redirects back to the previous page.
         // Errors will be in the 'bookingMessageErrors' bag, and old input will be flashed.
         // Your JavaScript in detailsHouse.blade.php should then reopen the modal.
-        $validatedData = $request->validateWithBag('bookingMessageErrors', [
+        $validatedData = $request->validateWithBag('sendBookingFormErrors', [ // Changed error bag name
+            'month_duration' => 'required|integer|min:1',
             'booking_message' => 'nullable|string|max:2000', // Message is optional as per your modal
         ], [
             // Optional: Custom validation messages
+            'month_duration.required' => 'Please specify the duration in months.',
+            'month_duration.integer' => 'The duration must be a whole number of months.',
+            'month_duration.min' => 'The minimum duration is 1 month.',
             'booking_message.max' => 'Your message is too long (maximum 2000 characters).',
         ]);
         try {
@@ -33,14 +37,15 @@ class BookingController extends Controller
                 'house_id' => $house->id,
                 'tenant_id' => Auth::id(), // Gets the ID of the currently authenticated user
                 'message' => $validatedData['booking_message'] ?? null, // Use validated data, default to null if empty
+                'month_duration' => $validatedData['month_duration'],
                 'status' => 'pending', // Set a default status like 'inquiry' or 'pending_confirmation'
             ]);
 
             // Get the landlord of the house.
             // This assumes your Booking model has a 'house' relationship,
             // and your House model has a 'landlord' relationship (e.g., belongsTo User via landlord_id).
-            $landlord = $booking->house->landlord; 
-            
+            $landlord = $booking->house->landlord;
+
             if ($landlord) {
                 $landlord->notify(new NewBookingRequest($booking));
             }
@@ -53,7 +58,7 @@ class BookingController extends Controller
             // This ensures the modal reopens and displays the error.
             return redirect()->back()
                 ->withInput() // Flash the submitted input (the message) back to the form
-                ->withErrors(['_form' => 'We couldn\'t send your Booking at this moment. Please try again later.'], 'bookingMessageErrors');
+                ->withErrors(['_form' => 'We couldn\'t send your Booking at this moment. Please try again later.'], 'sendBookingFormErrors');
         }
     }
 
@@ -109,7 +114,26 @@ class BookingController extends Controller
 
         // Eager load relationships for efficiency if not already globally eager-loaded in Booking model
         $booking->load(['house.landlord', 'tenant']);
-        return view('bookings.showBooking', compact('booking'));
+        return view('bookings.ShowSentBookings', compact('booking'));
+    }
+
+    public function updateSentBooking(Request $request, Booking $booking)
+    {
+        // Authorization: Ensure the user is the tenant and booking is not rejected
+        if (Auth::id() !== $booking->tenant_id || $booking->status === 'rejected') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validatedData = $request->validate([
+            'month_duration' => 'required|integer|min:1',
+            'message' => 'nullable|string|max:1000', // Adjust max length as needed
+        ]);
+
+        $booking->month_duration = $validatedData['month_duration'];
+        $booking->message = $validatedData['message'];
+        $booking->save();
+
+        return redirect()->route('bookings.details.show', $booking->id)->with('success', 'Booking details updated successfully!');
     }
 
     public function destroySentBooking(Request $request, Booking $booking): RedirectResponse
@@ -123,7 +147,14 @@ class BookingController extends Controller
         // (e.g., if it's already accepted and past a certain point)
 
         $booking->delete();
-        return redirect()->back()->with('success', 'Booking request deleted successfully.');
+
+         $house = $booking->house;
+        if ($house) {
+            $house->status = 'available'; // Assuming 'booked' is a valid status in your House model
+            $house->save();
+        }
+
+        return redirect()->route('bookings.sent')->with('success', 'Booking request deleted successfully.');
     }
 
     public function acceptBooking(Booking $booking): RedirectResponse
@@ -149,6 +180,13 @@ class BookingController extends Controller
         $newStatus = 'accepted';
         $booking->status = $newStatus;
         $booking->save();
+
+        // Update the house status to 'booked'
+        $house = $booking->house;
+        if ($house) {
+            $house->status = 'booked'; // Assuming 'booked' is a valid status in your House model
+            $house->save();
+        }
 
         $tenant = $booking->tenant;
 
@@ -177,7 +215,7 @@ class BookingController extends Controller
             return redirect()->route('bookings.show', $booking)->with('info', 'This booking has already been processed.');
         }
 
-         $newStatus = 'rejected';
+        $newStatus = 'rejected';
         $booking->status = $newStatus;
         $booking->save();
 
@@ -191,20 +229,18 @@ class BookingController extends Controller
     }
 
     public function scheduleCashAppointment(Request $request)
-{
-    $request->validate([
-        'booking_id' => 'required|exists:bookings,id',
-        'date' => 'required|date',
-        'time' => 'required',
-    ]);
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'date' => 'required|date',
+            'time' => 'required',
+        ]);
 
-    $booking = Booking::findOrFail($request->booking_id);
-    $booking->appointment_date = $request->date;
-    $booking->appointment_time = $request->time;
-    $booking->save();
+        $booking = Booking::findOrFail($request->booking_id);
+        $booking->appointment_date = $request->date;
+        $booking->appointment_time = $request->time;
+        $booking->save();
 
-    return redirect()->back()->with('success', 'Appointment scheduled successfully!');
-}
-
-
+        return redirect()->back()->with('success', 'Appointment scheduled successfully!');
+    }
 }

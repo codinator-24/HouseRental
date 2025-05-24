@@ -13,10 +13,9 @@ class Booking extends Model
     protected $fillable = [
         'house_id', // got from houses table
         'tenant_id', // got from users table
-        'start_date',
-        'end_date',
         'status',
         'message',
+        'month_duration', // e.g., duration in month
     ];
 
     public function house(): BelongsTo

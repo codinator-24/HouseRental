@@ -191,8 +191,12 @@
                                         @endif
                                     </p>
                                     <div style="display: flex; align-items: center; gap: 6px;">
-                                    <i class="fas fa-envelope mr-2 fas fa-phone text-slate-500" style="margin-bottom:8px;"></i>
-                                    <a href="{{ route('contact') }}" ><h2 class="mb-3 font-bold text-gray-800 color color-primary" style="color:#007bff;">For Feedback</h2></a>
+                                        <i class="fas fa-envelope mr-2 fas fa-phone text-slate-500"
+                                            style="margin-bottom:8px;"></i>
+                                        <a href="{{ route('contact') }}">
+                                            <h2 class="mb-3 font-bold text-gray-800 color color-primary"
+                                                style="color:#007bff;">For Feedback</h2>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -239,7 +243,7 @@
                                             <div class="pt-6 mt-6 mb-8 border-t">
                                                 <p class="mb-3 text-lg text-gray-700">You have already sent a booking
                                                     request for this property.</p>
-                                                <a href="#"
+                                                <a href="{{ route('bookings.details.show', $userBookingForThisHouse->id) }}"
                                                     class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
                                                     View Your Booking Details
                                                 </a>
@@ -278,7 +282,7 @@
         </section>
     </div>
 
-    {{-- Booking Modal (Only shown if user hasn't booked yet, is not the landlord, and house has a landlord) --}}
+    {{-- Booking Modal --}}
     @auth
         @if (
             $house->landlord &&
@@ -298,26 +302,33 @@
                     <form method="POST" action="{{ route('send.booking', ['house' => $house->id]) }}"
                         class="px-6 py-6">
                         @csrf
-                        @if ($errors->bookingMessageErrors->any())
-                            <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
-                                <p class="font-bold">Please correct the following error(s):</p>
-                                <ul class="list-disc list-inside">
-                                    @foreach ($errors->bookingMessageErrors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                        <div class="mb-4">
+                            <label for="month_duration" class="block mb-1 text-sm font-medium text-gray-700">Your Required
+                                Duration</label>
+                            <input type="number" name="month_duration" id="month_duration"
+                                placeholder="Enter Your Month Duration"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('month_duration', 'sendBookingFormErrors') border-red-500 @enderror"{{ old('month_duration') }}>
+                        </div>
                         <div class="mb-4">
                             <label for="booking_message" class="block mb-1 text-sm font-medium text-gray-700">Your Message
                                 (Optional)</label>
                             <textarea name="booking_message" id="booking_message" rows="5"
                                 placeholder="E.g., I'm interested in viewing this property. What are the next steps?"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('booking_message', 'bookingMessageErrors') border-red-500 @enderror">{{ old('booking_message') }}</textarea>
-                            {{-- @error('booking_message', 'bookingMessageErrors')
-                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                            @enderror --}}
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('booking_message', 'sendBookingFormErrors') border-red-500 @enderror">{{ old('booking_message') }}</textarea>
                         </div>
+
+                        @if ($errors->sendBookingFormErrors->any())
+                            <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+                                <p class="font-bold">Please correct the following error(s):</p>
+                                <ul class="list-disc list-inside">
+                                    @foreach ($errors->sendBookingFormErrors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+
                         <div class="flex justify-end">
                             <button type="submit"
                                 class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
@@ -438,11 +449,12 @@
 
                 // Keep booking modal open if there are validation errors for it
                 // Ensure your controller redirects back with errors in the 'bookingMessageErrors' bag
-                @if ($errors->hasBag('bookingMessageErrors') && $errors->bookingMessageErrors->any())
+                @if ($errors->hasBag('sendBookingFormErrors') && $errors->sendBookingFormErrors->any())
                     if (bookingModal) { // Check if modal exists on the page (it should if errors are present for it)
                         bookingModal.style.display = 'flex';
                     }
                 @endif
+
             });
         </script>
     @endpush

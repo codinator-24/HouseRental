@@ -47,6 +47,8 @@
                             @endif
                         </p>
                         <hr class="my-2 border-gray-300">
+                        <p class="text-gray- mb-1">
+                            <strong>Requared Duration:</strong><br>{{ (int)$booking->month_duration }} Month{{ (int)$booking->month_duration > 1 ? 's' : '' }}</p>
                         <p class="text-gray-700">
                             <strong>Message:</strong><br>{{ $booking->message ?? 'No message provided.' }}</p>
                     </div>

@@ -48,7 +48,8 @@ Route::middleware('lang')->group(function () {
         Route::get('/MyBookings', [BookingController::class, 'MyBookings'])->name('my.bookings');
         Route::get('/bookings/{booking}', [BookingController::class, 'showBooking'])->name('bookings.show');
         Route::get('/my-sent-bookings', [BookingController::class, 'showSentBookings'])->name('bookings.sent');
-        // Route::get('/bookings/{booking}', [BookingController::class, 'showDetailSentBooking'])->name('bookings.details.show');
+        Route::get('/sentbookings/{booking}', [BookingController::class, 'showDetailSentBooking'])->name('bookings.details.show');
+        Route::patch('/sent-bookings/{booking}/update', [BookingController::class, 'updateSentBooking'])->name('bookings.sent.update')->middleware('auth');
         Route::delete('/my-bookings/sent/{booking}/delete', [BookingController::class, 'destroySentBooking'])->name('bookings.sent.destroy');
         Route::patch('/bookings/{booking}/accept', [BookingController::class, 'acceptBooking'])->name('bookings.accept');
         Route::patch('/bookings/{booking}/reject', [BookingController::class, 'rejectBooking'])->name('bookings.reject');

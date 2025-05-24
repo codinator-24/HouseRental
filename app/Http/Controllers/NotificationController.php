@@ -14,15 +14,17 @@ class NotificationController extends Controller
             return response()->json(['notifications' => [], 'unread_count' => 0], 401);
         }
 
-        // Fetch latest, e.g., 10 unread notifications. Adjust as needed.
+          // Fetch latest, e.g., 10 notifications (read and unread). Adjust as needed.
         // Laravel stores notification data in a 'data' JSON column.
-        $notifications = $user->unreadNotifications()->latest()->take(10)->get()->map(function ($notification) {
+        // We fetch all notifications and include their read_at status.
+        $notifications = $user->notifications()->latest()->take(10)->get()->map(function ($notification) {
             return [
                 'id' => $notification->id,
                 'message' => $notification->data['message'] ?? 'Notification message missing.',
                 'link' => $notification->data['link'] ?? '#',
                 'created_at_human' => $notification->created_at->diffForHumans(), // For display
                 'created_at' => $notification->created_at, // For Alpine timeAgo
+                'read_at' => $notification->read_at, // Include read status
             ];
         });
 
