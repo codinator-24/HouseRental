@@ -51,16 +51,7 @@
                     <!-- Language Switcher Dropdown -->
                     <div class="relative" x-data="{ langOpen: false }">
                         <button @click="langOpen = !langOpen"
-                            class="flex items-center px-3 py-1 space-x-1 text-gray-600 hover:text-blue-600 focus:outline-none">
-                            {{-- Simple Globe Icon --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                            </svg>
-                            {{-- <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg> --}}
+                            class="fa-solid fa-language flex items-center px-3 py-1 space-x-1 text-gray-600 hover:text-blue-600 focus:outline-none">
                         </button>
 
                         <div x-show="langOpen" @click.outside="langOpen = false"
