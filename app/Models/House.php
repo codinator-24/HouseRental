@@ -55,7 +55,7 @@ class House extends Model
         return $this->hasMany(HousePicture::class);
     }
 
-      public function floors(): HasMany // <-- Add this method
+    public function floors(): HasMany // <-- Add this method
     {
         return $this->hasMany(Floor::class);
     }

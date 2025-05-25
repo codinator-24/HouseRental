@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgreementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
@@ -57,6 +58,8 @@ Route::middleware('lang')->group(function () {
         Route::get('/notifications-data', [NotificationController::class, 'index'])->name('notifications.data');
         Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
         Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+
+        Route::get('/AgreementShow', [AgreementController::class, 'ShowAgreement'])->name('agreement.show');
     });
 });
 
