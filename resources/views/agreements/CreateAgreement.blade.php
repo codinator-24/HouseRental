@@ -51,13 +51,13 @@
             <div class="gradient-bg rounded-2xl p-8 mb-8 text-white">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-bold mb-2">Rental Agreement</h1>
+                        <h1 class="text-3xl font-bold mb-2">New Rental Agreement</h1>
                         <p class="text-blue-100">Professional Property Rental Contract</p>
                     </div>
                     <div class="text-right">
                         <div class="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
                             <p class="text-sm font-medium">Agreement ID</p>
-                            <p class="text-lg font-bold">#RA-2025-001</p>
+                            <p class="text-lg font-bold">#NEW</p> {{-- Will be assigned upon saving --}}
                         </div>
                     </div>
                 </div>
@@ -76,37 +76,48 @@
 
                     <div class="flex items-start mb-6">
                         <div
-                            class="profile-placeholder w-20 h-20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-                            <i class="fas fa-camera text-gray-400 text-xl"></i>
+                            class="w-20 h-20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 overflow-hidden border border-gray-200">
+                            @if ($booking->tenant->picture)
+                                <img src="{{ asset('storage/' . $booking->tenant->picture) }}" alt="{{ $booking->tenant->full_name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="profile-placeholder w-full h-full flex items-center justify-center">
+                                    <i class="fas fa-camera text-gray-400 text-2xl"></i>
+                                </div>
+                            @endif
                         </div>
+
                         <div class="flex-1">
-                            <h3 class="font-semibold text-lg text-gray-800">Dyari Morison</h3>
-                            <p class="text-gray-600 text-sm mb-2">dyari@gmail.com</p>
+                            <h3 class="font-semibold text-lg text-gray-800">{{ $booking->tenant->full_name ?? 'N/A' }}</h3>
+                            <p class="text-gray-600 text-sm mb-2">{{ $booking->tenant->email ?? 'N/A' }}</p>
                         </div>
                     </div>
 
                     <div class="space-y-3">
                         <div class="flex items-center">
                             <i class="fas fa-phone text-blue-500 w-5 mr-3"></i>
-                            <span class="text-gray-700">07701559713</span>
+                            <span class="text-gray-700">{{ $booking->tenant->first_phoneNumber ?? 'N/A' }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-mobile-alt text-blue-500 w-5 mr-3"></i>
-                            <span class="text-gray-700">0771213402</span>
+                            <span class="text-gray-700">{{ $booking->tenant->second_phoneNumber ?? 'N/A' }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-map-marker-alt text-blue-500 w-5 mr-3"></i>
-                            <span class="text-gray-700">Sulaimany</span>
+                            <span class="text-gray-700">{{ $booking->tenant->address ?? 'N/A' }}</span>
                         </div>
                     </div>
 
                     <div class="mt-6 pt-4 border-t border-gray-100">
-                        <div class="profile-placeholder h-24 rounded-lg flex items-center justify-center">
-                            <div class="text-center">
-                                <i class="fas fa-id-card text-gray-400 text-2xl mb-2"></i>
-                                <p class="text-sm text-gray-500">ID Card</p>
+                        @if ($booking->tenant->IdCard)
+                            <img src="{{ asset('storage/' . $booking->tenant->IdCard) }}" alt="Tenant ID Card" class="rounded-lg max-h-32 w-auto mx-auto">
+                        @else
+                            <div class="profile-placeholder h-24 rounded-lg flex items-center justify-center">
+                                <div class="text-center">
+                                    <i class="fas fa-id-card text-gray-400 text-2xl mb-2"></i>
+                                    <p class="text-sm text-gray-500">ID Card Not Provided</p>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -121,37 +132,47 @@
 
                     <div class="flex items-start mb-6">
                         <div
-                            class="profile-placeholder w-20 h-20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-                            <i class="fas fa-camera text-gray-400 text-xl"></i>
+                            class="w-20 h-20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 overflow-hidden border border-gray-200">
+                            @if ($booking->house->landlord->picture)
+                                <img src="{{ asset('storage/' . $booking->house->landlord->picture) }}" alt="{{ $booking->house->landlord->full_name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="profile-placeholder w-full h-full flex items-center justify-center">
+                                    <i class="fas fa-camera text-gray-400 text-2xl"></i>
+                                </div>
+                            @endif
                         </div>
                         <div class="flex-1">
-                            <h3 class="font-semibold text-lg text-gray-800">Hallo Man</h3>
-                            <p class="text-gray-600 text-sm mb-2">hallo@gmail.com</p>
+                            <h3 class="font-semibold text-lg text-gray-800">{{ $booking->house->landlord->full_name ?? 'N/A' }}</h3>
+                            <p class="text-gray-600 text-sm mb-2">{{ $booking->house->landlord->email ?? 'N/A' }}</p>
                         </div>
                     </div>
 
                     <div class="space-y-3">
                         <div class="flex items-center">
                             <i class="fas fa-phone text-green-500 w-5 mr-3"></i>
-                            <span class="text-gray-700">077504325678</span>
+                            <span class="text-gray-700">{{ $booking->house->landlord->first_phoneNumber ?? 'N/A' }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-mobile-alt text-green-500 w-5 mr-3"></i>
-                            <span class="text-gray-700">07501541890</span>
+                            <span class="text-gray-700">{{ $booking->house->landlord->second_phoneNumber ?? 'N/A' }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-map-marker-alt text-green-500 w-5 mr-3"></i>
-                            <span class="text-gray-700">Sulaimany</span>
+                            <span class="text-gray-700">{{ $booking->house->landlord->address ?? 'N/A' }}</span>
                         </div>
                     </div>
 
                     <div class="mt-6 pt-4 border-t border-gray-100">
-                        <div class="profile-placeholder h-24 rounded-lg flex items-center justify-center">
-                            <div class="text-center">
-                                <i class="fas fa-id-card text-gray-400 text-2xl mb-2"></i>
-                                <p class="text-sm text-gray-500">ID Card</p>
+                        @if ($booking->house->landlord->IdCard)
+                            <img src="{{ asset('storage/' . $booking->house->landlord->IdCard) }}" alt="Landlord ID Card" class="rounded-lg max-h-32 w-auto mx-auto">
+                        @else
+                            <div class="profile-placeholder h-24 rounded-lg flex items-center justify-center">
+                                <div class="text-center">
+                                    <i class="fas fa-id-card text-gray-400 text-2xl mb-2"></i>
+                                    <p class="text-sm text-gray-500">ID Card Not Provided</p>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -169,34 +190,34 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Property Name:</span>
-                            <span class="font-semibold text-gray-800">MyHouse</span>
+                            <span class="font-semibold text-gray-800">{{ $booking->house->title ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Property Type:</span>
-                            <span class="font-semibold text-gray-800">House</span>
+                            <span class="font-semibold text-gray-800">{{ $booking->house->property_type ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Property Address:</span>
-                            <span class="font-semibold text-gray-800">Sulaimany</span>
+                            <span class="font-semibold text-gray-800">{{ $booking->house->first_address ?? '' }} {{ $booking->house->second_address ?? '' }}, {{ $booking->house->city ?? 'N/A' }}</span>
                         </div>
                     </div>
 
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Number of Rooms:</span>
-                            <span class="font-semibold text-gray-800">5</span>
+                            <span class="font-semibold text-gray-800">{{ $booking->house->floors->sum('num_room') ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Number of Floors:</span>
-                            <span class="font-semibold text-gray-800">1</span>
+                            <span class="font-semibold text-gray-800">{{ $booking->house->floors->count() ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Square Footage:</span>
-                            <span class="font-semibold text-gray-800">200</span>
+                            <span class="font-semibold text-gray-800">{{ $booking->house->square_footage ?? 'N/A' }} m²</span>
                         </div>
                     </div>
                 </div>
@@ -212,7 +233,7 @@
                         <h2 class="text-xl font-semibold text-gray-800">Agreement Information</h2>
                     </div>
                     <div class="status-badge bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-medium text-sm">
-                        <i class="fas fa-clock mr-2"></i>Pending
+                        <i class="fas fa-clock mr-2"></i>Pending Signature
                     </div>
                 </div>
 
@@ -222,7 +243,7 @@
                             <i class="fas fa-calendar-plus text-blue-600 mr-2"></i>
                             <span class="text-sm font-medium text-blue-800">Signed Date</span>
                         </div>
-                        <p class="text-xl font-bold text-blue-900">15/5/2025</p>
+                        <p class="text-xl font-bold text-blue-900">{{ $signedDate->format('d/m/Y') }}</p>
                     </div>
 
                     <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4">
@@ -230,38 +251,47 @@
                             <i class="fas fa-calendar-times text-red-600 mr-2"></i>
                             <span class="text-sm font-medium text-red-800">Expires Date</span>
                         </div>
-                        <p class="text-xl font-bold text-red-900">15/7/2025</p>
+                        <p class="text-xl font-bold text-red-900">{{ $expiresDate->format('d/m/Y') }}</p>
                     </div>
 
                     <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
                         <div class="flex items-center mb-2">
                             <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
-                            <span class="text-sm font-medium text-green-800">Monthly Rent</span>
+                            <label for="rent_amount" class="text-sm font-medium text-green-800">Monthly Rent ($)</label>
                         </div>
-                        <p class="text-xl font-bold text-green-900">$150</p>
+                        <input type="number" id="rent_amount" name="rent_amount" value="{{ $booking->house->rent_amount ?? '0.00' }}"
+                               class="text-xl font-bold text-green-900 bg-transparent border-b-2 border-green-200 focus:border-green-500 outline-none w-full" step="0.01" required>
                     </div>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Rent Frequency:</span>
-                            <span class="font-semibold text-gray-800">Monthly</span>
+                            <label for="rent_frequency" class="text-gray-600">Rent Frequency:</label>
+                            <select id="rent_frequency" name="rent_frequency" class="font-semibold text-gray-800 border border-gray-300 rounded-md p-1 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Payment Method:</span>
-                            <span class="font-semibold text-gray-800">Credit</span>
+                            <label for="payment_method" class="text-gray-600">Payment Method:</label>
+                            <select id="payment_method" name="payment_method" class="font-semibold text-gray-800 border border-gray-300 rounded-md p-1 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="Credit">Credit Card</option>
+                                <option value="Cash">Cash</option>
+                                {{-- Add other payment methods as needed --}}
+                            </select>
                         </div>
                     </div>
 
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Payment Date:</span>
-                            <span class="font-semibold text-gray-800">15/5/2025</span>
+                            <span class="font-semibold text-gray-800">{{ $signedDate->format('d/m/Y') }} (or as agreed)</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Duration:</span>
-                            <span class="font-semibold text-gray-800">2 Months</span>
+                            <span class="font-semibold text-gray-800">{{ $booking->month_duration }} Month{{ $booking->month_duration > 1 ? 's' : '' }}</span>
                         </div>
                     </div>
                 </div>
@@ -272,16 +302,28 @@
                             <i class="fas fa-sticky-note text-blue-600 mr-3 mt-1"></i>
                             <div>
                                 <h4 class="font-semibold text-blue-900 mb-2">Additional Notes</h4>
-                                <p class="text-blue-800">This Agreement for 2 Months.</p>
-                            </div>
+                                <textarea name="notes" rows="3" class="w-full p-2 border border-blue-200 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-blue-800"
+                                placeholder="Enter any additional terms or notes here...">This agreement is for the rental of the property located at {{ $booking->house->first_address ?? '' }} {{ $booking->house->second_address ?? '' }}, {{ $booking->house->city ?? 'N/A' }} for a duration of {{ $booking->month_duration }} month{{ $booking->month_duration > 1 ? 's' : '' }}.</textarea>                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Action Buttons -->
+            <div class="mt-10 flex justify-end space-x-4">
+                <button onclick="downloadPDFAgreement()"
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
+                    <i class="fas fa-download mr-2"></i>Download PDF Agreement
+                </button>
+                <button onclick="signAgreement()"
+                    class="gradient-bg text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
+                    <i class="fas fa-file-signature mr-2"></i>Sign Agreement
+                </button>
+            </div>
+
             <!-- Footer -->
-            <div class="text-center py-8">
-                <p class="text-gray-500 text-sm">© 2025 Rental Agreement System. All rights reserved.</p>
+            <div class="text-center py-8 mt-4">
+                <p class="text-gray-500 text-sm">© {{ date('Y') }} Rental Agreement System. All rights reserved.</p>
             </div>
         </div>
     </div>
@@ -583,4 +625,21 @@
         document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
 
+    <script>
+        function downloadPDFAgreement() {
+            // Placeholder for PDF download logic
+            // You'll need to implement the actual PDF generation and download here.
+            // For example, you might make an AJAX request to a backend route
+            // that generates the PDF and returns it for download.
+            alert('Download PDF Agreement button clicked! Implement PDF generation here.');
+            console.log('Attempting to download PDF agreement...');
+        }
+
+        function signAgreement() {
+            // Placeholder for signing agreement logic
+            // This could redirect to a digital signature platform or trigger a modal.
+            alert('Sign Agreement button clicked! Implement signing process here.');
+            console.log('Initiating agreement signing process...');
+        }
+    </script>
 </x-layout> --}}

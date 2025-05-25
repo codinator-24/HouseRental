@@ -59,7 +59,7 @@ Route::middleware('lang')->group(function () {
         Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
         Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
-        Route::get('/AgreementShow', [AgreementController::class, 'ShowAgreement'])->name('agreement.show');
+        Route::get('/agreement/{booking}/create', [AgreementController::class, 'create'])->name('agreement.create');
     });
 });
 

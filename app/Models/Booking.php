@@ -19,6 +19,15 @@ class Booking extends Model
         'month_duration', // e.g., duration in month
     ];
 
+     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'month_duration' => 'integer',
+    ];
+
     public function house(): BelongsTo
     {
         return $this->belongsTo(House::class);
@@ -27,10 +36,5 @@ class Booking extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(User::class, 'tenant_id');
-    }
-
-     public function floors(): HasOne
-    {
-        return $this->hasOne(Floor::class);
     }
 }

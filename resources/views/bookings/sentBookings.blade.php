@@ -72,45 +72,13 @@
                                 </div>
                                 <div class="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center space-x-2">
 
-                                    <!-- drop down checkout list -->
-                                    <div x-data="{ open: false }" class="relative inline-block text-left text-sm">
-                                        <button @click="open = !open"
-                                            class="px-3 py-1.5 border border-blue-600 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 flex items-center">
-                                            Select Payment
-                                            <svg class="w-3 h-3 ml-1.5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </button>
-
-                                        <div x-show="open" @click.away="open = false" x-cloak
-                                            x-transition:enter="transition ease-out duration-200"
-                                            x-transition:enter-start="opacity-0 scale-90"
-                                            x-transition:enter-end="opacity-100 scale-100"
-                                            x-transition:leave="transition ease-in duration-150"
-                                            x-transition:leave-start="opacity-100 scale-100"
-                                            x-transition:leave-end="opacity-0 scale-90"
-                                            class="absolute right-0 mt-1 w-36 bg-white border border-blue-600 rounded-md shadow-md z-50">
-
-                                            <button
-                                                @click="open = false; $dispatch('open-cash-modal', { bookingId: {{ $booking->id }} })"
-                                                class="w-full text-left px-3 py-1.5 text-blue-600 hover:bg-blue-600 hover:text-white rounded-t-md">
-                                                Cash
-                                            </button>
-
-                                            <a href="#"
-                                                @click.prevent="
-                                            open = false;
-                                            document.getElementById('credit-checkout-form').submit();
-                                        "
-                                                class="block px-3 py-1.5 text-blue-600 hover:bg-blue-600 hover:text-white rounded-b-md">
-                                                Credit
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <!-- drop down checkout list -->
-
+                                    @if ($booking->status === 'accepted')
+                                        <a href="{{ route('agreement.create', $booking->id) }}"
+                                            class="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
+                                            Create Agreement
+                                        </a>
+                                    @endif
+                                    
                                     <a href="{{ route('bookings.details.show', $booking->id) }}"
                                         class="bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
                                         View/Update
@@ -129,7 +97,8 @@
                             <hr class="my-4 border-gray-200">
                             <p class="text-sm text-gray-600">
                                 <strong>Your Duration Required:</strong>
-                                {{ (int)$booking->month_duration }} Month{{ (int)$booking->month_duration > 1 ? 's' : '' }}
+                                {{ (int) $booking->month_duration }}
+                                Month{{ (int) $booking->month_duration > 1 ? 's' : '' }}
                             </p>
 
                             <div>

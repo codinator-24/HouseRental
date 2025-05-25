@@ -287,7 +287,7 @@
                 <tbody>
                     
                     @foreach ($houses as $house)
-                    @if($house->status == 'unavailable')
+                    @if($house->status == 'disagree')
                     <tr>
                             <td>{{ $house->title }}</td>
                             <td>{{ $house->first_address }}</td>
