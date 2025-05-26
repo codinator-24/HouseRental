@@ -37,6 +37,8 @@ class HouseController extends Controller
             'property_type' => 'required|string|max:100',
             'square_footage' => 'required|numeric|min:0',
             'rent_amount' => 'required|numeric|min:0',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'pictures' => 'nullable|array', // Ensure pictures is an array if present
             'pictures.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10048', // Validate each file in the array
             'floors' => 'required|array|min:1', // Ensure at least one floor is provided
@@ -62,6 +64,8 @@ class HouseController extends Controller
                 'square_footage' => $validatedData['square_footage'],
                 'rent_amount' => $validatedData['rent_amount'],
                 'status' => 'disagree', // Default status
+                'latitude' => $validatedData['latitude'] ?? null,
+                'longitude' => $validatedData['longitude'] ?? null,
             ]);
 
             // 3. Create Floor records
@@ -163,6 +167,8 @@ class HouseController extends Controller
             'property_type' => 'required|string|max:100',
             'square_footage' => 'required|numeric|min:0',
             'rent_amount' => 'required|numeric|min:0',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'pictures' => 'nullable|array', // Pictures array is optional
             'pictures.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10048', // Each file in array must be an image
             'floors' => 'required|array|min:1', // Ensure at least one floor is provided
@@ -185,6 +191,8 @@ class HouseController extends Controller
                 'property_type' => $validatedData['property_type'],
                 'square_footage' => $validatedData['square_footage'],
                 'rent_amount' => $validatedData['rent_amount'],
+                'latitude' => $validatedData['latitude'] ?? null,
+                'longitude' => $validatedData['longitude'] ?? null,
             ];
             $house->update($houseDataToUpdate);
 

@@ -220,6 +220,32 @@
                             </div>
                         @endif
 
+                        {{-- Location Map Section (Display if latitude and longitude exist) --}}
+                        @if ($house->latitude !== null && $house->longitude !== null)
+                            <div class="mb-6">
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Location</h2>
+                                <div id="map" style="height: 400px; width: 100%;" class="rounded-md shadow-sm">
+                                </div>
+                            </div>
+                        @elseif ($house->location_url)
+                            {{-- Fallback to existing iframe if lat/lng are not available but a URL is --}}
+                            <div class="mb-6">
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Location</h2>
+                                <div
+                                    class="overflow-hidden border border-gray-300 rounded-md shadow-sm aspect-w-16 aspect-h-9">
+                                    <iframe src="{{ $house->location_url }}" width="100%" height="100%"
+                                        style="border:0;" allowfullscreen="" loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade">
+                                    </iframe>
+                                </div>
+                                <a href="{{ $house->location_url }}" target="_blank" rel="noopener noreferrer"
+                                    class="inline-flex items-center mt-2 text-sm text-blue-600 hover:underline">
+                                    View Full Map <i class="ml-1 text-xs fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        @endif
+
+
                         {{-- Booking Buttons Logic --}}
                         @auth
                             @if (auth()->user()->status === 'Not Verified')
@@ -458,4 +484,30 @@
             });
         </script>
     @endpush
+
+    @if ($house->latitude !== null && $house->longitude !== null)
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA550b4oUwPM5RoQAmGX3LIH_BkmJoPeFM&callback=initMap" async
+            defer></script>
+        <script>
+            let map;
+
+            function initMap() {
+                const houseLocation = {
+                    lat: parseFloat({{ $house->latitude }}),
+                    lng: parseFloat({{ $house->longitude }})
+                };
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: houseLocation,
+                    zoom: 15, // Adjust zoom level as needed
+                });
+
+                new google.maps.Marker({
+                    position: houseLocation,
+                    map: map,
+                    title: 'Property Location',
+                });
+            }
+        </script>
+    @endif
 </x-layout>

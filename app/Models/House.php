@@ -28,6 +28,8 @@ class House extends Model
         'square_footage',
         'rent_amount',
         'status',
+        'latitude',
+        'longitude',
     ];
 
     /**

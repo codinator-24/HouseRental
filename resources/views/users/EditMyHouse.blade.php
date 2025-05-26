@@ -236,6 +236,17 @@
                     @enderror
                 </div>
 
+                {{-- Location Map Section --}}
+                <div class="mt-6 border-t pt-6 md:col-span-2">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">Property Location</h2>
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                    <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $house->latitude) }}">
+                    <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $house->longitude) }}">
+                    @error('latitude') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
+                    @error('longitude') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
+                </div>
+
+
             </div> {{-- End Grid --}}
 
             {{-- Submit Button for the main form (should now work correctly) --}}
@@ -376,4 +387,62 @@
     });
     </script>
     @endpush
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA550b4oUwPM5RoQAmGX3LIH_BkmJoPeFM&callback=initMap" async defer></script>
+<script>
+    let map;
+    let marker;
+
+    function initMap() {
+        const initialLat = parseFloat(document.getElementById('latitude').value)  || 35.555744; // Default bo nawarasti slemani
+        const initialLng = parseFloat(document.getElementById('longitude').value) || 45.435123; // Default bo nawarasti slemani
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: initialLat, lng: initialLng },
+            zoom: 12,
+        });
+
+        marker = new google.maps.Marker({
+            position: { lat: initialLat, lng: initialLng },
+            map: map,
+            draggable: true, // Make the marker draggable
+        });
+
+        // Update hidden input fields when marker is dragged
+        marker.addListener('dragend', function() {
+            updateLatLngInputs(marker.getPosition());
+        });
+
+        // Allow placing marker by clicking on the map
+        map.addListener('click', function(event) {
+            placeMarker(event.latLng);
+        });
+    }
+
+    function placeMarker(location) {
+        if (marker) {
+            marker.setPosition(location);
+        } else {
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                draggable: true,
+            });
+             marker.addListener('dragend', function() {
+                updateLatLngInputs(marker.getPosition());
+            });
+        }
+        updateLatLngInputs(location);
+    }
+
+    function updateLatLngInputs(location) {
+        document.getElementById('latitude').value = location.lat();
+        document.getElementById('longitude').value = location.lng();
+    }
+
+    // Initialize map when the window loads
+    // The `async defer` on the script tag handles the timing, but this is a fallback/alternative
+    // window.onload = initMap; // This might conflict with the callback in the script tag
+    // Better to rely on the `callback=initMap` in the script tag.
+</script>
 </x-layout>
