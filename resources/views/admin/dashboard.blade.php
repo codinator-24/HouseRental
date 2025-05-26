@@ -157,6 +157,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{route('houses')}}">
+                             <i class="bi bi-house-door"></i>
+                            <span>Manage House</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{route('aprove')}}">
                             <i class="bi bi-check-circle"></i>
                             <span>Approve Rents</span>
@@ -165,7 +171,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{route('users')}}">
                             <i class="bi bi-people"></i>
-                            <span>User Management</span>
+                            <span>Manage User </span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -200,6 +206,22 @@
 
                         <div class="col">
                             <div class="card shadow rounded-4 p-3">
+                                <i class="bi bi-person-exclamation text-danger" ></i>
+                                <h5 class="mt-2">Users Need Verify</h5>
+                                <h3>{{$verify}}</h3>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card shadow rounded-4 p-3">
+                                <i class="bi bi-check-circle text-info"></i>
+                                <h5 class="mt-2">Houses Need Approve</h5>
+                                <h3>{{$aproves}}</h3>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card shadow rounded-4 p-3">
                                 <i class="bi bi-people" style="color:#900C3F;"></i>
                                 <h5 class="mt-2">Boss Users</h5>
                                 <h3>{{$bosses}}</h3>
@@ -222,13 +244,7 @@
                             </div>
                         </div>
 
-                        <div class="col">
-                            <div class="card shadow rounded-4 p-3">
-                                <i class="bi bi-person-exclamation text-danger" ></i>
-                                <h5 class="mt-2">Users Need Verify</h5>
-                                <h3>{{$verify}}</h3>
-                            </div>
-                        </div>
+                        
 
                         <!-- <div class="col">
                             <div class="card shadow rounded-4 p-3">
@@ -237,14 +253,6 @@
                                 <h3>$4,567</h3>
                             </div>
                         </div> -->
-
-                        <div class="col">
-                            <div class="card shadow rounded-4 p-3">
-                                <i class="bi bi-check-circle text-info"></i>
-                                <h5 class="mt-2">Houses Need Approve</h5>
-                                <h3>{{$aproves}}</h3>
-                            </div>
-                        </div>
 
                         <div class="col">
                             <div class="card shadow rounded-4 p-3">

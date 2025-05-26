@@ -96,13 +96,16 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
     Route::get('approve', [AdminController::class, 'viewaprove'])->name('aprove');
     Route::get('users', [AdminController::class, 'viewusers'])->name('users');
+    Route::get('houses', [AdminController::class, 'view_house'])->name('houses');
     Route::get('feedback', [AdminController::class, 'viewfeedback'])->name('feedback');
     Route::get('/approve-user', [AdminController::class, 'view_aprove_user'])->name('approve-user');
     Route::get('/delete-aprove/{id}', [AdminController::class, 'delete_aprove']);
     Route::get('/approve-house/{id}', [AdminController::class, 'approve_house']);
     Route::get('/delete-user/{id}', [AdminController::class, 'delete_user']);
+    Route::get('/deactivate-user/{id}', [AdminController::class, 'deactivate_user']);
     Route::get('/approve-user/{id}', [AdminController::class, 'approve_user']);
     Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
+    Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
    });
 
 //Route bo pishandany data bo Admin

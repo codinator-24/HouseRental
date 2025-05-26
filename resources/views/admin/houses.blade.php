@@ -233,13 +233,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('houses')}}">
-                             <i class="bi bi-house-door"></i>
+                        <a class="nav-link activee" href="{{route('houses')}}">
+                            <i class="bi bi-house-door"></i>
                             <span>Manage House</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link activee" href="{{route('aprove')}}">
+                        <a class="nav-link" href="{{route('aprove')}}">
                             <i class="bi bi-check-circle"></i>
                             <span>Approve Rents</span>
                         </a>
@@ -266,16 +266,21 @@
             </nav>
 
             <div class="main-content" id="mainContent">
-                <h1>Approve Rents</h1>
+                <h1>Manage House</h1>
                 <p>This is your main content section.</p>
+
 
                 <div class="">
                     <div class="container py-5">
+                       <div class="search" style="margin-bottom:3%;">
+                         <h3 style="color:rgb(50, 149, 235);">Search For House</h3>
+                        <input type="text" id="houseSearchInput" class="form-control" placeholder="Search house...">
+                       </div>
+
     <div class="card custom-table">
-        
-        
+                        
         <div class="table-responsive">
-            <table class="table table-hover mb-0" style="font-size: 12px;">
+            <table  id="houseTable" class="table table-hover mb-0" style="font-size: 12px;">
                 <thead>
                     <tr>
                             <th scope="col">House type</th>
@@ -287,13 +292,13 @@
                             <th scope="col">Rent price</th>
                             <th scope="col">Description</th>
                             <th scope="col">Photo</th>
-                            <th scope="col">Approve?</th>
+                            <th scope="col">Deactivate</th>
                         </tr>
                 </thead>
                 <tbody>
                     
                     @foreach ($houses as $house)
-                    @if($house->status == 'disagree')
+                    @if($house->status == 'available')
                     <tr>
                             <td>{{ $house->title }}</td>
                             <td>{{ $house->first_address }}</td>
@@ -321,8 +326,7 @@
                         </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{{url('approve-house/'.$house->id)}}" onclick="return confirm('Are you sure you want to approve this house rental?')"><button class="btn-accept">Accept</button></a>
-                                    <a href="{{url('delete-aprove',$house->id)}}"  onclick="return confirm('Are you sure you want to reject this house rental?')"><button class="btn-reject">Reject</button></a>
+                                    <a href="{{url('deactivate-house',$house->id)}}"  onclick="return confirm('Are you sure you want to reject this house rental?')"><button class="btn-reject">Deactivate</button></a>
                                 </div>
                             </td>
                         </tr>
@@ -376,6 +380,24 @@ function rejectHouse(houseId) {
     }
 }
     </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('houseSearchInput');
+        const rows = document.querySelectorAll('#houseTable tbody tr');
+
+        input.addEventListener('keyup', function () {
+            const filter = input.value.toLowerCase();
+
+            rows.forEach(function (row) {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(filter) ? '' : 'none';
+            });
+        });
+    });
+</script>
+
+
+
 </body>
 
 </html>

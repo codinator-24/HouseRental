@@ -226,6 +226,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                        <a class="nav-link" href="{{route('houses')}}">
+                             <i class="bi bi-house-door"></i>
+                            <span>Manage House</span>
+                        </a>
+                    </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ route('aprove') }}">
                         <i class="bi bi-check-circle"></i>
                         <span>Approve Rents</span>
@@ -234,7 +240,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('users') }}">
                         <i class="bi bi-people"></i>
-                        <span>User Management</span>
+                        <span>Manage User</span>
                     </a>
                 </li>
                 <li class="nav-item">

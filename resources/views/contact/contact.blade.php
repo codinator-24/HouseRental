@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -241,7 +240,7 @@
      <!-- Feedback Form -->
     <main>
 <div class="container register-form">
-  <h2 class="form-title">Register</h2>
+  <h2 class="form-title">Feedback</h2>
   <form method="POST" action="{{url('add_contact')}}">
    @csrf
     <div class="row g-3">

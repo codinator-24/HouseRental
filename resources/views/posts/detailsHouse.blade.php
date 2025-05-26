@@ -1,4 +1,26 @@
 <x-layout>
+    <style>
+          .custom-btn {
+      background-color: #4a90e2;
+      color: white;
+      padding: 8px 15px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .custom-btn:hover {
+      background-color: #3a78c2;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .custom-btn:active {
+      transform: scale(0.98);
+    }
+    </style>
     <div class="px-25 bg-gray-50">
         <section class="py-12">
             <div class="container px-4 mx-auto sm:px-6 lg:px-8">
@@ -193,10 +215,10 @@
                                     <div style="display: flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-envelope mr-2 fas fa-phone text-slate-500"
                                             style="margin-bottom:8px;"></i>
-                                        <a href="{{ route('contact') }}">
-                                            <h2 class="mb-3 font-bold text-gray-800 color color-primary"
-                                                style="color:#007bff;">For Feedback</h2>
-                                        </a>
+                                        
+                                            <h2 class="mb-3 font-bold text-gray-800 color color-primary">For Feedback:</h2>
+                                                <a href="{{ route('contact') }}"><button class="custom-btn">Feedback</button></a>
+                                        
                                     </div>
                                 </div>
                             </div>

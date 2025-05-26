@@ -19,9 +19,9 @@ class AdminController extends  Controller
     {
         //this is to count all tables data
         $users = User::count();
-        $houses = House::count();
+        $houses = House::where('status','available')->count();
         $feedbacks = Feedback::count();
-        $aproves = User::where('status', 'unavailable')->count();
+        $aproves = House::where('status', 'disagree')->count();
         $landlords = User::where('role', 'lordland')->count();
         $tenants = User::where('role', 'Tenant')->count();
         $verify = User::where('status', 'Not Verified')->count();
@@ -35,6 +35,22 @@ class AdminController extends  Controller
         $images= HousePicture::all();
         $floors = Floor::all();
         return view('admin/aprove', compact('houses','images','floors'));
+    }
+
+    public function view_house()
+    {
+        $houses = House::all();
+        $images= HousePicture::all();
+        $floors = Floor::all();
+        return view('admin/houses', compact('houses','images','floors'));
+    }
+
+    public function view_allhouse()
+    {
+        $houses = House::all();
+        $images= HousePicture::all();
+        $floors = Floor::all();
+        return view('admin/houses', compact('houses','images','floors'));
     }
 
     public function viewusers()
@@ -103,4 +119,27 @@ class AdminController extends  Controller
 
         return redirect('/approve-user');
     }
+
+    public function deactivate_user($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = 'Not Verified';
+        $user->save();
+
+        // Notify the user
+        $user->notify(new AccountVerified($user));
+
+        return redirect()->back();
+    }
+
+    public function deactivate_house($id)
+    {
+        $house = House::findOrFail($id);
+        $house->status = 'disagree';
+        $house->save();
+        return redirect()->back();
+}
+
+
+
 }

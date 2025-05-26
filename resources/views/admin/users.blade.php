@@ -216,6 +216,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{route('houses')}}">
+                            < <i class="bi bi-house-door"></i>
+                            <span>Manage House</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{route('aprove')}}">
                             <i class="bi bi-check-circle"></i>
                             <span>Approve Rents</span>
@@ -224,7 +230,7 @@
                     <li class="nav-item">
                         <a class="nav-link activee" href="{{route('users')}}">
                             <i class="bi bi-people"></i>
-                            <span>User Management</span>
+                            <span>Manage User</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -243,15 +249,20 @@
             </nav>
 
             <div class="main-content" id="mainContent">
-                <h1>User Management</h1>
+                <h1>Manage User</h1>
                 <p>Manage your users.</p>
 
                 <div class="">
                     <div class="container py-5">
+                        <div class="mb-3">
+                            <h3 style="color:rgb(50, 149, 235);">Search For Users</h3>
+                        <input type="text" id="userSearchInput" class="form-control" placeholder="Search users...">
+                       </div>
+
                         <div class="card custom-table">
 
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0" style="font-size: 12px;">
+                                <table class="table table-hover mb-0" id="userTable" style="font-size: 12px;">
                                     <thead>
                                         <tr>
                                             <th>Full name</th>
@@ -260,11 +271,12 @@
                                             <th>Phone number</th>
                                             <th>Address</th>
                                             <th>Role</th>
-                                            <th>Remove User</th>
+                                            <th>Deactivate User</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($data as $user)
+                                        @if($user->status == 'Verified')
                                         <tr>
                                             <td data-label="ناو">
                                                 <p>{{$user->full_name}}</p>
@@ -285,10 +297,11 @@
                                                 {{$user->role}}
                                             </td>
                                             <td data-label="گۆرینی ڕؤڵ یان سڕینەوە">
-                                                <a href="{{url('delete-user',$user->id)}}">
-                                                    <button class="btn-delete" onclick="return confirm('Are you sure you want to reject this house rental?')">Delete</button>                                                </a>
+                                                <a href="{{url('deactivate-user',$user->id)}}">
+                                                    <button class="btn-delete" onclick="return confirm('Are you sure you want to reject this house rental?')">Deactivate</button>                                                </a>
                                             </td>
                                         </tr>
+                                        @endif
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -332,6 +345,17 @@
                 }
             }
         </script>
+        <script>
+    document.getElementById('userSearchInput').addEventListener('keyup', function () {
+        let input = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#userTable tbody tr');
+
+        rows.forEach(function (row) {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    });
+</script>
     </body>
 
 </html>
