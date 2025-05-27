@@ -46,13 +46,20 @@
     <section id="search"
         class="container relative z-20 max-w-4xl px-5 py-6 mx-auto -mt-16 bg-white rounded-lg shadow-lg">
         {{-- Submit to the current URL to re-load the page with query parameters --}}
-        <form action="{{ request()->url() }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-4">
-            {{-- Location --}}
+         <form action="{{ route('home') }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-4">
+            {{-- City Dropdown (Replaces Location Input) --}}
             <div>
-                <label for="location" class="block mb-1 text-sm font-medium text-gray-700">Location</label>
-                <input type="text" id="location" name="location" value="{{ request('location') }}"
-                    placeholder="City, neighborhood..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                 <label for="city" class="block mb-1 text-sm font-medium text-gray-700">City</label>
+                <select id="city" name="city"
+                    class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <option value="" {{ request('city') == '' ? 'selected' : '' }}>All Cities</option>
+                    <option value="Sulaymaniyah" {{ request('city') == 'Sulaymaniyah' ? 'selected' : '' }}>Sulaymaniyah</option>
+                    <option value="Hawler" {{ request('city') == 'Hawler' ? 'selected' : '' }}>Hawler</option>
+                    <option value="Karkuk" {{ request('city') == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
+                    <option value="Dhok" {{ request('city') == 'Dhok' ? 'selected' : '' }}>Dhok</option>
+                    <option value="Halabja" {{ request('city') == 'Halabja' ? 'selected' : '' }}>Halabja</option>
+                    {{-- Add other cities as needed, ensuring values match what's stored in the database --}}
+                </select>
             </div>
             {{-- Price --}}
             <div>
@@ -119,7 +126,9 @@
                                 <p class="flex-grow mb-4 text-sm text-gray-600">
                                     <i class="mr-1 fas fa-map-marker-alt text-slate-500"></i>
                                     {{ $house->city }}, {{ $house->first_address }}
-                                    {{ $house->second_address ?? '' }}
+                                   {{-- In index, 'first_address' is now 'neighborhood' --}}
+                                    {{-- Displaying city and neighborhood --}}
+                                    {{ $house->neighborhood }} {{ $house->second_address ? ', ' . $house->second_address : '' }}
                                 </p>
                                 <div class="flex items-center justify-between mb-4">
                                     <span

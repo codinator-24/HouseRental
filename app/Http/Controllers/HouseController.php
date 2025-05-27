@@ -30,7 +30,7 @@ class HouseController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'first_address' => 'required|string|max:255',
+            'neighborhood' => 'required|string|max:255',
             'second_address' => 'nullable|string|max:255',
             'city' => 'required|string|max:100',
             'location_url' => 'nullable|url|max:500',
@@ -56,7 +56,7 @@ class HouseController extends Controller
                 'landlord_id' => Auth::id(), // Get logged-in user's ID
                 'title' => $validatedData['title'],
                 'description' => $validatedData['description'],
-                'first_address' => $validatedData['first_address'],
+                'neighborhood' => $validatedData['neighborhood'],
                 'second_address' => $validatedData['second_address'],
                 'city' => $validatedData['city'],
                 'location_url' => $validatedData['location_url'],
@@ -160,7 +160,7 @@ class HouseController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'first_address' => 'required|string|max:255',
+            'neighborhood' => 'required|string|max:255',
             'second_address' => 'nullable|string|max:255',
             'city' => 'required|string|max:100',
             'location_url' => 'nullable|url|max:500',
@@ -184,7 +184,7 @@ class HouseController extends Controller
             $houseDataToUpdate = [
                 'title' => $validatedData['title'],
                 'description' => $validatedData['description'],
-                'first_address' => $validatedData['first_address'],
+                'neighborhood' => $validatedData['neighborhood'],
                 'second_address' => $validatedData['second_address'],
                 'city' => $validatedData['city'],
                 'location_url' => $validatedData['location_url'],

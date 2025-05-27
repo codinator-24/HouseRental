@@ -52,7 +52,7 @@
                     <select id="property_type" name="property_type"
                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white @error('property_type') border-red-500 @enderror"
                         required>
-                        <option value="" {{ old('property_type', $house->property_type) == '' ? 'selected' : '' }}>Select Property Type</option>
+                        <option value="" {{ old('property_type', $house->property_type) === '' ? 'selected' : '' }}>Select Property Type</option>
                         <option value="apartment" {{ old('property_type', $house->property_type) == 'apartment' ? 'selected' : '' }}>Apartment</option>
                         <option value="house" {{ old('property_type', $house->property_type) == 'house' ? 'selected' : '' }}>House</option>
                         <option value="condo" {{ old('property_type', $house->property_type) == 'condo' ? 'selected' : '' }}>Condo</option>
@@ -63,36 +63,48 @@
                     @enderror
                 </div>
 
-                {{-- First Address --}}
-                <div class="mb-4 md:col-span-2">
-                    <label for="first_address" class="block text-gray-700 text-sm font-bold mb-2">First Address Line:</label>
-                    <input type="text" id="first_address" name="first_address" value="{{ old('first_address', $house->first_address) }}"
-                        required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('first_address') border-red-500 @enderror">
-                    @error('first_address')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Second Address --}}
-                <div class="mb-4">
-                    <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">Second Address Line <span class="text-gray-500 text-xs">(Optional)</span>:</label>
-                    <input type="text" id="second_address" name="second_address" value="{{ old('second_address', $house->second_address) }}"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('second_address') border-red-500 @enderror">
-                    @error('second_address')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 {{-- City --}}
                 <div class="mb-4">
                     <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
-                    <input type="text" id="city" name="city" value="{{ old('city', $house->city) }}"
-                        required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('city') border-red-500 @enderror">
+                    <select id="city" name="city" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('city') border-red-500 @enderror">
+                        <option value="" {{ old('city', $house->city) == '' ? 'selected' : '' }}>Select City</option>
+                        <option value="Sulaymaniyah" {{ old('city', $house->city) == 'Sulaymaniyah' ? 'selected' : '' }}>Sulaymaniyah</option>
+                        <option value="Hawler" {{ old('city', $house->city) == 'Hawler' ? 'selected' : '' }}>Hawler</option>
+                        <option value="Karkuk" {{ old('city', $house->city) == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
+                        <option value="Dhok" {{ old('city', $house->city) == 'Dhok' ? 'selected' : '' }}>Dhok</option>
+                        <option value="Halabja" {{ old('city', $house->city) == 'Halabja' ? 'selected' : '' }}>Halabja</option>
+                    </select>
                     @error('city')
                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                     @enderror
+                </div>
+
+                {{-- Combined Neighborhood and Second Address --}}
+                <div class="md:col-span-2 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- Neighborhood (Replaces First Address) --}}
+                        <div>
+                            <label for="neighborhood" class="block text-gray-700 text-sm font-bold mb-2">Neighborhood:</label>
+                            <select id="neighborhood" name="neighborhood" required
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('neighborhood') border-red-500 @enderror">
+                                <option value="">Select Neighborhood</option> {{-- Options populated by JS --}}
+                            </select>
+                            @error('neighborhood')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Second Address (Moved into sub-grid) --}}
+                        <div>
+                            <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">Second Address Line <span class="text-gray-500 text-xs">(Optional)</span>:</label>
+                            <input type="text" id="second_address" name="second_address" value="{{ old('second_address', $house->second_address) }}"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('second_address') border-red-500 @enderror">
+                            @error('second_address')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Location URL --}}
@@ -384,6 +396,78 @@
             });
             floorCounter = allFloorSections.length; // Reset counter to current number of floors
         }
+
+        // --- City and Neighborhood Dropdown Logic (Adapted for Edit Page) ---
+        const cityDropdown = document.getElementById('city');
+        const neighborhoodDropdown = document.getElementById('neighborhood');
+
+        if (cityDropdown && neighborhoodDropdown) {
+            const neighborhoodsByCity = {
+                'Sulaymaniyah': [
+                    'Salim', 'Raparin', 'New Sulaymaniyah', 'Bakhtiary', 'Tasfirate',
+                    'German', 'Goizha', 'Kani Ashkan', 'Malkandi', 'Shaikh Maruf',
+                    'Qelay Sherwana', 'Pismam', 'Nawbahar', 'Kanes', 'Razgah', 'Ashti'
+                ],
+                'Hawler': [
+                    'Ankawa', 'Iskan', 'Naz City', 'Kushtaba', 'Majidi Mall',
+                    'Erbil Citadel', 'Shadi', 'Mamostayan', 'Badawa', 'Prmam',
+                    'Rozhalat', 'Brayati', 'Galawezh', 'Bakhtyari', 'Brusk', 'Haybat Sultan'
+                ],
+                'Karkuk': [
+                    'Shorja', 'Arafa', 'Imam Qasim', 'Shorawiya', 'Tisseen Street',
+                    'Baghlan', 'Azadi', 'Rahimawa', 'Domiz', 'New Kirkuk',
+                    'Wasati', 'Laylan' // Removed duplicate Shorja, Iskan
+                ],
+                'Dhok': [
+                    'Azadi', 'Baxtyari', 'Shexan', 'Qutabxana', 'Newroz', 'Center',
+                    'Nali', 'Shorsh', 'Tasluja', 'Qoshtapa'
+                ],
+                'Halabja': [
+                    'Center', 'New Halabja', 'Khurmal', 'Biara', 'Sayid Sadiq',
+                    'Serkani', 'Anab', 'Biyare', 'Tuwela', 'Maidan', 'Shahidan'
+                ]
+            };
+
+            const currentOldCity = "{{ old('city', $house->city) }}";
+            const currentOldNeighborhood = "{{ old('neighborhood', $house->neighborhood) }}";
+
+            function updateNeighborhoodOptions() {
+                const selectedCity = cityDropdown.value;
+                neighborhoodDropdown.innerHTML = '<option value="">Select Neighborhood</option>'; // Clear and add placeholder
+
+                if (selectedCity && neighborhoodsByCity[selectedCity] && neighborhoodsByCity[selectedCity].length > 0) {
+                    neighborhoodsByCity[selectedCity].forEach(function(neighborhood) {
+                        const option = document.createElement('option');
+                        option.value = neighborhood;
+                        option.textContent = neighborhood;
+                        // Pre-select logic: if the current neighborhood matches for the selected city
+                        if (selectedCity === currentOldCity && neighborhood === currentOldNeighborhood) {
+                            option.selected = true;
+                        }
+                        neighborhoodDropdown.appendChild(option);
+                    });
+                    neighborhoodDropdown.disabled = false;
+                } else {
+                    neighborhoodDropdown.disabled = true;
+                }
+            }
+
+            // Add event listener for changes on the city dropdown
+            cityDropdown.addEventListener('change', updateNeighborhoodOptions);
+
+            // Initial population:
+            // 1. Ensure the city dropdown itself has the correct initial value (from old input or model data).
+            //    The Blade template already handles setting the 'selected' attribute on city options.
+            //    So, cityDropdown.value should be correct on DOMContentLoaded.
+            //
+            // 2. Call updateNeighborhoodOptions to populate neighborhoods based on the initially selected city
+            //    and to select the correct neighborhood.
+            if (currentOldCity) { // Ensure cityDropdown.value is explicitly set if relying on JS for initial state
+                 cityDropdown.value = currentOldCity;
+            }
+            updateNeighborhoodOptions();
+        }
+        // --- End of City and Neighborhood Dropdown Logic ---
     });
     </script>
     @endpush

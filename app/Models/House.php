@@ -20,7 +20,7 @@ class House extends Model
         'landlord_id',
         'title',
         'description',
-        'first_address',
+        'neighborhood',
         'second_address',
         'city',
         'location_url',

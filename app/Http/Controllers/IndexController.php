@@ -13,18 +13,13 @@ class IndexController extends Controller
     {
         $query = House::query()->with('pictures'); // Start a query and eager load pictures
 
-        // 1. Filter by Location (as discussed before)
-        if ($request->filled('location')) {
-            $location = $request->input('location');
-            $query->where(function ($q) use ($location) {
-                $q->where('city', 'LIKE', "%{$location}%")
-                    ->orWhere('first_address', 'LIKE', "%{$location}%")
-                    ->orWhere('second_address', 'LIKE', "%{$location}%");
-            });
+        // 1. Filter by City (updated from general location search)
+        if ($request->filled('city')) {
+            $query->where('city', $request->input('city'));
         }
 
         // 2. Filter by Price (as discussed before)
-        if ($request->filled('price')) {
+        if ($request->filled('price') && $request->input('price') !== '') {
             $priceRange = $request->input('price');
             switch ($priceRange) {
                 case '0-1000':
@@ -43,7 +38,7 @@ class IndexController extends Controller
         }
 
         // 3. Filter by Property Type (as discussed before)
-        if ($request->filled('property_type')) {
+        if ($request->filled('property_type') && $request->input('property_type') !== '') {
             $query->where('property_type', $request->input('property_type'));
         }
 
@@ -55,7 +50,10 @@ class IndexController extends Controller
             $query->where('landlord_id', '!=', Auth::id());
         }
 
-        // 5. Filter by status: only show 'available' houses
+         // 5. Filter by status: only show 'agree' (or 'available') houses
+        // Assuming 'agree' is the status for publicly visible and rentable houses.
+        // Adjust to 'available' if that's your intended status.
+        // The previous version had 'available', your HouseController AddHouse sets 'disagree' by default.
         $query->where('status', 'available');
 
         // Get the results (you might want to paginate)
