@@ -19,7 +19,7 @@ class AdminController extends  Controller
     {
         //this is to count all tables data
         $users = User::count();
-        $houses = House::where('status','available')->count();
+        $houses = House::where('status', 'available')->count();
         $feedbacks = Feedback::count();
         $aproves = House::where('status', 'disagree')->count();
         $landlords = User::where('role', 'lordland')->count();
@@ -32,25 +32,25 @@ class AdminController extends  Controller
     public function viewaprove()
     {
         $houses = House::all();
-        $images= HousePicture::all();
+        $images = HousePicture::all();
         $floors = Floor::all();
-        return view('admin/aprove', compact('houses','images','floors'));
+        return view('admin/aprove', compact('houses', 'images', 'floors'));
     }
 
     public function view_house()
     {
         $houses = House::all();
-        $images= HousePicture::all();
+        $images = HousePicture::all();
         $floors = Floor::all();
-        return view('admin/houses', compact('houses','images','floors'));
+        return view('admin/houses', compact('houses', 'images', 'floors'));
     }
 
     public function view_allhouse()
     {
         $houses = House::all();
-        $images= HousePicture::all();
+        $images = HousePicture::all();
         $floors = Floor::all();
-        return view('admin/houses', compact('houses','images','floors'));
+        return view('admin/houses', compact('houses', 'images', 'floors'));
     }
 
     public function viewusers()
@@ -61,7 +61,7 @@ class AdminController extends  Controller
     public function viewfeedback()
     {
         $data = Feedback::all();
-        return view('admin/feedback',compact('data'));
+        return view('admin/feedback', compact('data'));
     }
     public function view_aprove_user()
     {
@@ -138,8 +138,45 @@ class AdminController extends  Controller
         $house->status = 'disagree';
         $house->save();
         return redirect()->back();
-}
+    }
+
+    // Example in your AdminController.php (or relevant controller)
+    public function ViewProfit()
+    {
+        // --- Fetch or calculate your data ---
+        // Example:
+        $profitData = [
+            'labels' => ['Luxury Apartments', 'Standard Houses', 'Commissions'],
+            'data' => [15000, 25000, 5000],
+        ];
+
+        // You might also want to generate colors dynamically or have a predefined set
+        $colors = [
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            // Add more colors if needed
+        ];
+        $borderColors = [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+        ];
 
 
+        $chartDataFromServer = [
+            'labels' => $profitData['labels'],
+            'datasets' => [
+                [
+                    'label' => 'Profit Distribution',
+                    'data' => $profitData['data'],
+                    'backgroundColor' => array_slice($colors, 0, count($profitData['data'])),
+                    'borderColor' => array_slice($borderColors, 0, count($profitData['data'])),
+                    'borderWidth' => 1
+                ]
+            ]
+        ];
 
+        return view('admin.profit', compact('chartDataFromServer'));
+    }
 }

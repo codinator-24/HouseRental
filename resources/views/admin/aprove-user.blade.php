@@ -255,6 +255,12 @@
                         <span>Feedback</span>
                     </a>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="{{ route('profit') }}">
+                        <i class="bi bi-bar-chart-line"></i>
+                        <span>profit</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 

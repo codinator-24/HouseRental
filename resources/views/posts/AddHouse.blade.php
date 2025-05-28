@@ -309,17 +309,17 @@
     @endauth
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- Existing Floor Management Script ---
-        const addFloorButton = document.getElementById('addFloorButton');
-        const floorsContainer = document.getElementById('floors_container');
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Existing Floor Management Script ---
+            const addFloorButton = document.getElementById('addFloorButton');
+            const floorsContainer = document.getElementById('floors_container');
 
-        if (addFloorButton && floorsContainer) {
-            let floorCounter = {{ isset($floorEntries) ? count($floorEntries) : 0 }};
+            if (addFloorButton && floorsContainer) {
+                let floorCounter = {{ isset($floorEntries) ? count($floorEntries) : 0 }};
 
-            addFloorButton.addEventListener('click', function() {
-                const newIndex = floorCounter;
-                const floorSectionHtml = `
+                addFloorButton.addEventListener('click', function() {
+                    const newIndex = floorCounter;
+                    const floorSectionHtml = `
                     <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50" data-index="${newIndex}">
                         <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor ${newIndex + 1}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -343,167 +343,170 @@
                         </div>
                     </div>
                 `;
-                floorsContainer.insertAdjacentHTML('beforeend', floorSectionHtml);
-                floorCounter++;
-            });
-
-            floorsContainer.addEventListener('click', function(event) {
-                if (event.target && event.target.classList.contains('remove-floor-btn')) {
-                    const floorSectionToRemove = event.target.closest('.floor-section');
-                    if (floorSectionToRemove) {
-                        floorSectionToRemove.remove();
-                        updateFloorTitles();
-                    }
-                }
-            });
-
-            function updateFloorTitles() {
-                const allFloorSections = floorsContainer.querySelectorAll('.floor-section');
-                allFloorSections.forEach((section, idx) => {
-                    const titleElement = section.querySelector('h3');
-                    if (titleElement) {
-                        titleElement.textContent = `Floor ${idx + 1}`;
-                    }
+                    floorsContainer.insertAdjacentHTML('beforeend', floorSectionHtml);
+                    floorCounter++;
                 });
-                floorCounter = allFloorSections.length;
-            }
-        }
-        // --- End of Existing Floor Management Script ---
 
-
-        // --- NEW: City and Neighborhood Dropdown Logic ---
-        const cityDropdown = document.getElementById('city');
-        const neighborhoodDropdown = document.getElementById('neighborhood'); // The new select element
-
-        if (cityDropdown && neighborhoodDropdown) { // Ensure these elements exist on the page
-            // Define neighborhoods for each city.
-            // In a real application, this data might come from the backend (e.g., passed as a JSON object or fetched via API)
-            const neighborhoodsByCity = {
-                  'Sulaymaniyah': [
-            'Salim',
-            'Raparin',
-            'Bakrajo',
-            'Xabat',
-            'New Sulaymaniyah',
-            'Bakhtiary',
-            'Tasfirate',
-            'German',
-            'Goizha',
-            'Kani Ashkan',
-            'Malkandi',
-            'Shaikh Maruf',
-            'Qelay Sherwana',
-            'Pismam',
-            'Nawbahar',
-            'Kanes',
-            'Razgah',
-            'Ashti'
-        ],
-        'Hawler': [
-            'Ankawa',
-            'Iskan',
-            'Naz City', 
-            'Kushtaba',
-            'Majidi Mall',
-            'Erbil Citadel',
-            'Shadi',
-            'Mamostayan',
-            'Badawa',
-            'Prmam',
-            'Rozhalat',
-            'Brayati',
-            'Galawezh',
-            'Bakhtyari',
-            'Brusk',
-            'Haybat Sultan'
-        ],
-        'Karkuk': [
-            'Shorja',
-            'Arafa',
-            'Imam Qasim',
-            'Shorawiya',
-            'Tisseen Street',
-            'Baghlan',
-            'Azadi',
-            'Rahimawa',
-            'Domiz',
-            'New Kirkuk',
-            'Wasati',
-            'Shorja',
-            'Iskan',
-            'Laylan'
-        ],
-        'Dhok': [
-            'Azadi',
-            'Baxtyari',
-            'Shexan',
-            'Qutabxana',
-            'Newroz',
-            'Center',
-            'Nali',
-            'Shorsh',
-            'Tasluja',
-            'Qoshtapa'
-        ],
-        'Halabja': [
-            'Center',
-            'New Halabja',
-            'Khurmal',
-            'Biara',
-            'Sayid Sadiq',
-            'Serkani',
-            'Anab',
-            'Biyare',
-            'Tuwela',
-            'Maidan',
-            'Shahidan'
-        ]
-                // Add more cities and their neighborhoods as needed
-            };
-
-            const currentOldCity = "{{ old('city') }}";
-            const currentOldNeighborhood = "{{ old('neighborhood') }}";
-
-            function updateNeighborhoodOptions() {
-                const selectedCity = cityDropdown.value;
-                
-                // Clear previous neighborhood options and add the default placeholder
-                neighborhoodDropdown.innerHTML = '<option value="">Select Neighborhood</option>';
-
-                if (selectedCity && neighborhoodsByCity[selectedCity] && neighborhoodsByCity[selectedCity].length > 0) {
-                    neighborhoodsByCity[selectedCity].forEach(function(neighborhood) {
-                        const option = document.createElement('option');
-                        option.value = neighborhood;
-                        option.textContent = neighborhood;
-                        neighborhoodDropdown.appendChild(option);
-                    });
-
-                    // If there was an old city selected and it matches the current selected city,
-                    // and there was an old neighborhood, try to re-select it.
-                    if (selectedCity === currentOldCity && currentOldNeighborhood) {
-                        // Ensure the old neighborhood is valid for the selected city before setting it
-                        if (neighborhoodsByCity[selectedCity].includes(currentOldNeighborhood)) {
-                            neighborhoodDropdown.value = currentOldNeighborhood;
+                floorsContainer.addEventListener('click', function(event) {
+                    if (event.target && event.target.classList.contains('remove-floor-btn')) {
+                        const floorSectionToRemove = event.target.closest('.floor-section');
+                        if (floorSectionToRemove) {
+                            floorSectionToRemove.remove();
+                            updateFloorTitles();
                         }
                     }
-                    
-                    neighborhoodDropdown.disabled = false;
-                } else {
-                    neighborhoodDropdown.disabled = true; // Disable if no city selected or no neighborhoods for the city
+                });
+
+                function updateFloorTitles() {
+                    const allFloorSections = floorsContainer.querySelectorAll('.floor-section');
+                    allFloorSections.forEach((section, idx) => {
+                        const titleElement = section.querySelector('h3');
+                        if (titleElement) {
+                            titleElement.textContent = `Floor ${idx + 1}`;
+                        }
+                    });
+                    floorCounter = allFloorSections.length;
                 }
             }
+            // --- End of Existing Floor Management Script ---
 
-            // Add event listener for changes on the city dropdown
-            cityDropdown.addEventListener('change', updateNeighborhoodOptions);
 
-            // Initial population of neighborhoods when the page loads.
-            // This handles cases where `old('city')` pre-selects a city,
-            // ensuring the neighborhood dropdown is populated and `old('neighborhood')` is respected.
-            updateNeighborhoodOptions();
-        }
-        // --- End of City and Neighborhood Dropdown Logic ---
-    });
-</script>
+            // --- NEW: City and Neighborhood Dropdown Logic ---
+            const cityDropdown = document.getElementById('city');
+            const neighborhoodDropdown = document.getElementById('neighborhood'); // The new select element
+
+            if (cityDropdown && neighborhoodDropdown) { // Ensure these elements exist on the page
+                // Define neighborhoods for each city.
+                // In a real application, this data might come from the backend (e.g., passed as a JSON object or fetched via API)
+                const neighborhoodsByCity = {
+                    'Sulaymaniyah': [
+                        'Salim',
+                        'Raparin',
+                        'Bakrajo',
+                        'Xabat',
+                        'New Sulaymaniyah',
+                        'Bakhtiary',
+                        'Tasfirate',
+                        'German',
+                        'Goizha',
+                        'Kani Ashkan',
+                        'Malkandi',
+                        'Shaikh Maruf',
+                        'Qelay Sherwana',
+                        'Pismam',
+                        'Nawbahar',
+                        'Kanes',
+                        'Razgah',
+                        'Ashti'
+                    ],
+                    'Hawler': [
+                        'Ankawa',
+                        'Iskan',
+                        'Naz City',
+                        'Kushtaba',
+                        'Majidi Mall',
+                        'Erbil Citadel',
+                        'Shadi',
+                        'Mamostayan',
+                        'Badawa',
+                        'Prmam',
+                        'Rozhalat',
+                        'Brayati',
+                        'Galawezh',
+                        'Bakhtyari',
+                        'Brusk',
+                        'Haybat Sultan'
+                    ],
+                    'Karkuk': [
+                        'Shorja',
+                        'Arafa',
+                        'Imam Qasim',
+                        'Shorawiya',
+                        'Tisseen Street',
+                        'Baghlan',
+                        'Azadi',
+                        'Rahimawa',
+                        'Domiz',
+                        'New Kirkuk',
+                        'Wasati',
+                        'Shorja',
+                        'Iskan',
+                        'Laylan'
+                    ],
+                    'Dhok': [
+                        'Azadi',
+                        'Baxtyari',
+                        'Shexan',
+                        'Qutabxana',
+                        'Newroz',
+                        'Center',
+                        'Nali',
+                        'Shorsh',
+                        'Tasluja',
+                        'Qoshtapa'
+                    ],
+                    'Halabja': [
+                        'Center',
+                        'New Halabja',
+                        'Khurmal',
+                        'Biara',
+                        'Sayid Sadiq',
+                        'Serkani',
+                        'Ababaile',
+                        'Anab',
+                        'Biyare',
+                        'Tuwela',
+                        'Maidan',
+                        'Shahidan'
+                    ]
+                    // Add more cities and their neighborhoods as needed
+                };
+
+                const currentOldCity = "{{ old('city') }}";
+                const currentOldNeighborhood = "{{ old('neighborhood') }}";
+
+                function updateNeighborhoodOptions() {
+                    const selectedCity = cityDropdown.value;
+
+                    // Clear previous neighborhood options and add the default placeholder
+                    neighborhoodDropdown.innerHTML = '<option value="">Select Neighborhood</option>';
+
+                    if (selectedCity && neighborhoodsByCity[selectedCity] && neighborhoodsByCity[selectedCity]
+                        .length > 0) {
+                        neighborhoodsByCity[selectedCity].forEach(function(neighborhood) {
+                            const option = document.createElement('option');
+                            option.value = neighborhood;
+                            option.textContent = neighborhood;
+                            neighborhoodDropdown.appendChild(option);
+                        });
+
+                        // If there was an old city selected and it matches the current selected city,
+                        // and there was an old neighborhood, try to re-select it.
+                        if (selectedCity === currentOldCity && currentOldNeighborhood) {
+                            // Ensure the old neighborhood is valid for the selected city before setting it
+                            if (neighborhoodsByCity[selectedCity].includes(currentOldNeighborhood)) {
+                                neighborhoodDropdown.value = currentOldNeighborhood;
+                            }
+                        }
+
+                        neighborhoodDropdown.disabled = false;
+                    } else {
+                        neighborhoodDropdown.disabled =
+                        true; // Disable if no city selected or no neighborhoods for the city
+                    }
+                }
+
+                // Add event listener for changes on the city dropdown
+                cityDropdown.addEventListener('change', updateNeighborhoodOptions);
+
+                // Initial population of neighborhoods when the page loads.
+                // This handles cases where `old('city')` pre-selects a city,
+                // ensuring the neighborhood dropdown is populated and `old('neighborhood')` is respected.
+                updateNeighborhoodOptions();
+            }
+            // --- End of City and Neighborhood Dropdown Logic ---
+        });
+    </script>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA550b4oUwPM5RoQAmGX3LIH_BkmJoPeFM&callback=initMap" async
         defer></script>

@@ -106,6 +106,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/approve-user/{id}', [AdminController::class, 'approve_user']);
     Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
     Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
+    Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
    });
 
 //Route bo pishandany data bo Admin

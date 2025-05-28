@@ -1,25 +1,25 @@
 <x-layout>
     <style>
-          .custom-btn {
-      background-color: #4a90e2;
-      color: white;
-      padding: 8px 15px;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
+        .custom-btn {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    .custom-btn:hover {
-      background-color: #3a78c2;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
+        .custom-btn:hover {
+            background-color: #3a78c2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
 
-    .custom-btn:active {
-      transform: scale(0.98);
-    }
+        .custom-btn:active {
+            transform: scale(0.98);
+        }
     </style>
     <div class="px-25 bg-gray-50">
         <section class="py-12">
@@ -215,10 +215,11 @@
                                     <div style="display: flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-envelope mr-2 fas fa-phone text-slate-500"
                                             style="margin-bottom:8px;"></i>
-                                        
-                                            <h2 class="mb-3 font-bold text-gray-800 color color-primary">For Feedback:</h2>
-                                                <a href="{{ route('contact') }}"><button class="custom-btn">Feedback</button></a>
-                                        
+
+                                        <h2 class="mb-3 font-bold text-gray-800 color color-primary">For Feedback:</h2>
+                                        <a href="{{ route('contact') }}"><button
+                                                class="custom-btn">Feedback</button></a>
+
                                     </div>
                                 </div>
                             </div>
@@ -274,45 +275,47 @@
                                 <div class="pt-6 mt-6 mb-8 border-t">
                                     <p class="text-lg text-orange-600">Wait until your account is verified.</p>
                                 </div>
+                            @elseif (auth()->user()->role === 'landlord')
+                                <div class="pt-6 mt-6 mb-8 border-t">
+                                    <p class="text-lg text-gray-700">As a landlord, you cannot book properties.</p>
+                                </div>
                             @else
-                                @if ($house->landlord) {{-- Ensure landlord exists for this house --}}
-                                    @if (auth()->id() === $house->landlord->id)
-                                        {{-- User IS the landlord --}}
+                                @if ($house->landlord)
+                                    @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
+                                        {{-- User has already booked this house --}}
                                         <div class="pt-6 mt-6 mb-8 border-t">
-                                            <p class="text-lg text-gray-700">This is your property. You cannot book it.</p>
-                                            {{-- Optionally, add a link to manage this property or view its bookings --}}
+                                            <p class="mb-3 text-lg text-gray-700">You have already sent a booking
+                                                request for this property.</p>
+                                            <a href="{{ route('bookings.details.show', $userBookingForThisHouse->id) }}"
+                                                class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
+                                                View Your Booking Details
+                                            </a>
                                         </div>
                                     @else
-                                        {{-- User is authenticated and is NOT the landlord --}}
-                                        {{-- Assumes $userBookingForThisHouse is passed from controller --}}
-                                        {{-- $userBookingForThisHouse = Booking::where('tenant_id', auth()->id())->where('house_id', $house->id)->first(); --}}
-                                        @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
-                                            {{-- User has already booked this house --}}
-                                            <div class="pt-6 mt-6 mb-8 border-t">
-                                                <p class="mb-3 text-lg text-gray-700">You have already sent a booking
-                                                    request for this property.</p>
-                                                <a href="{{ route('bookings.details.show', $userBookingForThisHouse->id) }}"
-                                                    class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                                                    View Your Booking Details
-                                                </a>
-                                                {{-- <a href="{{ route('bookings.show.sent', $userBookingForThisHouse->id) }}"
-                           class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                            View Your Booking Details
-                        </a> --}}
-                                            </div>
-                                        @else
-                                            {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
-                                            <div class="pt-6 mt-6 mb-8 border-t">
-                                                <button type="button" id="openBookingMessageModalBtn"
-                                                    class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
-                                                    Book This Property Now
-                                                </button>
-                                            </div>
-                                        @endif
+                                        {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
+                                        <div class="pt-6 mt-6 mb-8 border-t">
+                                            <button type="button" id="openBookingMessageModalBtn"
+                                                class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
+                                                Book This Property Now
+                                            </button>
+                                        </div>
                                     @endif
                                 @else
+                                    <div class="pt-6 mt-6 mb-8 border-t">
+                                        <p class="text-lg text-gray-700">This property is currently not available for
+                                            booking (no landlord assigned).</p>
+                                    </div>
                                 @endif
                             @endif
+                        @else
+                            {{-- User is not authenticated (guest) --}}
+                            <div class="pt-6 mt-6 mb-8 border-t">
+                                <p class="text-lg text-gray-700">Please <a href="{{ route('login') }}"
+                                        class="font-semibold text-indigo-600 hover:underline">log in</a> or <a
+                                        href="{{ route('register') }}"
+                                        class="font-semibold text-indigo-600 hover:underline">register</a> to book a
+                                    property.</p>
+                            </div>
                         @endauth
 
                         @guest
