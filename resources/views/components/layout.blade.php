@@ -48,6 +48,28 @@
                     </div>
                 @endguest
 
+                <!-- Currency Switcher Dropdown (Desktop) -->
+                <div class="relative hidden md:block" x-data="currencySwitcher()" x-init="initGlobal()">
+                    <button @click="open = !open" type="button" title="Switch Currency"
+                        class="flex items-center px-3 py-1 space-x-1 text-gray-600 rounded hover:text-blue-600 focus:outline-none hover:bg-gray-100">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span x-text="currentCurrencyDisplay" class="hidden ml-1 sm:inline"></span>
+                        <i class="ml-1 fas fa-chevron-down fa-xs"></i>
+                    </button>
+                    <div x-show="open" @click.outside="open = false"
+                        class="absolute right-0 z-20 py-1 mt-2 bg-white border border-gray-200 rounded-md shadow-lg min-w-max"
+                        style="display: none;">
+                        <template x-for="currency in availableCurrencies" :key="currency">
+                            <button @click="selectCurrency(currency)"
+                                :class="{ 'bg-gray-100 font-semibold': currency === currentCurrencyDisplay }"
+                                class="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100">
+                                <!-- You might want icons for currencies if available, like flags for languages -->
+                                <span x-text="currency"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
                 <!-- Language Switcher Dropdown (Desktop and Mobile) -->
                 <!-- This will be duplicated into the mobile menu below, or we can make this one work for both -->
                 <div class="relative hidden md:block" x-data="{ langOpen: false }">
@@ -240,6 +262,29 @@
                         class="block px-3 py-2 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">@lang('words.Register')</a>
                 @endguest
             </div>
+            <!-- Currency Switcher Dropdown for mobile -->
+            <div class="px-5 pt-3 pb-2 border-t border-gray-200" x-data="currencySwitcher()" x-init="initGlobal()">
+                <div class="text-sm font-medium text-gray-500 flex items-center">
+                     <i class="fas fa-dollar-sign mr-2"></i> <span>Currency</span>
+                </div>
+                <div class="mt-1 space-y-1">
+                    <button @click="open = !open"
+                        class="flex items-center justify-between w-full px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-blue-600">
+                        <span x-text="currentCurrencyDisplay"></span>
+                        <i class="ml-1 fas fa-chevron-down fa-xs" :class="{'rotate-180': open}"></i>
+                    </button>
+                    <div x-show="open" class="pl-3 mt-1 space-y-1 border-l border-gray-200">
+                        <template x-for="currency in availableCurrencies" :key="currency">
+                            <button @click="selectCurrency(currency)"
+                                :class="{ 'bg-gray-100 font-semibold': currency === currentCurrencyDisplay }"
+                                class="flex items-center w-full px-3 py-2 text-sm text-left text-gray-700 rounded-md hover:bg-gray-100">
+                                <span x-text="currency"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
             <!-- Language switcher for mobile -->
             <div class="px-5 pt-2 pb-3 border-t border-gray-200">
                 <div class="text-sm font-medium text-gray-500 flex items-center">
@@ -317,6 +362,144 @@
         </div>
     </footer>
 
+    <script>
+        // Pass PHP variables to JavaScript
+        window.currencyConfig = @json($currencyConfig ?? []);
+        window.initialCurrency = @json($currentCurrency ?? 'USD');
+        window.availableCurrencies = @json($currencyConfig['currencies'] ?? ['USD', 'IQD']);
+        window.csrfToken = "{{ csrf_token() }}";
+        window.currencySwitchUrl = "{{ route('currency.switch') }}";
+
+        function currencySwitcher() {
+            return {
+                open: false,
+                currentCurrencyDisplay: window.initialCurrency,
+                availableCurrencies: window.availableCurrencies,
+                
+                initGlobal() {
+                    this.currentCurrencyDisplay = window.initialCurrency; // Set from global on init
+                    
+                    document.addEventListener('currencyChangedGlobal', (event) => {
+                        // Update this instance's display text to reflect the new global currency
+                        this.currentCurrencyDisplay = event.detail.newCurrency; 
+                        
+                        // Update all prices on the page based on the new currency
+                        // This ensures other instances of the switcher also trigger a price update.
+                        this.updateAllPricesOnPage(event.detail.newCurrency, window.currencyConfig);
+                    });
+                    
+                    // Initial price update on page load
+                    this.updateAllPricesOnPage(window.initialCurrency, window.currencyConfig);
+                },
+                async selectCurrency(selectedCurrency) {
+                    if (selectedCurrency === this.currentCurrencyDisplay) {
+                        this.open = false; // Close dropdown if same currency is selected
+                        return;
+                    }
+                    try {
+                        const response = await fetch(window.currencySwitchUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': window.csrfToken,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({ currency: selectedCurrency })
+                        });
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            this.currentCurrencyDisplay = data.newCurrency;
+                            window.initialCurrency = data.newCurrency; // Update global state for other initializations
+                            this.open = false;
+
+                            // Directly update prices from this instance
+                            this.updateAllPricesOnPage(data.newCurrency, window.currencyConfig);
+
+                            // Dispatch a global event so other currency switcher instances can update their display
+                            // and other parts of the page can react if needed.
+                            document.dispatchEvent(new CustomEvent('currencyChangedGlobal', { 
+                                detail: { 
+                                    newCurrency: data.newCurrency,
+                                    newFormat: data.newFormat
+                                } 
+                            }));
+                        } else {
+                            console.error('Error switching currency:', data.message);
+                            alert('Error switching currency: ' + (data.message || 'Unknown error'));
+                        }
+                    } catch (error) {
+                        console.error('Failed to switch currency:', error);
+                        alert('Failed to switch currency. Please check your connection.');
+                    }
+                },
+                formatPrice(amount, currencyCode, config) {
+                    const targetCurrency = currencyCode;
+                    if (!config || !config.format || !config.format[targetCurrency]) {
+                        console.warn('Currency format details missing for:', targetCurrency);
+                        // Fallback to simple display if format is missing
+                        return `${amount} ${targetCurrency}`;
+                    }
+
+                    const formatDetails = config.format[targetCurrency];
+                    
+                    let valueToFormat = parseFloat(amount);
+                    if (isNaN(valueToFormat)) {
+                        console.warn('Invalid amount for formatting:', amount);
+                        return `${amount} ${targetCurrency}`; // or some error indication
+                    }
+
+                    // Perform conversion if base price is always USD and target is IQD or vice-versa
+                    // Assuming 'amount' is already in the targetCurrency or basePriceUsd is handled before calling this
+                    
+                    const formattedValue = Number(valueToFormat).toLocaleString(undefined, { // Use browser's locale for number formatting initially
+                        minimumFractionDigits: formatDetails.decimals,
+                        maximumFractionDigits: formatDetails.decimals,
+                    });
+                    
+                    // Manual override for thousands separator if toLocaleString doesn't match exactly
+                    // For IQD, we want "219,000 IQD" (0 decimals, comma separator)
+                    // For USD, we want "$219.00" (2 decimals, comma separator, dot decimal)
+                    
+                    let finalFormattedValue;
+                    if (targetCurrency === 'IQD') {
+                         finalFormattedValue = Number(valueToFormat.toFixed(formatDetails.decimals)).toLocaleString('en-US', {
+                            minimumFractionDigits: formatDetails.decimals,
+                            maximumFractionDigits: formatDetails.decimals,
+                            useGrouping: true // Ensures thousands separator
+                        }).replace(/\.\d+$/, ''); // Remove decimals if any for IQD as per "219,000"
+                    } else { // USD or other currencies with decimals
+                        finalFormattedValue = Number(valueToFormat.toFixed(formatDetails.decimals)).toLocaleString('en-US', {
+                            minimumFractionDigits: formatDetails.decimals,
+                            maximumFractionDigits: formatDetails.decimals,
+                            useGrouping: true
+                        });
+                    }
+
+
+                    return formatDetails.format
+                        .replace('%s', formatDetails.symbol)
+                        .replace('%v', finalFormattedValue);
+                },
+                updateAllPricesOnPage(newSelectedCurrency, config) {
+                    document.querySelectorAll('.convertible-price').forEach(el => {
+                        const basePriceUsd = parseFloat(el.dataset.basePriceUsd);
+                        if (isNaN(basePriceUsd)) {
+                            console.warn('Missing or invalid data-base-price-usd on element:', el);
+                            return;
+                        }
+
+                        let displayPrice;
+                        if (newSelectedCurrency === 'IQD') {
+                            displayPrice = basePriceUsd * config.exchange_rates.USD_TO_IQD;
+                        } else { // USD
+                            displayPrice = basePriceUsd;
+                        }
+                        el.textContent = this.formatPrice(displayPrice, newSelectedCurrency, config);
+                    });
+                }
+            }
+        }
+    </script>
     @stack('scripts')
     @auth
         <script>
