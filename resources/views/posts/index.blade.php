@@ -43,24 +43,37 @@
     @endauth
 
     {{-- Search Bar Section --}}
+
+    {{-- Search Bar Section --}}
     <section id="search"
         class="container relative z-20 max-w-4xl px-5 py-6 mx-auto -mt-16 bg-white rounded-lg shadow-lg">
         {{-- Submit to the current URL to re-load the page with query parameters --}}
-         <form action="{{ route('home') }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-4">
-            {{-- City Dropdown (Replaces Location Input) --}}
+        <form action="{{ route('home') }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-5">
+            {{-- City Dropdown --}}
             <div>
-                 <label for="city" class="block mb-1 text-sm font-medium text-gray-700">City</label>
+                <label for="city" class="block mb-1 text-sm font-medium text-gray-700">City</label>
                 <select id="city" name="city"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                     <option value="" {{ request('city') == '' ? 'selected' : '' }}>All Cities</option>
-                    <option value="Sulaymaniyah" {{ request('city') == 'Sulaymaniyah' ? 'selected' : '' }}>Sulaymaniyah</option>
+                    <option value="Sulaymaniyah" {{ request('city') == 'Sulaymaniyah' ? 'selected' : '' }}>Sulaymaniyah
+                    </option>
                     <option value="Hawler" {{ request('city') == 'Hawler' ? 'selected' : '' }}>Hawler</option>
                     <option value="Karkuk" {{ request('city') == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
                     <option value="Dhok" {{ request('city') == 'Dhok' ? 'selected' : '' }}>Dhok</option>
                     <option value="Halabja" {{ request('city') == 'Halabja' ? 'selected' : '' }}>Halabja</option>
-                    {{-- Add other cities as needed, ensuring values match what's stored in the database --}}
                 </select>
             </div>
+
+            {{-- Neighborhood Dropdown --}}
+            <div>
+                <label for="neighborhood" class="block mb-1 text-sm font-medium text-gray-700">Neighborhood</label>
+                <select id="neighborhood" name="neighborhood"
+                    class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Neighborhoods</option>
+                    {{-- Options will be populated by JavaScript --}}
+                </select>
+            </div>
+
             {{-- Price --}}
             <div>
                 <label for="price" class="block mb-1 text-sm font-medium text-gray-700">Price</label>
@@ -75,12 +88,14 @@
                     <option value="3000+" {{ request('price') == '3000+' ? 'selected' : '' }}>$3000+</option>
                 </select>
             </div>
+
             {{-- Property Type --}}
             <div>
                 <label for="property_type" class="block mb-1 text-sm font-medium text-gray-700">Property Type</label>
                 <select id="property_type" name="property_type"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="" {{ request('property_type') == '' ? 'selected' : '' }}>Property Type</option>
+                    <option value="" {{ request('property_type') == '' ? 'selected' : '' }}>Property Type
+                    </option>
                     <option value="apartment" {{ request('property_type') == 'apartment' ? 'selected' : '' }}>Apartment
                     </option>
                     <option value="house" {{ request('property_type') == 'house' ? 'selected' : '' }}>House</option>
@@ -88,10 +103,10 @@
                     <option value="studio" {{ request('property_type') == 'studio' ? 'selected' : '' }}>Studio</option>
                 </select>
             </div>
+
             {{-- Search Button --}}
             <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md w-full h-[42px]">
-                {{-- Matched height of inputs --}}
                 Search properties
             </button>
         </form>
@@ -126,9 +141,10 @@
                                 <p class="flex-grow mb-4 text-sm text-gray-600">
                                     <i class="mr-1 fas fa-map-marker-alt text-slate-500"></i>
                                     {{ $house->city }}, {{ $house->first_address }}
-                                   {{-- In index, 'first_address' is now 'neighborhood' --}}
+                                    {{-- In index, 'first_address' is now 'neighborhood' --}}
                                     {{-- Displaying city and neighborhood --}}
-                                    {{ $house->neighborhood }} {{ $house->second_address ? ', ' . $house->second_address : '' }}
+                                    {{ $house->neighborhood }}
+                                    {{ $house->second_address ? ', ' . $house->second_address : '' }}
                                 </p>
                                 <div class="flex items-center justify-between mb-4">
                                     <span
@@ -225,4 +241,142 @@
             crossorigin="anonymous" referrerpolicy="no-referrer" />
     @endpush
 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // City and Neighborhood Dropdown Logic for Search
+            const cityDropdown = document.getElementById('city');
+            const neighborhoodDropdown = document.getElementById('neighborhood');
+
+            if (cityDropdown && neighborhoodDropdown) {
+                // Define neighborhoods for each city (same as add property page)
+                const neighborhoodsByCity = {
+                    'Sulaymaniyah': [
+                        'Salim',
+                        'Raparin',
+                        'Bakrajo',
+                        'Xabat',
+                        'New Sulaymaniyah',
+                        'Bakhtiary',
+                        'Tasfirate',
+                        'German',
+                        'Goizha',
+                        'Kani Ashkan',
+                        'Malkandi',
+                        'Shaikh Maruf',
+                        'Qelay Sherwana',
+                        'Pismam',
+                        'Nawbahar',
+                        'Kanes',
+                        'Razgah',
+                        'Ashti'
+                    ],
+                    'Hawler': [
+                        'Ankawa',
+                        'Iskan',
+                        'Naz City',
+                        'Kushtaba',
+                        'Majidi Mall',
+                        'Erbil Citadel',
+                        'Shadi',
+                        'Mamostayan',
+                        'Badawa',
+                        'Prmam',
+                        'Rozhalat',
+                        'Brayati',
+                        'Galawezh',
+                        'Bakhtyari',
+                        'Brusk',
+                        'Haybat Sultan'
+                    ],
+                    'Karkuk': [
+                        'Shorja',
+                        'Arafa',
+                        'Imam Qasim',
+                        'Shorawiya',
+                        'Tisseen Street',
+                        'Baghlan',
+                        'Azadi',
+                        'Rahimawa',
+                        'Domiz',
+                        'New Kirkuk',
+                        'Wasati',
+                        'Shorja',
+                        'Iskan',
+                        'Laylan'
+                    ],
+                    'Dhok': [
+                        'Azadi',
+                        'Baxtyari',
+                        'Shexan',
+                        'Qutabxana',
+                        'Newroz',
+                        'Center',
+                        'Nali',
+                        'Shorsh',
+                        'Tasluja',
+                        'Qoshtapa'
+                    ],
+                    'Halabja': [
+                        'Center',
+                        'New Halabja',
+                        'Khurmal',
+                        'Biara',
+                        'Sayid Sadiq',
+                        'Serkani',
+                        'Ababaile',
+                        'Anab',
+                        'Biyare',
+                        'Tuwela',
+                        'Maidan',
+                        'Shahidan'
+                    ]
+                };
+
+                // Get current request values
+                const currentCity = "{{ request('city') }}";
+                const currentNeighborhood = "{{ request('neighborhood') }}";
+
+                function updateNeighborhoodOptions() {
+                    const selectedCity = cityDropdown.value;
+
+                    // Clear previous neighborhood options and add the default
+                    neighborhoodDropdown.innerHTML = '<option value="">All Neighborhoods</option>';
+
+                    if (selectedCity && neighborhoodsByCity[selectedCity] && neighborhoodsByCity[selectedCity]
+                        .length > 0) {
+                        neighborhoodsByCity[selectedCity].forEach(function(neighborhood) {
+                            const option = document.createElement('option');
+                            option.value = neighborhood;
+                            option.textContent = neighborhood;
+
+                            // Preserve selected neighborhood if it matches current request
+                            if (neighborhood === currentNeighborhood && selectedCity === currentCity) {
+                                option.selected = true;
+                            }
+
+                            neighborhoodDropdown.appendChild(option);
+                        });
+
+                        neighborhoodDropdown.disabled = false;
+                    } else {
+                        // If "All Cities" is selected, enable neighborhood but keep it as "All Neighborhoods"
+                        neighborhoodDropdown.disabled = false;
+                    }
+                }
+
+                // Add event listener for changes on the city dropdown
+                cityDropdown.addEventListener('change', function() {
+                    updateNeighborhoodOptions();
+                    // Clear neighborhood selection when city changes (except on initial load)
+                    if (cityDropdown.value === '') {
+                        neighborhoodDropdown.value = '';
+                    }
+                });
+
+                // Initial population of neighborhoods when the page loads
+                updateNeighborhoodOptions();
+            }
+        });
+    </script>
 </x-layout>

@@ -72,8 +72,7 @@
                             </div>
                         @endforeach
 
-                        @if ($hasMoreSentBookings)
-                            {{-- "View More Sent Bookings" as a card in the grid --}}
+                        {{-- @if ($hasMoreSentBookings) --}}
                             <div
                                 class="bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-full items-center justify-center p-4 transition-all duration-300 hover:shadow-xl hover:border-indigo-300">
                                 <a href="{{ route('bookings.sent') }}"
@@ -87,7 +86,7 @@
                                     <span class="text-xs">Sent Bookings</span>
                                 </a>
                             </div>
-                        @endif
+                        {{-- @endif --}}
                     </div>
                 @else
                     <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
@@ -174,8 +173,7 @@
                             </div>
                         @endforeach
 
-                        @if ($hasMoreReceivedBookings)
-                            {{-- "View More Received Bookings" as a card in the grid --}}
+                        {{-- @if ($hasMoreReceivedBookings) --}}
                             <div
                                 class="bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-full items-center justify-center p-4 transition-all duration-300 hover:shadow-xl hover:border-indigo-300">
                                 <a href="{{ route('my.bookings') }}" {{-- This route should lead to the page showing all received bookings --}}
@@ -189,7 +187,7 @@
                                     <span class="text-xs">Received Bookings</span>
                                 </a>
                             </div>
-                        @endif
+                        {{-- @endif --}}
                     </div>
                 @else
                     <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">

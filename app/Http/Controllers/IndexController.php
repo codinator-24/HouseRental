@@ -18,7 +18,15 @@ class IndexController extends Controller
             $query->where('city', $request->input('city'));
         }
 
-        // 2. Filter by Price (as discussed before)
+        // 2. NEW: Filter by Neighborhood
+        if ($request->filled('neighborhood') && $request->input('neighborhood') !== '') {
+            $query->where('neighborhood', $request->input('neighborhood'));
+            // Note: Make sure your database table has a 'neighborhood' column
+            // If your column name is different (like 'first_address'), change it accordingly:
+            // $query->where('first_address', $request->input('neighborhood'));
+        }
+
+        // 3. Filter by Price (as discussed before)
         if ($request->filled('price') && $request->input('price') !== '') {
             $priceRange = $request->input('price');
             switch ($priceRange) {
@@ -37,12 +45,12 @@ class IndexController extends Controller
             }
         }
 
-        // 3. Filter by Property Type (as discussed before)
+        // 4. Filter by Property Type (as discussed before)
         if ($request->filled('property_type') && $request->input('property_type') !== '') {
             $query->where('property_type', $request->input('property_type'));
         }
 
-        // 4. NEW: Exclude properties listed by the authenticated user
+        // 5. NEW: Exclude properties listed by the authenticated user
         if (Auth::check()) {
             // Assuming your House model has a 'landlord_id' column
             // that stores the ID of the user who listed the house.
@@ -50,9 +58,9 @@ class IndexController extends Controller
             $query->where('landlord_id', '!=', Auth::id());
         }
 
-         // 5. Filter by status: only show 'agree' (or 'available') houses
-        // Assuming 'agree' is the status for publicly visible and rentable houses.
-        // Adjust to 'available' if that's your intended status.
+        // 6. Filter by status: only show 'available' houses
+        // Assuming 'available' is the status for publicly visible and rentable houses.
+        // Adjust to 'agree' if that's your intended status.
         // The previous version had 'available', your HouseController AddHouse sets 'disagree' by default.
         $query->where('status', 'available');
 

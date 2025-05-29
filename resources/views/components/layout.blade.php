@@ -143,7 +143,7 @@
                                     class="block py-2 pl-4 pr-8 hover:bg-slate-100">Profile</a>
 
                                 <!-- Houses Dropdown -->
-                                <div x-data="{ housesOpen: false }">
+                                {{-- <div x-data="{ housesOpen: false }">
                                     <button @click="housesOpen = !housesOpen"
                                         class="flex items-center justify-between w-full py-2 pl-4 pr-8 text-left hover:bg-slate-100">
                                         <span>Houses</span>
@@ -158,12 +158,12 @@
                                         <a href="{{ route('Show.house.add') }}"
                                             class="block py-2 pl-4 pr-8 text-sm text-gray-700 hover:bg-slate-100">Add
                                             House</a>
-                                        {{-- You'll need to define this route: route('my.houses') --}}
+                                        
                                         <a href="{{ route('my.houses') }}"
                                             class="block py-2 pl-4 pr-8 text-sm text-gray-700 hover:bg-slate-100">My
                                             Houses</a>
-                                        {{-- You'll need to define this route: route('booking.lists') --}}
-                                        <a href="{{ route('my.bookings') }}" {{-- href="{{ route('booking.lists') }}" --}}
+                                        
+                                        <a href="{{ route('my.bookings') }}"
                                             class="block py-2 pl-4 pr-8 text-sm text-gray-700 hover:bg-slate-100">Booking
                                             Lists</a>
 
@@ -171,7 +171,7 @@
                                             class="block py-2 pl-4 pr-8 text-sm text-gray-700 hover:bg-slate-100">Bookings
                                             sent</a>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <!-- End Houses Dropdown -->
 
                                 <a href="{{ route('dashboard') }}"

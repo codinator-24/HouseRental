@@ -204,12 +204,13 @@
                                         <i class="mr-2 fas fa-user text-slate-500"></i>
                                         <strong>Name:</strong> {{ $house->landlord->full_name ?? 'N/A' }}
                                     </p>
+
                                     <p>
                                         <i class="mr-2 fas fa-phone text-slate-500"></i>
                                         <strong>Phone Numbers:</strong>
-                                        {{ $house->landlord->first_phoneNumber ?? 'N/A' }}
-                                        @if ($house->landlord->second_phoneNumber)
-                                            / {{ $house->landlord->second_phoneNumber }}
+                                        {{ $house->landlord->masked_first_phone ?? 'N/A' }}
+                                        @if ($house->landlord->masked_second_phone)
+                                            / {{ $house->landlord->masked_second_phone }}
                                         @endif
                                     </p>
                                     <div style="display: flex; align-items: center; gap: 6px;">

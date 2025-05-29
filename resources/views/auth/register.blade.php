@@ -92,11 +92,12 @@
                         <label for="role" class="block text-sm font-medium text-gray-700">@lang('words.Role')</label>
                         <select name="role" id="role"
                             class="block w-full px-3 py-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm @error('role') border-red-500 @enderror">
-                            <option value="tenant" {{ old('role', 'both') == 'tenant' ? 'selected' : '' }}>
+                            <option value="" {{ old('role') == '' ? 'selected' : '' }} disabled>--Select Your Role--</option>
+                            <option value="tenant" {{ old('role') == 'tenant' ? 'selected' : '' }}>
                                 @lang('words.Tenant')</option>
-                            <option value="lordland" {{ old('role', 'both') == 'lordland' ? 'selected' : '' }}>
+                            <option value="lordland" {{ old('role') == 'lordland' ? 'selected' : '' }}>
                                 @lang('words.Landlord')</option>
-                            <option value="both" {{ old('role', 'both') == 'both' ? 'selected' : '' }}>
+                            <option value="both" {{ old('role') == 'both' ? 'selected' : '' }}>
                                 @lang('words.Both')</option>
                         </select>
                         @error('role')
