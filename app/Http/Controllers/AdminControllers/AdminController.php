@@ -147,7 +147,7 @@ class AdminController extends  Controller
         // Example:
         $profitData = [
             'labels' => ['Luxury Apartments', 'Standard Houses', 'Commissions'],
-            'data' => [15000, 25000, 5000],
+            'data' => [15000, 25000, 2250],
         ];
 
         // You might also want to generate colors dynamically or have a predefined set
