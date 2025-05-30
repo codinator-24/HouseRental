@@ -115,15 +115,12 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
     Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
     Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
+    Route::get('/agreements', [AdminController::class, 'ViewAgreement'])->name('agreement');
 
     // Admin routes for managing reports
     Route::get('/admin/reports/{report}', [AdminController::class, 'showReportDetails'])->name('admin.reports.show');
     Route::post('/admin/reports/{report}/status', [AdminController::class, 'updateReportStatus'])->name('admin.reports.updateStatus');
    });
-
-//Route bo pishandany data bo Admin
-// Route::get('/aprove',[AdminController::class,'viewaprove']);
-// Route::get('/users',[AdminController::class,'viewusers']);
 
 //Stable
 

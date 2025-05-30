@@ -229,6 +229,12 @@
                         <span>Profit Analytics</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('agreement') }}">
+                       <i class="bi bi-file-earmark-text"></i>
+                        <span>Agreements & Payments</span>
+                    </a>
+                </li>
             </ul>
         </nav>
         <div class="main-content" id="mainContent">

@@ -211,7 +211,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('houses') }}">
-                        < <i class="bi bi-house-door"></i>
+                        <i class="bi bi-house-door"></i>
                             <span>Manage House</span>
                     </a>
                 </li>
@@ -243,6 +243,12 @@
                     <a class="nav-link" href="{{ route('profit') }}">
                         <i class="bi bi-bar-chart-line"></i>
                         <span>profit</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('agreement') }}">
+                      <i class="bi bi-file-earmark-text"></i>
+                        <span>Agreements & Payments</span>
                     </a>
                 </li>
             </ul>

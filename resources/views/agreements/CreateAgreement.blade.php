@@ -124,7 +124,10 @@
                     <div class="text-right">
                         <div class="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
                             <p class="text-sm font-medium">Agreement ID</p>
-                            <p class="text-lg font-bold">#NEW</p> {{-- Will be assigned upon saving --}}
+                            <p class="text-lg font-bold">
+                                {{ $agreement ? '#' . $agreement->id : '#NEW' }}
+                            </p>
+
                         </div>
                     </div>
                 </div>
@@ -314,9 +317,29 @@
                         </div>
                         <h2 class="text-xl font-semibold text-gray-800">Agreement Information</h2>
                     </div>
-                    <div class="status-badge bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-medium text-sm">
-                        <i class="fas fa-clock mr-2"></i>Pending Signature
-                    </div>
+                    @if ($agreement)
+                        @if ($agreement->status === 'pending')
+                            <div
+                                class="status-badge bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-medium text-sm">
+                                <i class="fas fa-clock mr-2"></i>Pending Signature
+                            </div>
+                        @elseif($agreement->status === 'active' || $agreement->status === 'agreed')
+                            <div
+                                class="status-badge bg-green-100 text-green-800 px-4 py-2 rounded-full font-medium text-sm">
+                                <i class="fas fa-check-circle mr-2"></i>Agreement Active
+                            </div>
+                        @else
+                            {{-- Display other statuses or a default --}}
+                            <div
+                                class="status-badge bg-gray-100 text-gray-800 px-4 py-2 rounded-full font-medium text-sm">
+                                Status: {{ ucfirst($agreement->status) }}
+                            </div>
+                        @endif
+                    @else
+                        <div class="status-badge bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium text-sm">
+                            <i class="fas fa-plus-circle mr-2"></i>New Agreement
+                        </div>
+                    @endif
                 </div>
 
                 <div class="grid md:grid-cols-3 gap-6 mb-6">
@@ -405,11 +428,12 @@
                     class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
                     <i class="fas fa-download mr-2"></i>Download PDF Agreement
                 </button>
-
-                <button type="button" @click="initiateSignAgreement()"
-                    class="gradient-bg text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
-                    <i class="fas fa-file-signature mr-2"></i>Sign Agreement
-                </button>
+                @if ($agreement->status === 'pending')
+                    <button type="button" @click="initiateSignAgreement()"
+                        class="gradient-bg text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
+                        <i class="fas fa-file-signature mr-2"></i>Sign Agreement
+                    </button>
+                @endif
             </div>
 
             <!-- Modal of Credit Card -->

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Agreement;
 use Illuminate\Http\Request;
 use App\Models\House;
 use App\Models\User;
@@ -11,6 +12,7 @@ use App\Notifications\AccountVerified;
 use App\Notifications\HouseApproved;
 use App\Models\Floor;
 use App\Models\Feedback;
+use App\Models\Payment;
 use App\Models\Report; // Added Report model
 
 class AdminController extends  Controller
@@ -202,5 +204,20 @@ class AdminController extends  Controller
         ];
 
         return view('admin.profit', compact('chartDataFromServer'));
+    }
+    public function ViewAgreement()
+    {
+        // Fetch agreements with necessary relationships
+        $agreements = Agreement::with([
+            'booking.tenant', // To get tenant info
+            'booking.house.landlord' // To get house info and landlord info
+        ])->latest()->get();
+
+        // Fetch payments with necessary relationships
+        $payments = Payment::with([
+            'agreement.booking.tenant',
+            'agreement.booking.house'
+        ])->latest()->get();
+        return view('admin.agreements', compact('agreements', 'payments'));
     }
 }

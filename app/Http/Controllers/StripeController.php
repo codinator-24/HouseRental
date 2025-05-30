@@ -92,10 +92,12 @@ class StripeController extends Controller
                     ->with('error', 'No agreement found for this booking.');
             }
 
+            $expiresDate = Carbon::now()->copy()->addMonths($booking->month_duration ?? 1); // Default to 1 month if duration not set
             // Update the Agreement status to agreed/active
             $agreement->update([
                 'status' => 'agreed', // or 'active' depending on your preference
                 'signed_at' => Carbon::now(), // Update signed date when agreement is finalized
+                'expires_at' => $expiresDate,
             ]);
 
             // Create the Payment record

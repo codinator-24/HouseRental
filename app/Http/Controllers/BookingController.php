@@ -205,14 +205,11 @@ class BookingController extends Controller
 
             if (!$existingAgreement) {
                 // Create the Agreement
-                $signedDate = Carbon::now();
-                $expiresDate = $signedDate->copy()->addMonths($booking->month_duration ?? 1); // Default to 1 month if duration not set
+                $expiresDate = Carbon::now()->copy()->addMonths($booking->month_duration ?? 1); // Default to 1 month if duration not set
                 $rentAmount = $house->rent_amount;
 
                 $agreement = Agreement::create([
                     'booking_id' => $booking->id,
-                    'signed_at' => $signedDate,
-                    'expires_at' => $expiresDate,
                     'rent_amount' => $rentAmount,
                     'rent_frequency' => 'monthly', // Default, adjust if necessary
                     'status' => 'pending', // Agreement is active upon booking acceptance
