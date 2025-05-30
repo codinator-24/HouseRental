@@ -14,7 +14,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to right, #007CE6, #1AA0E8);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -26,11 +26,11 @@
 
         .login-form-container {
             background-color: #ffffff;
-            padding: 2.5rem 2rem;
+            padding: 3rem 2rem; /* Increased top/bottom padding */
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 450px;
+            max-width: 550px; /* Increased max-width */
         }
 
         .login-form-container h2 {
@@ -41,13 +41,13 @@
         }
 
         .form-control:focus {
-            border-color: #764ba2;
-            box-shadow: 0 0 0 0.25rem rgba(118, 75, 162, 0.25);
+            border-color: #007CE6;
+            box-shadow: 0 0 0 0.25rem rgba(0, 124, 230, 0.27);
         }
 
         .btn-login {
-            background-color: #764ba2;
-            border-color: #764ba2;
+            background-color: #007CE6;
+            border-color: #007CE6;
             color: white;
             font-weight: 500;
             padding: 0.75rem;
@@ -56,8 +56,8 @@
         }
 
         .btn-login:hover {
-            background-color: #663f8c;
-            border-color: #663f8c;
+            background-color: #006AD5;
+            border-color: #006AD5;
         }
 
         .input-group-text {
@@ -92,7 +92,7 @@
 
         .form-floating>.form-control:focus~label,
         .form-floating>.form-control:not(:placeholder-shown)~label {
-            color: #764ba2;
+            color: #007CE6;
             /* Change label color on focus or when filled */
         }
 
@@ -102,7 +102,7 @@
         }
 
         .extra-links a {
-            color: #764ba2;
+            color: #007CE6;
             text-decoration: none;
             font-size: 0.9rem;
         }
@@ -173,12 +173,12 @@
             </div>
 
             <div class="d-grid">
-                <button type="submit" class="btn btn-login">Login</button>
+                <button type="submit" class="btn btn-login mt-2">Login</button>
             </div>
 
             <div class="extra-links mt-3">
                 {{-- <a href="#">Forgot password?</a> --}}
-                <a href="{{ route('AdminRegister') }}">Create an account</a>
+                {{-- <a href="{{ route('AdminRegister') }}">Create an account</a> --}}
             </div>
         </form>
     </div>
