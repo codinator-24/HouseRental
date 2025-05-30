@@ -38,7 +38,23 @@
                     </a>
                 </div>
 
-                <div class="overflow-hidden bg-white rounded-lg shadow-lg">
+                <div class="relative overflow-hidden bg-white rounded-lg shadow-lg">
+                    {{-- Favorite Button --}}
+                    <div class="absolute top-4 right-4 z-40"> {{-- z-40 to be above carousel controls --}}
+                        @auth
+                            <button class="p-2 bg-white rounded-full shadow-md favorite-btn hover:bg-gray-100 focus:outline-none" data-house-id="{{ $house->id }}" title="Favorite">
+                                @if(auth()->user()->hasFavorited($house))
+                                    <i class="text-2xl text-red-500 fas fa-heart"></i> {{-- Filled heart --}}
+                                @else
+                                    <i class="text-2xl text-gray-600 far fa-heart"></i> {{-- Empty heart, standardized to gray-600 --}}
+                                @endif
+                            </button>
+                        @else
+                            <button class="p-2 bg-white rounded-full shadow-md favorite-btn-guest hover:bg-gray-100 focus:outline-none" title="Favorite">
+                                <i class="text-2xl text-gray-600 far fa-heart"></i> {{-- Empty heart for guests, standardized to gray-600 --}}
+                            </button>
+                        @endguest
+                    </div>
 
                     @if (session('success'))
                         <div class="relative px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded"

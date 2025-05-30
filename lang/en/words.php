@@ -28,4 +28,11 @@ return [
     'Remember_Me' => 'Remember me',
     //Index
     'Our_Services' => 'Our Services',
+
+    // Favorites Modal
+    'Login Required' => 'Login Required',
+    'Please' => 'Please',
+    'or' => 'or',
+    'to add properties to your favorites' => 'to add properties to your favorites.',
+    'Close' => 'Close', // Though likely common, adding for completeness if used in modal
 ];

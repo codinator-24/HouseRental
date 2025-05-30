@@ -161,10 +161,25 @@
                                     <span><i class="mr-1 fas fa-ruler-combined"></i> {{ $house->square_footage }}
                                         m<sup>2</sup></span>
                                 </div>
-                                <a href="{{ route('house.details', $house) }}"
-                                    class="block w-full px-4 py-2 mt-auto font-bold text-center text-white transition duration-300 bg-blue-600 rounded hover:bg-blue-700">
-                                    View Details
-                                </a>
+                                <div class="flex items-center mt-auto"> {{-- Flex container for button and icon --}}
+                                    <a href="{{ route('house.details', $house) }}"
+                                        class="block w-full px-4 py-2 font-bold text-center text-white transition duration-300 bg-blue-600 rounded-l-md hover:bg-blue-700">
+                                        View Details
+                                    </a>
+                                    @auth
+                                        <button class="p-2 px-3 bg-blue-600 rounded-r-md favorite-btn hover:bg-blue-700 focus:outline-none" data-house-id="{{ $house->id }}" title="Favorite">
+                                            @if(auth()->user()->hasFavorited($house))
+                                                <i class="text-xl text-red-500 fas fa-heart"></i>
+                                            @else
+                                                <i class="text-xl text-white far fa-heart"></i> {{-- White heart on blue background --}}
+                                            @endif
+                                        </button>
+                                    @else
+                                        <button class="p-2 px-3 bg-blue-600 rounded-r-md favorite-btn-guest hover:bg-blue-700 focus:outline-none" title="Favorite">
+                                            <i class="text-xl text-white far fa-heart"></i>
+                                        </button>
+                                    @endguest
+                                </div>
                             </div>
                         </div>
                     @empty

@@ -10,6 +10,7 @@ use App\Http\Controllers\CurrencyController; // Add this line for currency switc
 
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AuthAdminController;
+use App\Http\Controllers\FavoriteController; // Added FavoriteController
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReportController; // Added ReportController
 use App\Http\Controllers\StripeController;
@@ -65,6 +66,9 @@ Route::middleware('lang')->group(function () {
 
         // Report a house
         Route::post('/houses/{house}/report', [ReportController::class, 'store'])->name('house.report');
+
+        // Favorite a house
+        Route::post('/favorites/{house}/toggle', [FavoriteController::class, 'toggleFavorite'])->name('favorites.toggle');
     });
 
     // Currency Switcher Route - accessible by guests and authenticated users

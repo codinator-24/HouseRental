@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class House extends Model
 {
@@ -60,5 +61,13 @@ class House extends Model
     public function floors(): HasMany // <-- Add this method
     {
         return $this->hasMany(Floor::class);
+    }
+
+    /**
+     * The users that have favorited this house.
+     */
+    public function favoritedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'favorites', 'house_id', 'user_id')->withTimestamps();
     }
 }
