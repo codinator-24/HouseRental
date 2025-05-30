@@ -23,7 +23,7 @@
             </div>
         @else
             <div class="container mx-auto px-4 py-8"> {{-- Basic container and padding --}}
-                <h1 class="text-3xl font-bold mb-6 text-gray-800">Add New Property Listing</h1> {{-- Styled heading --}}
+                <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Add New Property Listing</h1> {{-- Styled heading, centered --}}
 
                 {{-- Display validation errors if any --}}
                 @if ($errors->any())
@@ -41,111 +41,94 @@
 
                 {{-- The route('house.add') is assumed correct based on previous context --}}
                 <form action="{{ route('house.add') }}" method="POST" enctype="multipart/form-data"
-                    class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                    class="bg-white shadow-xl rounded-lg p-8 mx-auto max-w-6xl mb-4">
                     @csrf {{-- CSRF protection token --}}
 
-                    {{-- House Details Section --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> {{-- Grid layout for better alignment --}}
-
-                        {{-- Title --}}
-                        <div class="mb-4">
-                            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
-                            <input type="text" id="title" name="title" value="{{ old('title') }}"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('title') border-red-500 @enderror">
-                            @error('title')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Property Type --}}
-                        <div class="mb-4">
-                            <label for="property_type" class="block text-sm font-medium text-gray-700 mb-1">Property
-                                Type</label>
-                            <select id="property_type" name="property_type"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white @error('property_type') border-red-500 @enderror">
-                                <option value="" {{ old('property_type') == '' ? 'selected' : '' }}>Select Property
-                                    Type</option>
-                                <option value="apartment" {{ old('property_type') == 'apartment' ? 'selected' : '' }}>
-                                    Apartment</option>
-                                <option value="house" {{ old('property_type') == 'house' ? 'selected' : '' }}>House
-                                </option>
-                                <option value="condo" {{ old('property_type') == 'condo' ? 'selected' : '' }}>Condo
-                                </option>
-                                <option value="studio" {{ old('property_type') == 'studio' ? 'selected' : '' }}>Studio
-                                </option>
-                            </select>
-                            @error('property_type')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- City --}}
-                        <div class="mb-4">
-                            <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
-                            <select id="city" name="city"
-                                class="shadow appearance-none border rounded w-296 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('city') border-red-500 @enderror">
-                                <option value="" {{ old('city') == '' ? 'selected' : '' }}>Select City</option>
-                                <option value="Sulaymaniyah" {{ old('city') == 'Sulaymaniyah' ? 'selected' : '' }}>
-                                    Sulaymaniyah</option>
-                                <option value="Hawler" {{ old('city') == 'Hawler' ? 'selected' : '' }}>Hawler
-                                </option>
-                                <option value="Karkuk" {{ old('city') == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
-                                <option value="Dhok" {{ old('city') == 'Dhok' ? 'selected' : '' }}>Dhok</option>
-                                <option value="Halabja" {{ old('city') == 'Halabja' ? 'selected' : '' }}>Halabja</option>
-                            </select>
-                            @error('city')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Combined First and Second Address --}}
-                        <div class="md:col-span-2 mb-4"> {{-- Container for the address sub-grid, spans full width on md --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> {{-- Sub-grid for side-by-side layout --}}
-                                {{-- Neighborhood --}}
-                                <div>
-                                    <label for="neighborhood"
-                                        class="block text-gray-700 text-sm font-bold mb-2">Neighborhood:</label>
-                                    <select id="neighborhood" name="neighborhood"
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('neighborhood') border-red-500 @enderror">
-                                        <option value="">Select Neighborhood</option> {{-- Default placeholder --}}
-                                        {{-- Options will be populated by JavaScript --}}
-                                    </select>
-                                    @error('neighborhood')
-                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                {{-- Second Address --}}
-                                <div>
-                                    <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">Second
-                                        Address Line <span class="text-gray-500 text-xs">(Optional)</span>:</label>
-                                    <input type="text" id="second_address" name="second_address"
-                                        value="{{ old('second_address') }}"
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('second_address') border-red-500 @enderror">
-                                    @error('second_address')
-                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            {{-- Location URL --}}
-                            <div class="mb-4 md:col-span-2">
-                                <label for="location_url" class="block text-gray-700 text-sm font-bold mb-2">Location URL
-                                    <span class="text-gray-500 text-xs">(e.g., Google Maps, Optional)</span>:</label>
-                                <input type="url" id="location_url" name="location_url"
-                                    value="{{ old('location_url') }}"
-                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('location_url') border-red-500 @enderror">
-                                @error('location_url')
+                    {{-- Section 1: Basic Property Information --}}
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Basic Property Information</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {{-- Title --}}
+                            <div class="mb-4">
+                                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                                <input type="text" id="title" name="title" value="{{ old('title') }}"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('title') border-red-500 @enderror">
+                                @error('title')
                                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
                                 @enderror
                             </div>
 
+                            {{-- Property Type --}}
+                            <div class="mb-4">
+                                <label for="property_type" class="block text-sm font-medium text-gray-700 mb-2">Property Type:</label>
+                                <select id="property_type" name="property_type"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white shadow appearance-none @error('property_type') border-red-500 @enderror">
+                                    <option value="" {{ old('property_type') == '' ? 'selected' : '' }}>Select Property Type</option>
+                                    <option value="apartment" {{ old('property_type') == 'apartment' ? 'selected' : '' }}>Apartment</option>
+                                    <option value="house" {{ old('property_type') == 'house' ? 'selected' : '' }}>House</option>
+                                    <option value="condo" {{ old('property_type') == 'condo' ? 'selected' : '' }}>Condo</option>
+                                    <option value="studio" {{ old('property_type') == 'studio' ? 'selected' : '' }}>Studio</option>
+                                </select>
+                                @error('property_type')
+                                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Section 2: Location Details --}}
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Location Details</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                            {{-- City --}}
+                            <div class="mb-4">
+                                <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
+                                <select id="city" name="city"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('city') border-red-500 @enderror">
+                                    <option value="" {{ old('city') == '' ? 'selected' : '' }}>Select City</option>
+                                    <option value="Sulaymaniyah" {{ old('city') == 'Sulaymaniyah' ? 'selected' : '' }}>Sulaymaniyah</option>
+                                    <option value="Hawler" {{ old('city') == 'Hawler' ? 'selected' : '' }}>Hawler</option>
+                                    <option value="Karkuk" {{ old('city') == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
+                                    <option value="Dhok" {{ old('city') == 'Dhok' ? 'selected' : '' }}>Dhok</option>
+                                    <option value="Halabja" {{ old('city') == 'Halabja' ? 'selected' : '' }}>Halabja</option>
+                                </select>
+                                @error('city')
+                                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Neighborhood --}}
+                            <div class="mb-4">
+                                <label for="neighborhood" class="block text-gray-700 text-sm font-bold mb-2">Neighborhood:</label>
+                                <select id="neighborhood" name="neighborhood"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('neighborhood') border-red-500 @enderror">
+                                    <option value="">Select Neighborhood</option> {{-- Default placeholder --}}
+                                    {{-- Options will be populated by JavaScript --}}
+                                </select>
+                                @error('neighborhood')
+                                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                        {{-- Second Address --}}
+                        <div class="mb-6"> {{-- Increased bottom margin --}}
+                            <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">Second Address Line <span class="text-gray-500 text-xs">(Optional)</span>:</label>
+                            <input type="text" id="second_address" name="second_address" value="{{ old('second_address') }}"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('second_address') border-red-500 @enderror">
+                            @error('second_address')
+                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Section 3: Property Specifications --}}
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Property Specifications</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Square Footage --}}
                             <div class="mb-4">
-                                <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">Sqaure Meter
-                                    (m<sup>2</sup>):</label>
-                                <input type="number" id="square_footage" name="square_footage"
-                                    value="{{ old('square_footage') }}" min="0"
+                                <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">Square Meter (m<sup>2</sup>):</label>
+                                <input type="number" id="square_footage" name="square_footage" value="{{ old('square_footage') }}" min="0"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('square_footage') border-red-500 @enderror">
                                 @error('square_footage')
                                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
@@ -154,142 +137,134 @@
 
                             {{-- Rent Amount --}}
                             <div class="mb-4">
-                                <label for="rent_amount" class="block text-gray-700 text-sm font-bold mb-2">Rent Amount (per
-                                    month):</label>
-                                <input type="number" id="rent_amount" name="rent_amount" value="{{ old('rent_amount') }}"
-                                    min="0" step="0.01"
+                                <label for="rent_amount" class="block text-gray-700 text-sm font-bold mb-2">Rent Amount (per month):</label>
+                                <input type="number" id="rent_amount" name="rent_amount" value="{{ old('rent_amount') }}" min="0" step="0.01"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('rent_amount') border-red-500 @enderror">
                                 @error('rent_amount')
                                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
                                 @enderror
                             </div>
+                        </div>
+                    </div>
 
-                            {{-- Floors Details Section --}}
-                            <div class="mb-2 md:col-span-2 ">
-                                <h2 class="text-2xl font-semibold mb-4 text-gray-700">Floor Details</h2>
-                                <div id="floors_container" class="space-y-6">
-                                    @php
-                                        // Ensure $floorEntries is an array; default to one empty floor structure for initial display or if old data is invalid
-                                        $floorEntries = old('floors');
-                                        if (
-                                            !is_array($floorEntries) ||
-                                            (empty($floorEntries) && request()->isMethod('get'))
-                                        ) {
-                                            $floorEntries = [['number_of_rooms' => '', 'bathrooms' => '0']]; // Default: 1 floor, no rooms, bathroom not exists
-                                        } elseif (empty($floorEntries) && !request()->isMethod('get')) {
-                                            // If form was submitted with all floors removed, respect that.
-                                            // Or, if you always want at least one floor, you can re-add the default here.
-                                            // For now, allow zero floors if explicitly submitted as such.
-                                            $floorEntries = [];
-                                        }
-                                    @endphp
+                    {{-- Section 4: Floor Details --}}
+                    <div class="mb-8"> {{-- Replaced md:col-span-2 and mb-2 with mb-8 for consistency --}}
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Floor Details</h2> {{-- Consistent heading style --}}
+                        <div id="floors_container" class="space-y-6">
+                            @php
+                                // Ensure $floorEntries is an array; default to one empty floor structure for initial display or if old data is invalid
+                                $floorEntries = old('floors');
+                                if (
+                                    !is_array($floorEntries) ||
+                                    (empty($floorEntries) && request()->isMethod('get'))
+                                ) {
+                                    $floorEntries = [['number_of_rooms' => '', 'bathrooms' => '0']]; // Default: 1 floor, no rooms, bathroom not exists
+                                } elseif (empty($floorEntries) && !request()->isMethod('get')) {
+                                    // If form was submitted with all floors removed, respect that.
+                                    // Or, if you always want at least one floor, you can re-add the default here.
+                                    // For now, allow zero floors if explicitly submitted as such.
+                                    $floorEntries = [];
+                                }
+                            @endphp
 
-                                    @foreach ($floorEntries as $index => $floorData)
-                                        <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50"
-                                            data-index="{{ $index }}">
-                                            <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor {{ $index + 1 }}
-                                            </h3>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label for="floor_{{ $index }}_number_of_rooms"
-                                                        class="block text-gray-700 text-sm font-bold mb-1">Number of
-                                                        Rooms:</label>
-                                                    <input type="number" id="floor_{{ $index }}_number_of_rooms"
-                                                        name="floors[{{ $index }}][number_of_rooms]"
-                                                        value="{{ $floorData['number_of_rooms'] ?? '' }}" min="0"
-                                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('floors.' . $index . '.number_of_rooms') border-red-500 @enderror">
-                                                    @error('floors.' . $index . '.number_of_rooms')
-                                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                                <div>
-                                                    <label for="floor_{{ $index }}_bathrooms"
-                                                        class="block text-gray-700 text-sm font-bold mb-1">Bathrooms:</label>
-                                                    <select id="floor_{{ $index }}_bathrooms"
-                                                        name="floors[{{ $index }}][bathrooms]"
-                                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('floors.' . $index . '.bathrooms') border-red-500 @enderror">
-                                                        <option value="0"
-                                                            {{ isset($floorData['bathrooms']) && $floorData['bathrooms'] == '0' ? 'selected' : '' }}>
-                                                            Not Exists</option>
-                                                        <option value="1"
-                                                            {{ isset($floorData['bathrooms']) && $floorData['bathrooms'] == '1' ? 'selected' : '' }}>
-                                                            Exists</option>
-                                                    </select>
-                                                    @error('floors.' . $index . '.bathrooms')
-                                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            @if ($index > 0)
-                                                {{-- Allow removing floors, but not the very first one if it's the only one, or always allow removal --}}
-                                                <div class="mt-3 text-right">
-                                                    <button type="button"
-                                                        class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove
-                                                        Floor</button>
-                                                </div>
-                                            @endif
+                            @foreach ($floorEntries as $index => $floorData)
+                                <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50"
+                                    data-index="{{ $index }}">
+                                    <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor {{ $index + 1 }}
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="floor_{{ $index }}_number_of_rooms"
+                                                class="block text-gray-700 text-sm font-bold mb-1">Number of
+                                                Rooms:</label>
+                                            <input type="number" id="floor_{{ $index }}_number_of_rooms"
+                                                name="floors[{{ $index }}][number_of_rooms]"
+                                                value="{{ $floorData['number_of_rooms'] ?? '' }}" min="0"
+                                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('floors.' . $index . '.number_of_rooms') border-red-500 @enderror">
+                                            @error('floors.' . $index . '.number_of_rooms')
+                                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                            @enderror
                                         </div>
-                                    @endforeach
+                                        <div>
+                                            <label for="floor_{{ $index }}_bathrooms"
+                                                class="block text-gray-700 text-sm font-bold mb-1">Bathrooms:</label>
+                                            <select id="floor_{{ $index }}_bathrooms"
+                                                name="floors[{{ $index }}][bathrooms]"
+                                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('floors.' . $index . '.bathrooms') border-red-500 @enderror">
+                                                <option value="0"
+                                                    {{ isset($floorData['bathrooms']) && $floorData['bathrooms'] == '0' ? 'selected' : '' }}>
+                                                    Not Exists</option>
+                                                <option value="1"
+                                                    {{ isset($floorData['bathrooms']) && $floorData['bathrooms'] == '1' ? 'selected' : '' }}>
+                                                    Exists</option>
+                                            </select>
+                                            @error('floors.' . $index . '.bathrooms')
+                                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    @if ($index > 0)
+                                        {{-- Allow removing floors, but not the very first one if it's the only one, or always allow removal --}}
+                                        <div class="mt-3 text-right">
+                                            <button type="button"
+                                                class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove
+                                                Floor</button>
+                                        </div>
+                                    @endif
                                 </div>
-
-                                <div class="mt-6">
-                                    <button type="button" id="addFloorButton"
-                                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                                        Add Floor
-                                    </button>
-                                </div>
-                            </div>
-
-                            {{-- Description --}}
-                            <div class="mb-4 md:col-span-2">
-                                <label for="description"
-                                    class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-                                <textarea id="description" name="description" rows="4"
-                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
-                                @error('description')
-                                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                        </div> {{-- End Main Grid --}}
-
-                        {{-- Location Map Section --}}
-                        <div class="mt-6 border-t pt-6 md:col-span-2">
-                            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Property Location</h2>
-                            <div id="map" style="height: 400px; width: 100%;"></div>
-                            <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude') }}">
-                            <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude') }}">
-                            @error('latitude')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                            @error('longitude')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
+                            @endforeach
                         </div>
 
-
-                        {{-- House Pictures (moved after floor section) --}}
-                        <div class="mt-6 border-t pt-6">
-                            <div class="mb-6 md:col-span-2"> {{-- Ensure this takes full width if it's outside the initial grid --}}
-                                <label for="pictures" class="block text-gray-700 text-sm font-bold mb-2">House
-                                    Pictures:</label>
-                                <input type="file" id="pictures" name="pictures[]" multiple accept="image/*"
-                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none @error('pictures.*') border-red-500 @enderror @error('pictures') border-red-500 @enderror">
-                                <p class="mt-1 text-sm text-gray-500" id="file_input_help">PNG, JPG, GIF, WEBP. You can
-                                    select
-                                    multiple images.</p>
-                                @error('pictures')
-                                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                                @enderror
-                                @error('pictures.*')
-                                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        <div class="mt-6">
+                            <button type="button" id="addFloorButton"
+                                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                Add Floor
+                            </button>
                         </div>
+                    </div>
 
+                    {{-- Section 5: Description --}}
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Description</h2>
+                        <label for="description" class="block text-gray-700 text-sm font-bold mb-2 sr-only">Description:</label> {{-- Label is visually hidden but available for screen readers --}}
+                        <textarea id="description" name="description" rows="4"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
+                        @error('description')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        {{-- Submit Button --}}
-                        <div class="flex items-center justify-end mt-6 border-t pt-6">
+                    {{-- Section 6: Property Location (Map) --}}
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Property Location</h2>
+                        <div id="map" style="height: 400px; width: 100%;" class="rounded-md border"></div>
+                        <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude') }}">
+                        <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude') }}">
+                        @error('latitude')
+                            <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                        @enderror
+                        @error('longitude')
+                            <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Section 7: House Pictures --}}
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">House Pictures</h2>
+                        <label for="pictures" class="block text-gray-700 text-sm font-bold mb-2 sr-only">House Pictures:</label> {{-- Label is visually hidden --}}
+                        <input type="file" id="pictures" name="pictures[]" multiple accept="image/*"
+                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none @error('pictures.*') border-red-500 @enderror @error('pictures') border-red-500 @enderror">
+                        <p class="mt-1 text-sm text-gray-500" id="file_input_help">PNG, JPG, GIF, WEBP. You can select multiple images.</p>
+                        @error('pictures')
+                            <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                        @enderror
+                        @error('pictures.*')
+                            <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Submit Button --}}
+                    <div class="flex items-center justify-end mt-8 pt-6 border-t"> {{-- Increased top margin --}}
                             <button type="submit"
                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                 Add House
@@ -492,7 +467,7 @@
                         neighborhoodDropdown.disabled = false;
                     } else {
                         neighborhoodDropdown.disabled =
-                        true; // Disable if no city selected or no neighborhoods for the city
+                            true; // Disable if no city selected or no neighborhoods for the city
                     }
                 }
 
