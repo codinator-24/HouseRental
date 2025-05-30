@@ -27,8 +27,10 @@
                                     {{ $house->city }}, {{ $house->first_address }} {{ $house->second_address ?? '' }}
                                 </p>
                                 <div class="flex justify-between items-center mb-4">
-                                    <span
-                                        class="text-2xl font-bold text-blue-600">${{ number_format($house->rent_amount) }}</span>
+                                    <span class="text-2xl font-bold text-blue-600 convertible-price" data-base-price-usd="{{ $house->rent_amount }}">
+                                        {{-- Initial display, will be updated by JS --}}
+                                        ${{ number_format($house->rent_amount, 2) }}
+                                    </span>
                                     <span class="text-gray-600 text-sm">per month</span>
                                 </div>
                                 <div class="flex justify-between text-sm text-gray-600 border-t pt-4 mb-4">

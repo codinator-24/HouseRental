@@ -124,8 +124,11 @@
                         <div class="flex flex-col justify-between mb-4 md:flex-row md:items-center">
                             <h1 class="mb-2 text-3xl font-bold text-gray-800 md:text-4xl md:mb-0">{{ $house->title }}
                             </h1>
-                            <span class="text-3xl font-bold text-blue-600">${{ number_format($house->rent_amount) }} /
-                                month</span>
+                            <span class="text-3xl font-bold text-blue-600 convertible-price" data-base-price-usd="{{ $house->rent_amount }}">
+                                {{-- Initial display, will be updated by JS --}}
+                                ${{ number_format($house->rent_amount, 2) }}
+                            </span>
+                            <span class="ml-1 text-xl text-gray-600 md:text-2xl">/ month</span> {{-- Adjusted styling for "/ month" --}}
                         </div>
 
                         {{-- Address --}}

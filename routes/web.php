@@ -6,6 +6,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HouseController;
 use App\Http\Controllers\IndexController; // Add this line
+use App\Http\Controllers\CurrencyController; // Add this line for currency switching
 
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AuthAdminController;
@@ -61,6 +62,9 @@ Route::middleware('lang')->group(function () {
 
         Route::get('/agreement/{booking}/create', [AgreementController::class, 'create'])->name('agreement.create');
     });
+
+    // Currency Switcher Route - accessible by guests and authenticated users
+    Route::post('/currency/switch', [CurrencyController::class, 'switch'])->name('currency.switch');
 });
 
 
@@ -119,5 +123,3 @@ Route::middleware('admin.auth')->group(function () {
 Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
 Route::get('/contactUs', [DashboardController::class, 'show_contact'])->name('contact');
 Route::post('/add_contact', [DashboardController::class, 'insert_contact'])->name('submit.contact');
-
-
