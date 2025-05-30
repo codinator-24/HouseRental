@@ -24,9 +24,12 @@
     }
 
     @keyframes pulse {
-        0%, 100% {
+
+        0%,
+        100% {
             opacity: 1;
         }
+
         50% {
             opacity: 0.8;
         }
@@ -45,23 +48,41 @@
 <x-layout>
     <div class="bg-gray-50 min-h-screen py-8" x-data="{
         showConfirmModal: false,
+    
+        initiateSignAgreement() {
+            const paymentMethod = document.getElementById('payment_method').value;
+            const rentAmountValue = document.getElementById('rent_amount').value;
+    
+            // Validate rent amount
+            if (!rentAmountValue || parseFloat(rentAmountValue) < 0.50) {
+                alert('Please enter a valid rent amount (minimum $0.50).');
+                return;
+            }
+    
+            if (paymentMethod === 'Credit') {
+                this.showConfirmModal = true;
+            } else if (paymentMethod === 'Cash') {
+                this.$dispatch('open-cash-modal', { bookingId: {{ $booking->id }} });
+            }
+        },
+    
         processSignAgreement() {
             // Get form values
             const rentAmountValue = document.getElementById('rent_amount').value;
             const rentFrequency = document.getElementById('rent_frequency').value;
             const paymentMethod = document.getElementById('payment_method').value;
             const notes = document.querySelector('textarea[name=\'notes\']').value;
-            
+    
             // Validate rent amount
             if (!rentAmountValue || parseFloat(rentAmountValue) < 0.50) {
                 alert('Please enter a valid rent amount (minimum $0.50).');
                 return;
             }
-            
+    
             // Get the checkout form
             const form = this.$refs.checkoutForm;
             const hiddenRentInput = form.querySelector('input[name=\'rent_amount_checkout\']');
-            
+    
             if (hiddenRentInput) {
                 hiddenRentInput.value = rentAmountValue;
             } else {
@@ -69,17 +90,17 @@
                 alert('An error occurred. Could not process rent amount.');
                 return;
             }
-
+    
             // Add additional hidden inputs for other form data
             this.addHiddenInput(form, 'rent_frequency', rentFrequency);
             this.addHiddenInput(form, 'payment_method', paymentMethod);
             this.addHiddenInput(form, 'notes', notes);
-
+    
             // Submit the checkout form
             form.submit();
             this.showConfirmModal = false;
         },
-        
+    
         addHiddenInput(form, name, value) {
             // Check if input already exists
             let input = form.querySelector(`input[name=\'${name}\']`);
@@ -121,7 +142,8 @@
                     </div>
 
                     <div class="flex items-start mb-6">
-                        <div class="w-20 h-20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 overflow-hidden border border-gray-200">
+                        <div
+                            class="w-20 h-20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 overflow-hidden border border-gray-200">
                             @if ($booking->tenant->picture)
                                 <img src="{{ asset('storage/' . $booking->tenant->picture) }}"
                                     alt="{{ $booking->tenant->full_name }}" class="w-full h-full object-cover">
@@ -133,7 +155,8 @@
                         </div>
 
                         <div class="flex-1">
-                            <h3 class="font-semibold text-lg text-gray-800">{{ $booking->tenant->full_name ?? 'N/A' }}</h3>
+                            <h3 class="font-semibold text-lg text-gray-800">{{ $booking->tenant->full_name ?? 'N/A' }}
+                            </h3>
                             <p class="text-gray-600 text-sm mb-2">{{ $booking->tenant->email ?? 'N/A' }}</p>
                         </div>
                     </div>
@@ -178,10 +201,12 @@
                     </div>
 
                     <div class="flex items-start mb-6">
-                        <div class="w-20 h-20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 overflow-hidden border border-gray-200">
+                        <div
+                            class="w-20 h-20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 overflow-hidden border border-gray-200">
                             @if ($booking->house->landlord->picture)
                                 <img src="{{ asset('storage/' . $booking->house->landlord->picture) }}"
-                                    alt="{{ $booking->house->landlord->full_name }}" class="w-full h-full object-cover">
+                                    alt="{{ $booking->house->landlord->full_name }}"
+                                    class="w-full h-full object-cover">
                             @else
                                 <div class="profile-placeholder w-full h-full flex items-center justify-center">
                                     <i class="fas fa-camera text-gray-400 text-2xl"></i>
@@ -189,7 +214,8 @@
                             @endif
                         </div>
                         <div class="flex-1">
-                            <h3 class="font-semibold text-lg text-gray-800">{{ $booking->house->landlord->full_name ?? 'N/A' }}</h3>
+                            <h3 class="font-semibold text-lg text-gray-800">
+                                {{ $booking->house->landlord->full_name ?? 'N/A' }}</h3>
                             <p class="text-gray-600 text-sm mb-2">{{ $booking->house->landlord->email ?? 'N/A' }}</p>
                         </div>
                     </div>
@@ -197,11 +223,13 @@
                     <div class="space-y-3">
                         <div class="flex items-center">
                             <i class="fas fa-phone text-green-500 w-5 mr-3"></i>
-                            <span class="text-gray-700">{{ $booking->house->landlord->first_phoneNumber ?? 'N/A' }}</span>
+                            <span
+                                class="text-gray-700">{{ $booking->house->landlord->first_phoneNumber ?? 'N/A' }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-mobile-alt text-green-500 w-5 mr-3"></i>
-                            <span class="text-gray-700">{{ $booking->house->landlord->second_phoneNumber ?? 'N/A' }}</span>
+                            <span
+                                class="text-gray-700">{{ $booking->house->landlord->second_phoneNumber ?? 'N/A' }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-map-marker-alt text-green-500 w-5 mr-3"></i>
@@ -243,7 +271,8 @@
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Property Type:</span>
-                            <span class="font-semibold text-gray-800">{{ $booking->house->property_type ?? 'N/A' }}</span>
+                            <span
+                                class="font-semibold text-gray-800">{{ $booking->house->property_type ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
@@ -257,17 +286,20 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Number of Rooms:</span>
-                            <span class="font-semibold text-gray-800">{{ $booking->house->floors->sum('num_room') ?? 'N/A' }}</span>
+                            <span
+                                class="font-semibold text-gray-800">{{ $booking->house->floors->sum('num_room') ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Number of Floors:</span>
-                            <span class="font-semibold text-gray-800">{{ $booking->house->floors->count() ?? 'N/A' }}</span>
+                            <span
+                                class="font-semibold text-gray-800">{{ $booking->house->floors->count() ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Square Footage:</span>
-                            <span class="font-semibold text-gray-800">{{ $booking->house->square_footage ?? 'N/A' }} m²</span>
+                            <span class="font-semibold text-gray-800">{{ $booking->house->square_footage ?? 'N/A' }}
+                                m²</span>
                         </div>
                     </div>
                 </div>
@@ -307,7 +339,8 @@
                     <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
                         <div class="flex items-center mb-2">
                             <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
-                            <label for="rent_amount" class="text-sm font-medium text-green-800">Monthly Rent ($)</label>
+                            <label for="rent_amount" class="text-sm font-medium text-green-800">Monthly Rent
+                                ($)</label>
                         </div>
                         <input type="number" id="rent_amount" name="rent_amount"
                             value="{{ $booking->house->rent_amount ?? '0.00' }}"
@@ -333,8 +366,6 @@
                                 class="font-semibold text-gray-800 border border-gray-300 rounded-md p-1 focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="Credit">Credit Card</option>
                                 <option value="Cash">Cash</option>
-                                <option value="Bank Transfer">Bank Transfer</option>
-                                <option value="Check">Check</option>
                             </select>
                         </div>
                     </div>
@@ -342,7 +373,8 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Payment Date:</span>
-                            <span class="font-semibold text-gray-800">{{ $signedDate->format('d/m/Y') }} (or as agreed)</span>
+                            <span class="font-semibold text-gray-800">{{ $signedDate->format('d/m/Y') }} (or as
+                                agreed)</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Duration:</span>
@@ -374,35 +406,32 @@
                     <i class="fas fa-download mr-2"></i>Download PDF Agreement
                 </button>
 
-                <button type="button" @click="showConfirmModal = true"
+                <button type="button" @click="initiateSignAgreement()"
                     class="gradient-bg text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
                     <i class="fas fa-file-signature mr-2"></i>Sign Agreement
                 </button>
             </div>
 
-            <!-- Confirmation Modal -->
+            <!-- Modal of Credit Card -->
             <div x-show="showConfirmModal"
-                class="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm bg-black bg-opacity-50 p-4"
-                style="display: none;" 
-                x-transition:enter="ease-out duration-300"
-                x-transition:enter-start="opacity-0" 
-                x-transition:enter-end="opacity-100"
-                x-transition:leave="ease-in duration-200" 
-                x-transition:leave-start="opacity-100"
+                class="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm bg-opacity-50 p-4"
+                style="display: none;" x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0">
-                
+
                 <div @click.outside="showConfirmModal = false"
                     class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md transform transition-all"
-                    x-show="showConfirmModal" 
-                    x-transition:enter="ease-out duration-300"
+                    x-show="showConfirmModal" x-transition:enter="ease-out duration-300"
                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
                     x-transition:leave="ease-in duration-200"
                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                    
+
                     <div class="flex items-start">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <div
+                            class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
                             <i class="fas fa-file-signature text-blue-600 text-xl"></i>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -411,31 +440,37 @@
                             </h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
-                                    Are you sure you want to sign this agreement? This action will process the payment and create a legally binding contract.
+                                    Are you sure you want to sign this agreement? This action will process the payment
+                                    and create a legally binding contract.
                                 </p>
                                 <div class="mt-3 p-3 bg-blue-50 rounded-lg">
                                     <p class="text-sm text-blue-800">
-                                        <strong>Rent Amount:</strong> $<span x-text="document.getElementById('rent_amount')?.value || '0.00'"></span><br>
-                                        <strong>Duration:</strong> {{ $booking->month_duration }} month{{ $booking->month_duration > 1 ? 's' : '' }}
+                                        <strong>Rent Amount:</strong> $<span
+                                            x-text="document.getElementById('rent_amount')?.value || '0.00'"></span><br>
+                                        <strong>Duration:</strong> {{ $booking->month_duration }}
+                                        month{{ $booking->month_duration > 1 ? 's' : '' }}
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse space-y-2 sm:space-y-0 sm:space-x-3 sm:space-x-reverse">
-                        <form x-ref="checkoutForm" action="{{ route('checkout') }}" method="POST" class="w-full sm:w-auto">
+
+                    {{-- modal of credit card --}}
+                    <div
+                        class="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse space-y-2 sm:space-y-0 sm:space-x-3 sm:space-x-reverse">
+                        <form x-ref="checkoutForm" action="{{ route('checkout') }}" method="POST"
+                            class="w-full sm:w-auto">
                             @csrf
                             <input type="hidden" name="booking_id" value="{{ $booking->id }}">
                             <input type="hidden" name="rent_amount_checkout" value="">
-                            
+
                             <button @click="processSignAgreement()" type="button"
                                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm transition duration-150 ease-in-out">
                                 <i class="fas fa-credit-card mr-2"></i>
                                 Yes, Sign & Pay
                             </button>
                         </form>
-                        
+
                         <button @click="showConfirmModal = false" type="button"
                             class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm transition duration-150 ease-in-out">
                             Cancel
@@ -444,12 +479,56 @@
                 </div>
             </div>
 
+            <!-- Modal of Cash -->
+            <div x-data="{ show: false, bookingId: null }"
+                x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId" x-show="show" x-cloak
+                class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-opacity-50">
+                <div @click.away="show = false" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
+                    class="bg-white rounded-2xl shadow-2xl p-8 max-w-3xl w-full mx-4 sm:mx-auto"
+                    style="min-width: 400px;">
+                    <h2 class="text-2xl font-bold mb-6 text-indigo-700">Schedule Cash Appointment</h2>
+
+                    <form method="POST" action="{{ route('cash.appointment') }}">
+                        @csrf
+                        <input type="hidden" name="booking_id" :value="bookingId">
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Preferred Date</label>
+                            <input type="date" name="date" required
+                                class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Preferred Time</label>
+                            <input type="time" name="time" required
+                                class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition">
+                        </div>
+
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" @click="show = false"
+                                class="px-6 py-2 rounded-lg bg-gray-300 text-gray-800 font-semibold hover:bg-gray-400 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-6 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Footer -->
             <div class="text-center py-8 mt-4">
-                <p class="text-gray-500 text-sm">© {{ date('Y') }} Rental Agreement System. All rights reserved.</p>
+                <p class="text-gray-500 text-sm">© {{ date('Y') }} Rental Agreement System. All rights reserved.
+                </p>
             </div>
         </div>
     </div>
+
 
     <script>
         // Optional: Add downloadPDFAgreement function if needed

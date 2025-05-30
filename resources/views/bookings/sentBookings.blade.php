@@ -124,7 +124,7 @@
     </div>
 
     <!-- Cash Appointment Modal -->
-    <div x-data="{ show: false, bookingId: null }" x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId"
+    {{-- <div x-data="{ show: false, bookingId: null }" x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId"
         x-show="show" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-50">
         <div @click.away="show = false" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
@@ -161,7 +161,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Hidden Credit Checkout Form -->
     <form id="credit-checkout-form" action="{{ route('checkout') }}" method="POST" style="display: none;">
