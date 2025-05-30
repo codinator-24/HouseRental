@@ -454,8 +454,6 @@
                             </div>
                         </div>
                     </div>
-
-                    {{-- modal of credit card --}}
                     <div
                         class="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse space-y-2 sm:space-y-0 sm:space-x-3 sm:space-x-reverse">
                         <form x-ref="checkoutForm" action="{{ route('checkout') }}" method="POST"

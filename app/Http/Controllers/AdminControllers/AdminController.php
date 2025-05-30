@@ -11,6 +11,7 @@ use App\Notifications\AccountVerified;
 use App\Notifications\HouseApproved;
 use App\Models\Floor;
 use App\Models\Feedback;
+use App\Models\Report; // Added Report model
 
 class AdminController extends  Controller
 {
@@ -60,9 +61,32 @@ class AdminController extends  Controller
     }
     public function viewfeedback()
     {
-        $data = Feedback::all();
-        return view('admin/feedback', compact('data'));
+        $feedbacks = Feedback::latest()->get();
+        $reports = Report::with(['reporter', 'house', 'reportedUser'])->latest()->get();
+        return view('admin/feedback', compact('feedbacks', 'reports'));
     }
+
+    public function updateReportStatus(Request $request, Report $report)
+    {
+        $request->validate([
+            'status' => 'required|string|in:pending,under_review,resolved,dismissed',
+        ]);
+
+        $report->status = $request->status;
+        $report->save();
+
+        return redirect()->route('feedback')->with('success', 'Report status updated successfully.');
+    }
+
+    // Potentially for a dedicated report view page or AJAX data source for modal
+    public function showReportDetails(Report $report)
+    {
+        // For now, if accessed directly, redirect back or show a simple view.
+        // Or, return as JSON if we decide to fetch modal content via AJAX.
+        // For simplicity with current plan, modal will be populated by data already on page.
+        return response()->json($report->load(['reporter', 'house', 'reportedUser']));
+    }
+
     public function view_aprove_user()
     {
         $data = User::all();

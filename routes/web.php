@@ -11,6 +11,7 @@ use App\Http\Controllers\CurrencyController; // Add this line for currency switc
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AuthAdminController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ReportController; // Added ReportController
 use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
 use Stripe\Stripe;
@@ -61,6 +62,9 @@ Route::middleware('lang')->group(function () {
         Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
         Route::get('/agreement/{booking}/create', [AgreementController::class, 'create'])->name('agreement.create');
+
+        // Report a house
+        Route::post('/houses/{house}/report', [ReportController::class, 'store'])->name('house.report');
     });
 
     // Currency Switcher Route - accessible by guests and authenticated users
@@ -111,6 +115,10 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
     Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
     Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
+
+    // Admin routes for managing reports
+    Route::get('/admin/reports/{report}', [AdminController::class, 'showReportDetails'])->name('admin.reports.show');
+    Route::post('/admin/reports/{report}/status', [AdminController::class, 'updateReportStatus'])->name('admin.reports.updateStatus');
    });
 
 //Route bo pishandany data bo Admin

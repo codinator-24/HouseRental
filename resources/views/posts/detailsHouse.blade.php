@@ -189,8 +189,7 @@
                                             <h3 class="text-lg font-semibold text-gray-700">Floor {{ $index + 1 }}:
                                             </h3>
                                             <p class="text-sm text-gray-600">
-                                                {{ $floor->num_room }} Rooms and Bathroom is
-                                                {{ $floor->bathroom ? 'Exists' : 'not Exists' }}.
+                                                {{ $floor->num_room }} {{ Str::plural('Room', $floor->num_room) }}. Bathroom: {{ $floor->bathroom ? 'Yes' : 'No' }}.
                                             </p>
                                         </div>
                                     @endforeach
@@ -216,15 +215,15 @@
                                             / {{ $house->landlord->masked_second_phone }}
                                         @endif
                                     </p>
-                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                        <i class="fas fa-envelope mr-2 fas fa-phone text-slate-500"
-                                            style="margin-bottom:8px;"></i>
-
-                                        <h2 class="mb-3 font-bold text-gray-800 color color-primary">For Feedback:</h2>
-                                        <a href="{{ route('contact') }}"><button
-                                                class="custom-btn">Feedback</button></a>
-
-                                    </div>
+                                    @auth
+                                        @if(Auth::id() !== $house->landlord_id) {{-- Ensure user is not the landlord of this house --}}
+                                        <div class="mt-4">
+                                            <button type="button" id="openReportModalBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                                <i class="mr-2 fas fa-flag"></i> Report Property
+                                            </button>
+                                        </div>
+                                        @endif
+                                    @endauth
                                 </div>
                             </div>
                         @endif
@@ -339,6 +338,63 @@
 
     {{-- Booking Modal --}}
     @auth
+        {{-- Report Modal --}}
+        @if ($house->landlord && Auth::id() !== $house->landlord_id)
+        <div id="reportModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+            <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
+                <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+                    <h1 id="reportModalTitle" class="text-xl font-semibold text-gray-700">Report This Property</h1>
+                    <button id="closeReportModalBtn" aria-label="Close report modal" class="text-2xl text-gray-500 hover:text-gray-700">×</button>
+                </div>
+
+                <form method="POST" action="{{ route('house.report', ['house' => $house->id]) }}" class="px-6 py-6">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="reason_category" class="block mb-1 text-sm font-medium text-gray-700">Reason for Reporting</label>
+                        <select name="reason_category" id="reason_category" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('reason_category', 'reportFormErrors') border-red-500 @enderror">
+                            <option value="">Select a reason...</option>
+                            <option value="Misleading Information" {{ old('reason_category') == 'Misleading Information' ? 'selected' : '' }}>Misleading Information</option>
+                            <option value="Safety Concern" {{ old('reason_category') == 'Safety Concern' ? 'selected' : '' }}>Safety Concern</option>
+                            <option value="Landlord Behavior" {{ old('reason_category') == 'Landlord Behavior' ? 'selected' : '' }}>Landlord Behavior</option>
+                            <option value="Scam/Fraud" {{ old('reason_category') == 'Scam/Fraud' ? 'selected' : '' }}>Scam/Fraud</option>
+                            <option value="Technical Issue with Listing" {{ old('reason_category') == 'Technical Issue with Listing' ? 'selected' : '' }}>Technical Issue with Listing</option>
+                            <option value="Other" {{ old('reason_category') == 'Other' ? 'selected' : '' }}>Other</option>
+                        </select>
+                        @error('reason_category', 'reportFormErrors')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="report_description" class="block mb-1 text-sm font-medium text-gray-700">Description</label>
+                        <textarea name="description" id="report_description" rows="5" placeholder="Please provide details about the issue." class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'reportFormErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
+                        @error('description', 'reportFormErrors')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    @if ($errors->reportFormErrors->any() && !$errors->reportFormErrors->has('reason_category') && !$errors->reportFormErrors->has('description'))
+                        <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+                            <p class="font-bold">Please correct the following error(s):</p>
+                            <ul class="list-disc list-inside">
+                                @foreach ($errors->reportFormErrors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Submit Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @endif
+
+
         @if (
             $house->landlord &&
                 auth()->id() !== $house->landlord->id &&
@@ -494,7 +550,6 @@
                         }
                     });
 
-                    // Close with Escape key
                     document.addEventListener('keydown', function(event) {
                         if (event.key === 'Escape' && bookingModal.style.display === 'flex') {
                             bookingModal.style.display = 'none';
@@ -502,14 +557,45 @@
                     });
                 }
 
-                // Keep booking modal open if there are validation errors for it
-                // Ensure your controller redirects back with errors in the 'bookingMessageErrors' bag
                 @if ($errors->hasBag('sendBookingFormErrors') && $errors->sendBookingFormErrors->any())
-                    if (bookingModal) { // Check if modal exists on the page (it should if errors are present for it)
+                    if (bookingModal) {
                         bookingModal.style.display = 'flex';
                     }
                 @endif
 
+                // --- Report Modal Script ---
+                const openReportBtn = document.getElementById('openReportModalBtn');
+                const closeReportBtn = document.getElementById('closeReportModalBtn');
+                const reportModal = document.getElementById('reportModal');
+
+                if (openReportBtn && closeReportBtn && reportModal) {
+                    openReportBtn.addEventListener('click', function() {
+                        reportModal.style.display = 'flex';
+                    });
+
+                    closeReportBtn.addEventListener('click', function() {
+                        reportModal.style.display = 'none';
+                    });
+
+                    reportModal.addEventListener('click', function(event) {
+                        if (event.target === reportModal) { // Click on overlay
+                            reportModal.style.display = 'none';
+                        }
+                    });
+
+                    document.addEventListener('keydown', function(event) {
+                        if (event.key === 'Escape' && reportModal.style.display === 'flex') {
+                            reportModal.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Keep report modal open if there are validation errors for it
+                @if ($errors->hasBag('reportFormErrors') && $errors->reportFormErrors->any())
+                    if (reportModal) {
+                        reportModal.style.display = 'flex';
+                    }
+                @endif
             });
         </script>
     @endpush

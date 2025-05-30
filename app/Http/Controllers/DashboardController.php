@@ -58,13 +58,29 @@ class DashboardController extends Controller
 
     public function insert_contact(Request $request)
     {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string|max:5000',
+        ]);
+
         $data = new Feedback;
-        $data->name = $request->name;
-        $data->email = $request->email;
+
+        if (Auth::check()) {
+            $user = Auth::user();
+            $data->name = $user->full_name; // Assuming 'full_name' exists on User model
+            $data->email = $user->email;
+        } else {
+            // This case should ideally not be reached if frontend hides form for guests.
+            // If it is, name and email would be null, or you might want to redirect.
+            // For now, we'll let it proceed, but validation for name/email would fail if they were required for guests.
+            // However, since we are removing them for guests, this path is less likely.
+             return redirect()->route('login')->with('error', 'Please login to submit feedback.');
+        }
+
         $data->title = $request->title;
         $data->description = $request->description;
 
         $data->save();
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Feedback submitted successfully!');
     }
 }

@@ -55,7 +55,7 @@ class StripeController extends Controller
                 'rent_amount' => $rentAmount,
             ]
         ]);
-        
+
         return redirect()->away($session->url);
     }
 
@@ -85,30 +85,22 @@ class StripeController extends Controller
             // Get the booking to extract necessary data
             $booking = Booking::with(['house', 'tenant'])->findOrFail($bookingId);
 
-            // Check if agreement already exists for this booking
-            $existingAgreement = Agreement::where('booking_id', $bookingId)->first();
-            if ($existingAgreement) {
+            // Check if agreement exists for this booking
+            $agreement = Agreement::where('booking_id', $bookingId)->first();
+            if (!$agreement) {
                 return redirect()->route('agreement.create', ['booking' => $bookingId])
-                    ->with('info', 'Agreement already exists for this booking.');
+                    ->with('error', 'No agreement found for this booking.');
             }
 
-            // Create the Agreement
-            $signedDate = Carbon::now();
-            $expiresDate = $signedDate->copy()->addMonths($booking->month_duration);
-            
-            // Get rent amount from Stripe metadata or calculate from session
-            $rentAmount = $session->metadata->rent_amount ?? ($session->amount_total / 100);
-
-            $agreement = Agreement::create([
-                'booking_id' => $bookingId,
-                'signed_at' => $signedDate,
-                'expires_at' => $expiresDate,
-                'rent_amount' => $rentAmount,
-                'rent_frequency' => 'monthly', // Default, you might want to get this from session or form
-                'status' => 'active',
+            // Update the Agreement status to agreed/active
+            $agreement->update([
+                'status' => 'agreed', // or 'active' depending on your preference
+                'signed_at' => Carbon::now(), // Update signed date when agreement is finalized
             ]);
 
             // Create the Payment record
+            $rentAmount = $session->metadata->rent_amount ?? ($session->amount_total / 100);
+
             Payment::create([
                 'agreement_id' => $agreement->id,
                 'amount' => $rentAmount,
@@ -124,11 +116,10 @@ class StripeController extends Controller
             // Redirect back to agreement creation page with success message
             return redirect()->route('agreement.create', ['booking' => $bookingId])
                 ->with('success', 'Agreement signed successfully and payment processed!');
-
         } catch (\Exception $e) {
             // Log the error
             Log::error('Payment success processing failed: ' . $e->getMessage());
-            
+
             return redirect()->route('agreement.create', ['booking' => $bookingId ?? ''])
                 ->with('error', 'An error occurred while processing your payment. Please contact support.');
         }
