@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Booking extends Model
 {
@@ -13,10 +14,18 @@ class Booking extends Model
     protected $fillable = [
         'house_id', // got from houses table
         'tenant_id', // got from users table
-        'start_date',
-        'end_date',
         'status',
         'message',
+        'month_duration', // e.g., duration in month
+    ];
+
+     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'month_duration' => 'integer',
     ];
 
     public function house(): BelongsTo

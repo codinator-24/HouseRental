@@ -20,7 +20,7 @@ class House extends Model
         'landlord_id',
         'title',
         'description',
-        'first_address',
+        'neighborhood',
         'second_address',
         'city',
         'location_url',
@@ -28,6 +28,8 @@ class House extends Model
         'square_footage',
         'rent_amount',
         'status',
+        'latitude',
+        'longitude',
     ];
 
     /**
@@ -55,7 +57,7 @@ class House extends Model
         return $this->hasMany(HousePicture::class);
     }
 
-      public function floors(): HasMany // <-- Add this method
+    public function floors(): HasMany // <-- Add this method
     {
         return $this->hasMany(Floor::class);
     }

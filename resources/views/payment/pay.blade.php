@@ -1,4 +1,4 @@
-<form action="/checkout" method="POST">
+<form action="{{route('checkout')}}" method="POST">
 @csrf
 <button type="submit">Checkout</button>
 </form>

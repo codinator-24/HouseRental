@@ -17,7 +17,26 @@ use Illuminate\View\View;
 
 class HouseController extends Controller
 {
-
+    /**
+     * Helper method to mask phone number - hide last 5 digits
+     */
+    private function maskPhoneNumber($phoneNumber)
+    {
+        if (!$phoneNumber) {
+            return null;
+        }
+        
+        $phoneNumber = (string) $phoneNumber;
+        $length = strlen($phoneNumber);
+        
+        if ($length <= 5) {
+            // If phone number is 5 digits or less, mask all but first digit
+            return substr($phoneNumber, 0, 1) . str_repeat('X', $length - 1);
+        }
+        
+        // Hide last 5 digits
+        return substr($phoneNumber, 0, $length - 5) . 'XXXXX';
+    }
 
     public function ShowAddHouse()
     {
@@ -30,13 +49,15 @@ class HouseController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'first_address' => 'required|string|max:255',
+            'neighborhood' => 'required|string|max:255',
             'second_address' => 'nullable|string|max:255',
             'city' => 'required|string|max:100',
             'location_url' => 'nullable|url|max:500',
             'property_type' => 'required|string|max:100',
             'square_footage' => 'required|numeric|min:0',
             'rent_amount' => 'required|numeric|min:0',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'pictures' => 'nullable|array', // Ensure pictures is an array if present
             'pictures.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10048', // Validate each file in the array
             'floors' => 'required|array|min:1', // Ensure at least one floor is provided
@@ -54,7 +75,7 @@ class HouseController extends Controller
                 'landlord_id' => Auth::id(), // Get logged-in user's ID
                 'title' => $validatedData['title'],
                 'description' => $validatedData['description'],
-                'first_address' => $validatedData['first_address'],
+                'neighborhood' => $validatedData['neighborhood'],
                 'second_address' => $validatedData['second_address'],
                 'city' => $validatedData['city'],
                 'location_url' => $validatedData['location_url'],
@@ -62,6 +83,8 @@ class HouseController extends Controller
                 'square_footage' => $validatedData['square_footage'],
                 'rent_amount' => $validatedData['rent_amount'],
                 'status' => 'disagree', // Default status
+                'latitude' => $validatedData['latitude'] ?? null,
+                'longitude' => $validatedData['longitude'] ?? null,
             ]);
 
             // 3. Create Floor records
@@ -109,7 +132,13 @@ class HouseController extends Controller
 
     public function houseDetails(House $house)
     {
-        $house->load('pictures', 'floors'); // Eager load floors along with pictures
+        $house->load('pictures', 'floors', 'landlord'); // Eager load landlord, pictures, and floors
+
+        // Mask phone numbers for privacy
+        if ($house->landlord) {
+            $house->landlord->masked_first_phone = $this->maskPhoneNumber($house->landlord->first_phoneNumber);
+            $house->landlord->masked_second_phone = $this->maskPhoneNumber($house->landlord->second_phoneNumber);
+        }
 
         $userBookingForThisHouse = null;
         if (Auth::check() && $house && $house->id) {
@@ -156,13 +185,15 @@ class HouseController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'first_address' => 'required|string|max:255',
+            'neighborhood' => 'required|string|max:255',
             'second_address' => 'nullable|string|max:255',
             'city' => 'required|string|max:100',
             'location_url' => 'nullable|url|max:500',
             'property_type' => 'required|string|max:100',
             'square_footage' => 'required|numeric|min:0',
             'rent_amount' => 'required|numeric|min:0',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'pictures' => 'nullable|array', // Pictures array is optional
             'pictures.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10048', // Each file in array must be an image
             'floors' => 'required|array|min:1', // Ensure at least one floor is provided
@@ -178,13 +209,15 @@ class HouseController extends Controller
             $houseDataToUpdate = [
                 'title' => $validatedData['title'],
                 'description' => $validatedData['description'],
-                'first_address' => $validatedData['first_address'],
+                'neighborhood' => $validatedData['neighborhood'],
                 'second_address' => $validatedData['second_address'],
                 'city' => $validatedData['city'],
                 'location_url' => $validatedData['location_url'],
                 'property_type' => $validatedData['property_type'],
                 'square_footage' => $validatedData['square_footage'],
                 'rent_amount' => $validatedData['rent_amount'],
+                'latitude' => $validatedData['latitude'] ?? null,
+                'longitude' => $validatedData['longitude'] ?? null,
             ];
             $house->update($houseDataToUpdate);
 
@@ -277,123 +310,4 @@ class HouseController extends Controller
             return back()->with('error', 'Failed to delete picture. Please try again or contact support.');
         }
     }
-// ..
-//     public function sendBooking(Request $request, House $house)
-//     {
-//         // The 'auth' middleware (which should be on your route) handles unauthenticated users.
-//         // If Auth::id() is used, an authenticated user is assumed.
-
-//         // Validate the request data.
-//         // If validation fails, Laravel automatically redirects back to the previous page.
-//         // Errors will be in the 'bookingMessageErrors' bag, and old input will be flashed.
-//         // Your JavaScript in detailsHouse.blade.php should then reopen the modal.
-//         $validatedData = $request->validateWithBag('bookingMessageErrors', [
-//             'booking_message' => 'nullable|string|max:2000', // Message is optional as per your modal
-//         ], [
-//             // Optional: Custom validation messages
-//             'booking_message.max' => 'Your message is too long (maximum 2000 characters).',
-//         ]);
-
-//         try {
-//             Booking::create([
-//                 'house_id' => $house->id,
-//                 'tenant_id' => Auth::id(), // Gets the ID of the currently authenticated user
-//                 'message' => $validatedData['booking_message'] ?? null, // Use validated data, default to null if empty
-//                 'status' => 'pending', // Set a default status like 'inquiry' or 'pending_confirmation'
-//                 // 'start_date' and 'end_date' are not collected by this modal.
-//                 // Ensure these columns in your 'bookings' table are nullable or have default values.
-//             ]);
-
-//             // Redirect back to the house details page with a success message.
-//             // You'll need to have a way to display this 'booking_inquiry_success' flash message in your Blade layout/view.
-//             return redirect()->back()->with('success', 'Your Booking has been sent successfully to the landlord!');
-//         } catch (\Exception $e) {
-//             // Log the detailed error for debugging purposes
-//             Log::error("Booking Submission Failed for House ID {$house->id} by User ID " . Auth::id() . ": " . $e->getMessage());
-
-//             // Redirect back with a general error message, using the 'bookingMessageErrors' bag.
-//             // This ensures the modal reopens and displays the error.
-//             return redirect()->back()
-//                 ->withInput() // Flash the submitted input (the message) back to the form
-//                 ->withErrors(['_form' => 'We couldn\'t send your Booking at this moment. Please try again later.'], 'bookingMessageErrors');
-//         }
-//     }
-
-//     public function MyBookings()
-//     {
-//         // Get the ID of the currently authenticated landlord
-//         $landlordId = Auth::id();
-
-//         // Fetch bookings for houses owned by this landlord
-//         // Eager load the 'house' and 'tenant' relationships for efficiency
-//         $bookings = Booking::with(['house', 'tenant'])
-//             ->whereHas('house', function ($query) use ($landlordId) {
-//                 $query->where('landlord_id', $landlordId);
-//             })
-//             ->orderBy('created_at', 'desc') // Optional: Order by newest first
-//             ->get();
-
-//         return view('users.MyHousesBookings', ['bookings' => $bookings]);
-//     }
-
-//     public function showBooking(Booking $booking)
-//     {
-//         // Eager load relationships to prevent N+1 queries and for easy access in the view
-//         $booking->load(['tenant', 'house']);
-
-//         // Authorization: Ensure the authenticated user is the landlord of the house for this booking.
-//         if (Auth::id() !== $booking->house->landlord_id) {
-//             abort(403, 'Unauthorized action. You do not own the house associated with this booking.');
-//         }
-
-//         return view('users.showBooking', compact('booking'));
-//     }
-
-//     public function showSentBookings()
-//     {
-//         $user = Auth::user();
-
-//         // Fetch bookings where the authenticated user is the 'tenant_id' (the sender of the booking)
-//         // Eager load the 'house' relationship and then the 'landlord' relationship on the 'house'
-//         // Assumes Booking model has 'tenant_id' and a 'house' relationship.
-//         // Assumes House model has an 'landlord' relationship to the User model.
-//         $sentBookings = Booking::where('tenant_id', $user->id)
-//             ->with(['house.landlord']) // Eager load house and its landlord
-//             ->latest() // Order by the most recent bookings first
-//             ->paginate(10); // Paginate the results, 10 per page
-
-//         return view('users.sentBookings', compact('sentBookings'));
-//     }
-
-//     public function showDetailSentBooking(Booking $booking)
-//     {
-//         // Authorization: Ensure the logged-in user is either the tenant or the property landlord
-//         if (Auth::id() !== $booking->tenant_id && (! $booking->house || Auth::id() !== $booking->house->landlord_id)) {
-//             // If you have an AuthorizationException imported:
-//             // throw new \Illuminate\Auth\Access\AuthorizationException('You are not authorized to view this booking.');
-//             // Otherwise, a simple abort:
-//             abort(403, 'You are not authorized to view this booking.');
-//         }
-
-//         // Eager load relationships for efficiency if not already globally eager-loaded in Booking model
-//         $booking->load(['house.landlord', 'tenant']);
-
-//         return view('users.showBooking', compact('booking'));
-//     }
-
-
-//     public function destroySentBooking(Request $request, Booking $booking)
-//     {
-//         // Authorization: Ensure the authenticated user is the one who sent the booking
-//         if ($booking->tenant_id !== Auth::id()) {
-//             return back()->with('error', 'You are not authorized to delete this booking.');
-//         }
-
-//         // Optional: Add logic here if there are conditions under which a booking cannot be deleted
-//         // (e.g., if it's already accepted and past a certain point)
-
-//         $booking->delete();
-
-//         return redirect()->back()->with('success', 'Booking request deleted successfully.');
-//     }
 }

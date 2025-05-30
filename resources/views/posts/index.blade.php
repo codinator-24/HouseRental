@@ -8,11 +8,11 @@
             <div class="absolute inset-0 bg-black opacity-50"></div>
             {{-- Content --}}
             <div class="relative z-10 px-4 text-center">
-                <h1 class="mb-4 text-4xl font-bold md:text-5xl">Find Your Dream Home</h1>
-                <p class="mb-8 text-lg md:text-xl">Discover the perfect property for your needs</p>
+                <h1 class="mb-4 text-4xl font-bold md:text-5xl">@lang('words.Find Your Dream Home')</h1>
+                <p class="mb-8 text-lg md:text-xl">@lang('words.Discover the perfect property for your needs')</p>
                 <a href="{{ route('login') }}"
                     class="px-6 py-3 text-lg font-bold text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
-                    Please login to rent a house
+                    @lang('words.Please login to rent a house')    
                 </a>
             </div>
         </section>
@@ -26,16 +26,16 @@
             <div class="absolute inset-0 bg-black opacity-50"></div>
             {{-- Content --}}
             <div class="relative z-10 px-4 text-center">
-                <h1 class="mb-4 text-4xl font-bold md:text-5xl">Find Your Dream Home</h1>
-                <p class="mb-8 text-lg md:text-xl">Discover the perfect property for your needs</p>
+                <h1 class="mb-4 text-4xl font-bold md:text-5xl">@lang('words.Find Your Dream Home')</h1>
+                <p class="mb-8 text-lg md:text-xl">@lang('words.Discover the perfect property for your needs')</p>
                 @if (auth()->user()->status === 'Not Verified')
                     <p class="px-6 py-3 text-lg font-bold text-white bg-orange-500 rounded-md">
-                        Wait until your account is verified.
+                        @lang('words.Wait until your account is verified.')
                     </p>
                 @else
                     <a href="{{ route('Show.house.add') }}"
                         class="px-6 py-3 text-lg font-bold text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
-                        Click here to place your property
+                        @lang('words.Click here to place your property')
                     </a>
                 @endif
             </div>
@@ -43,23 +43,43 @@
     @endauth
 
     {{-- Search Bar Section --}}
+
+    {{-- Search Bar Section --}}
     <section id="search"
         class="container relative z-20 max-w-4xl px-5 py-6 mx-auto -mt-16 bg-white rounded-lg shadow-lg">
         {{-- Submit to the current URL to re-load the page with query parameters --}}
-        <form action="{{ request()->url() }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-4">
-            {{-- Location --}}
+        <form action="{{ route('home') }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-5">
+            {{-- City Dropdown --}}
             <div>
-                <label for="location" class="block mb-1 text-sm font-medium text-gray-700">Location</label>
-                <input type="text" id="location" name="location" value="{{ request('location') }}"
-                    placeholder="City, neighborhood..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <label for="city" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.city')</label>
+                <select id="city" name="city"
+                    class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <option value="" {{ request('city') == '' ? 'selected' : '' }}>@lang('words.All Cities')</option>
+                    <option value="Sulaymaniyah" {{ request('city') == 'Sulaymaniyah' ? 'selected' : '' }}>@lang('words.Sulaymaniyah')
+                    </option>
+                    <option value="Hawler" {{ request('city') == 'Hawler' ? 'selected' : '' }}>@lang('words.Hawler')</option>
+                    <option value="Karkuk" {{ request('city') == 'Karkuk' ? 'selected' : '' }}>@lang('words.Karkuk')</option>
+                    <option value="Dhok" {{ request('city') == 'Dhok' ? 'selected' : '' }}>@lang('words.Dhok')</option>
+                    <option value="Halabja" {{ request('city') == 'Halabja' ? 'selected' : '' }}>@lang('words.Halabja')</option>
+                </select>
             </div>
+
+            {{-- Neighborhood Dropdown --}}
+            <div>
+                <label for="neighborhood" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.Neighborhood')</label>
+                <select id="neighborhood" name="neighborhood"
+                    class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">@lang('words.All Neighborhoods')</option>
+                    {{-- Options will be populated by JavaScript --}}
+                </select>
+            </div>
+
             {{-- Price --}}
             <div>
-                <label for="price" class="block mb-1 text-sm font-medium text-gray-700">Price</label>
+                <label for="price" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.Price')</label>
                 <select id="price" name="price"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="" {{ request('price') == '' ? 'selected' : '' }}>Price Range</option>
+                    <option value="" {{ request('price') == '' ? 'selected' : '' }}>@lang('words.Price Range')</option>
                     <option value="0-1000" {{ request('price') == '0-1000' ? 'selected' : '' }}>$0 - $1000</option>
                     <option value="1000-2000" {{ request('price') == '1000-2000' ? 'selected' : '' }}>$1000 - $2000
                     </option>
@@ -68,24 +88,26 @@
                     <option value="3000+" {{ request('price') == '3000+' ? 'selected' : '' }}>$3000+</option>
                 </select>
             </div>
+
             {{-- Property Type --}}
             <div>
-                <label for="property_type" class="block mb-1 text-sm font-medium text-gray-700">Property Type</label>
+                <label for="property_type" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.Property Type')</label>
                 <select id="property_type" name="property_type"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="" {{ request('property_type') == '' ? 'selected' : '' }}>Property Type</option>
-                    <option value="apartment" {{ request('property_type') == 'apartment' ? 'selected' : '' }}>Apartment
+                    <option value="" {{ request('property_type') == '' ? 'selected' : '' }}>@lang('words.Property Type')
                     </option>
-                    <option value="house" {{ request('property_type') == 'house' ? 'selected' : '' }}>House</option>
-                    <option value="condo" {{ request('property_type') == 'condo' ? 'selected' : '' }}>Condo</option>
-                    <option value="studio" {{ request('property_type') == 'studio' ? 'selected' : '' }}>Studio</option>
+                    <option value="apartment" {{ request('property_type') == 'apartment' ? 'selected' : '' }}>@lang('words.Apartment')
+                    </option>
+                    <option value="house" {{ request('property_type') == 'house' ? 'selected' : '' }}>@lang('words.House')</option>
+                    <option value="condo" {{ request('property_type') == 'condo' ? 'selected' : '' }}>@lang('words.Condo')</option>
+                    <option value="studio" {{ request('property_type') == 'studio' ? 'selected' : '' }}>@lang('words.Studio')</option>
                 </select>
             </div>
+
             {{-- Search Button --}}
             <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md w-full h-[42px]">
-                {{-- Matched height of inputs --}}
-                Search properties
+                @lang('words.Search properties')
             </button>
         </form>
     </section>
@@ -97,9 +119,8 @@
         <section class="py-5">
             <div class="container px-6 mx-auto">
                 <div class="flex items-center justify-between mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800">Featured Properties</h2>
-                    <a href="{{ route('home') }}" class="font-medium text-blue-600 hover:text-blue-800">View All
-                        Properties</a>
+                    <h2 class="text-3xl font-bold text-gray-800">@lang('words.Featured Properties')</h2>
+                    <a href="{{ route('home') }}" class="font-medium text-blue-600 hover:text-blue-800">@lang('words.View All Properties')</a>
                 </div>
 
                 {{-- Property Grid --}}
@@ -119,12 +140,15 @@
                                 <p class="flex-grow mb-4 text-sm text-gray-600">
                                     <i class="mr-1 fas fa-map-marker-alt text-slate-500"></i>
                                     {{ $house->city }}, {{ $house->first_address }}
-                                    {{ $house->second_address ?? '' }}
+                                    {{-- In index, 'first_address' is now 'neighborhood' --}}
+                                    {{-- Displaying city and neighborhood --}}
+                                    {{ $house->neighborhood }}
+                                    {{ $house->second_address ? ', ' . $house->second_address : '' }}
                                 </p>
                                 <div class="flex items-center justify-between mb-4">
                                     <span
                                         class="text-2xl font-bold text-blue-600">${{ number_format($house->rent_amount) }}</span>
-                                    <span class="text-sm text-gray-600">per month</span>
+                                    <span class="text-sm text-gray-600">@lang('words.per month')</span>
                                 </div>
                                 <div class="flex justify-between pt-4 mb-4 text-sm text-gray-600 border-t">
                                     <span><i class="mr-1 fas fa-bed"></i> {{ $house->num_room }}
@@ -132,17 +156,16 @@
                                     <span><i class="mr-1 fas fa-layer-group"></i> {{ $house->num_floor }}
                                         {{ Str::plural('Floor', $house->num_floor) }}</span>
                                     <span><i class="mr-1 fas fa-ruler-combined"></i> {{ $house->square_footage }}
-                                        m<sup>2</sup></span>
+                                       @lang('words.m')   <sup>2</sup></span>
                                 </div>
                                 <a href="{{ route('house.details', $house) }}"
                                     class="block w-full px-4 py-2 mt-auto font-bold text-center text-white transition duration-300 bg-blue-600 rounded hover:bg-blue-700">
-                                    View Details
+                                   @lang('words.View Details') 
                                 </a>
                             </div>
                         </div>
                     @empty
-                        <p class="text-center text-gray-600 md:col-span-2 lg:col-span-3">No properties found at the
-                            moment.</p>
+                        <p class="text-center text-gray-600 md:col-span-2 lg:col-span-3">@lang('words.No properties found at the moment.') </p>
                     @endforelse
                 </div>
             </div>
@@ -151,8 +174,8 @@
     {{-- Why Choose Us Section --}}
     <section class="py-16 bg-blue-50">
         <div class="container px-6 mx-auto text-center">
-            <h2 class="mb-4 text-3xl font-bold text-gray-800">Why Choose HouseRental?</h2>
-            <p class="max-w-2xl mx-auto mb-12 text-gray-600">We make finding your perfect home simple and stress-free.
+            <h2 class="mb-4 text-3xl font-bold text-gray-800">@lang('words.Why Choose HouseRental?')</h2>
+            <p class="max-w-2xl mx-auto mb-12 text-gray-600">@lang('words.We make finding your perfect home simple and stress-free.')
             </p>
 
             <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -170,8 +193,8 @@
                             </svg>
                         </div>
                     </div>
-                    <h3 class="mb-2 text-xl font-semibold">Ideal Locations</h3>
-                    <p class="text-sm text-gray-600">Explore properties in prime locations across the city.</p>
+                    <h3 class="mb-2 text-xl font-semibold">@lang('words.Ideal Locations')</h3>
+                    <p class="text-sm text-gray-600">@lang('words.Explore properties in prime locations across the city.')</p>
                 </div>
 
                 {{-- Feature 2: Transparent Pricing --}}
@@ -186,8 +209,8 @@
                             </svg>
                         </div>
                     </div>
-                    <h3 class="mb-2 text-xl font-semibold">Transparent Pricing</h3>
-                    <p class="text-sm text-gray-600">No hidden fees or surprise costs, ever.</p>
+                    <h3 class="mb-2 text-xl font-semibold">@lang('words.Transparent Pricing')</h3>
+                    <p class="text-sm text-gray-600">@lang('words.No hidden fees or surprise costs, ever.')</p>
                 </div>
 
                 {{-- Feature 3: Quality Verified --}}
@@ -202,8 +225,8 @@
                             </svg>
                         </div>
                     </div>
-                    <h3 class="mb-2 text-xl font-semibold">Quality Verified</h3>
-                    <p class="text-sm text-gray-600">All our listings are verified for quality and accuracy.</p>
+                    <h3 class="mb-2 text-xl font-semibold">@lang('words.Quality Verified')</h3>
+                    <p class="text-sm text-gray-600">@lang('words.All our listings are verified for quality and accuracy.')</p>
                 </div>
             </div>
         </div>
@@ -216,4 +239,142 @@
             crossorigin="anonymous" referrerpolicy="no-referrer" />
     @endpush
 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // City and Neighborhood Dropdown Logic for Search
+            const cityDropdown = document.getElementById('city');
+            const neighborhoodDropdown = document.getElementById('neighborhood');
+
+            if (cityDropdown && neighborhoodDropdown) {
+                // Define neighborhoods for each city (same as add property page)
+                const neighborhoodsByCity = {
+                    'Sulaymaniyah': [
+                        'Salim',
+                        'Raparin',
+                        'Bakrajo',
+                        'Xabat',
+                        'New Sulaymaniyah',
+                        'Bakhtiary',
+                        'Tasfirate',
+                        'German',
+                        'Goizha',
+                        'Kani Ashkan',
+                        'Malkandi',
+                        'Shaikh Maruf',
+                        'Qelay Sherwana',
+                        'Pismam',
+                        'Nawbahar',
+                        'Kanes',
+                        'Razgah',
+                        'Ashti'
+                    ],
+                    'Hawler': [
+                        'Ankawa',
+                        'Iskan',
+                        'Naz City',
+                        'Kushtaba',
+                        'Majidi Mall',
+                        'Erbil Citadel',
+                        'Shadi',
+                        'Mamostayan',
+                        'Badawa',
+                        'Prmam',
+                        'Rozhalat',
+                        'Brayati',
+                        'Galawezh',
+                        'Bakhtyari',
+                        'Brusk',
+                        'Haybat Sultan'
+                    ],
+                    'Karkuk': [
+                        'Shorja',
+                        'Arafa',
+                        'Imam Qasim',
+                        'Shorawiya',
+                        'Tisseen Street',
+                        'Baghlan',
+                        'Azadi',
+                        'Rahimawa',
+                        'Domiz',
+                        'New Kirkuk',
+                        'Wasati',
+                        'Shorja',
+                        'Iskan',
+                        'Laylan'
+                    ],
+                    'Dhok': [
+                        'Azadi',
+                        'Baxtyari',
+                        'Shexan',
+                        'Qutabxana',
+                        'Newroz',
+                        'Center',
+                        'Nali',
+                        'Shorsh',
+                        'Tasluja',
+                        'Qoshtapa'
+                    ],
+                    'Halabja': [
+                        'Center',
+                        'New Halabja',
+                        'Khurmal',
+                        'Biara',
+                        'Sayid Sadiq',
+                        'Serkani',
+                        'Ababaile',
+                        'Anab',
+                        'Biyare',
+                        'Tuwela',
+                        'Maidan',
+                        'Shahidan'
+                    ]
+                };
+
+                // Get current request values
+                const currentCity = "{{ request('city') }}";
+                const currentNeighborhood = "{{ request('neighborhood') }}";
+
+                function updateNeighborhoodOptions() {
+                    const selectedCity = cityDropdown.value;
+
+                    // Clear previous neighborhood options and add the default
+                    neighborhoodDropdown.innerHTML = '<option value="">@lang('words.All Neighborhoods')</option>';
+
+                    if (selectedCity && neighborhoodsByCity[selectedCity] && neighborhoodsByCity[selectedCity]
+                        .length > 0) {
+                        neighborhoodsByCity[selectedCity].forEach(function(neighborhood) {
+                            const option = document.createElement('option');
+                            option.value = neighborhood;
+                            option.textContent = neighborhood;
+
+                            // Preserve selected neighborhood if it matches current request
+                            if (neighborhood === currentNeighborhood && selectedCity === currentCity) {
+                                option.selected = true;
+                            }
+
+                            neighborhoodDropdown.appendChild(option);
+                        });
+
+                        neighborhoodDropdown.disabled = false;
+                    } else {
+                        // If "All Cities" is selected, enable neighborhood but keep it as "All Neighborhoods"
+                        neighborhoodDropdown.disabled = false;
+                    }
+                }
+
+                // Add event listener for changes on the city dropdown
+                cityDropdown.addEventListener('change', function() {
+                    updateNeighborhoodOptions();
+                    // Clear neighborhood selection when city changes (except on initial load)
+                    if (cityDropdown.value === '') {
+                        neighborhoodDropdown.value = '';
+                    }
+                });
+
+                // Initial population of neighborhoods when the page loads
+                updateNeighborhoodOptions();
+            }
+        });
+    </script>
 </x-layout>

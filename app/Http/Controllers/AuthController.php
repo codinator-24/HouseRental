@@ -27,7 +27,7 @@ class AuthController extends Controller
             'role' => ['required', 'string', 'max:50'], // Added validation for role
             'address' => ['required', 'max:255'],
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Added max size
-            'IdCard' => 'nullable|file|mimes:pdf,jpeg,png,jpg,gif,webp|max:8048', // Added IdCard validation
+            'IdCard' => 'required|nullable|file|mimes:pdf,jpeg,png,jpg,gif,webp|max:8048', // Added IdCard validation
         ], [
             'first_phoneNumber' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',
             'second_phoneNumber' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',
@@ -121,14 +121,12 @@ class AuthController extends Controller
             // Note: Password and Role are typically not updated here for security/logic reasons
             'address' => ['required', 'max:255'],
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Added max size
-            'IdCard' => 'nullable|file|mimes:pdf,jpeg,png,jpg,gif,webp|max:8048', // Added IdCard validation
         ], [
             'first_phoneNumber.regex' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',
             'second_phoneNumber.regex' => 'Please enter the correct contact number format (e.g., 07xxxxxxxx).',
             'email.regex'     => 'Please enter a valid email address format.',
             'email.unique'    => 'This email address is already registered by another user.',
             'user_name.unique' => 'This username is already taken by another user.',
-            'IdCard.mimes' => 'The ID Card must be a file of type: pdf, jpeg, png, jpg, gif, webp.',
         ]);
 
         // Handle file upload if a new picture is provided
@@ -145,18 +143,6 @@ class AuthController extends Controller
             // (with 'nullable') would put 'picture' => null in $fields.
             // Unset it to prevent overwriting the existing picture with null.
             unset($fields['picture']);
-        }
-
-        // Handle IdCard upload if a new one is provided
-        if ($request->hasFile('IdCard')) {
-            if ($user->IdCard) {
-                Storage::disk('public')->delete($user->IdCard);
-            }
-            $idCardPath = $request->file('IdCard')->store('id_cards', 'public');
-            $fields['IdCard'] = $idCardPath;
-        } else {
-            // Prevent overwriting existing IdCard with null if no new file uploaded
-            unset($fields['IdCard']);
         }
 
         // Update the user record

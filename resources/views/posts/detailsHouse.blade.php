@@ -1,4 +1,26 @@
 <x-layout>
+    <style>
+        .custom-btn {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .custom-btn:hover {
+            background-color: #3a78c2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
     <div class="px-25 bg-gray-50">
         <section class="py-12">
             <div class="container px-4 mx-auto sm:px-6 lg:px-8">
@@ -182,14 +204,24 @@
                                         <i class="mr-2 fas fa-user text-slate-500"></i>
                                         <strong>Name:</strong> {{ $house->landlord->full_name ?? 'N/A' }}
                                     </p>
+
                                     <p>
                                         <i class="mr-2 fas fa-phone text-slate-500"></i>
                                         <strong>Phone Numbers:</strong>
-                                        {{ $house->landlord->first_phoneNumber ?? 'N/A' }}
-                                        @if ($house->landlord->second_phoneNumber)
-                                            / {{ $house->landlord->second_phoneNumber }}
+                                        {{ $house->landlord->masked_first_phone ?? 'N/A' }}
+                                        @if ($house->landlord->masked_second_phone)
+                                            / {{ $house->landlord->masked_second_phone }}
                                         @endif
                                     </p>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-envelope mr-2 fas fa-phone text-slate-500"
+                                            style="margin-bottom:8px;"></i>
+
+                                        <h2 class="mb-3 font-bold text-gray-800 color color-primary">For Feedback:</h2>
+                                        <a href="{{ route('contact') }}"><button
+                                                class="custom-btn">Feedback</button></a>
+
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -212,51 +244,79 @@
                             </div>
                         @endif
 
+                        {{-- Location Map Section (Display if latitude and longitude exist) --}}
+                        @if ($house->latitude !== null && $house->longitude !== null)
+                            <div class="mb-6">
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Location</h2>
+                                <div id="map" style="height: 400px; width: 100%;" class="rounded-md shadow-sm">
+                                </div>
+                            </div>
+                        @elseif ($house->location_url)
+                            {{-- Fallback to existing iframe if lat/lng are not available but a URL is --}}
+                            <div class="mb-6">
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Location</h2>
+                                <div
+                                    class="overflow-hidden border border-gray-300 rounded-md shadow-sm aspect-w-16 aspect-h-9">
+                                    <iframe src="{{ $house->location_url }}" width="100%" height="100%"
+                                        style="border:0;" allowfullscreen="" loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade">
+                                    </iframe>
+                                </div>
+                                <a href="{{ $house->location_url }}" target="_blank" rel="noopener noreferrer"
+                                    class="inline-flex items-center mt-2 text-sm text-blue-600 hover:underline">
+                                    View Full Map <i class="ml-1 text-xs fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        @endif
+
+
                         {{-- Booking Buttons Logic --}}
                         @auth
                             @if (auth()->user()->status === 'Not Verified')
                                 <div class="pt-6 mt-6 mb-8 border-t">
                                     <p class="text-lg text-orange-600">Wait until your account is verified.</p>
                                 </div>
+                            @elseif (auth()->user()->role === 'landlord')
+                                <div class="pt-6 mt-6 mb-8 border-t">
+                                    <p class="text-lg text-gray-700">As a landlord, you cannot book properties.</p>
+                                </div>
                             @else
-                                @if ($house->landlord) {{-- Ensure landlord exists for this house --}}
-                                    @if (auth()->id() === $house->landlord->id)
-                                        {{-- User IS the landlord --}}
+                                @if ($house->landlord)
+                                    @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
+                                        {{-- User has already booked this house --}}
                                         <div class="pt-6 mt-6 mb-8 border-t">
-                                            <p class="text-lg text-gray-700">This is your property. You cannot book it.</p>
-                                            {{-- Optionally, add a link to manage this property or view its bookings --}}
+                                            <p class="mb-3 text-lg text-gray-700">You have already sent a booking
+                                                request for this property.</p>
+                                            <a href="{{ route('bookings.details.show', $userBookingForThisHouse->id) }}"
+                                                class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
+                                                View Your Booking Details
+                                            </a>
                                         </div>
                                     @else
-                                        {{-- User is authenticated and is NOT the landlord --}}
-                                        {{-- Assumes $userBookingForThisHouse is passed from controller --}}
-                                        {{-- $userBookingForThisHouse = Booking::where('tenant_id', auth()->id())->where('house_id', $house->id)->first(); --}}
-                                        @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
-                                            {{-- User has already booked this house --}}
-                                            <div class="pt-6 mt-6 mb-8 border-t">
-                                                <p class="mb-3 text-lg text-gray-700">You have already sent a booking
-                                                    request for this property.</p>
-                                                <a href="#"
-                                                    class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                                                    View Your Booking Details
-                                                </a>
-                                                {{-- <a href="{{ route('bookings.show.sent', $userBookingForThisHouse->id) }}"
-                           class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                            View Your Booking Details
-                        </a> --}}
-                                            </div>
-                                        @else
-                                            {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
-                                            <div class="pt-6 mt-6 mb-8 border-t">
-                                                <button type="button" id="openBookingMessageModalBtn"
-                                                    class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
-                                                    Book This Property Now
-                                                </button>
-                                            </div>
-                                        @endif
+                                        {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
+                                        <div class="pt-6 mt-6 mb-8 border-t">
+                                            <button type="button" id="openBookingMessageModalBtn"
+                                                class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
+                                                Book This Property Now
+                                            </button>
+                                        </div>
                                     @endif
                                 @else
+                                    <div class="pt-6 mt-6 mb-8 border-t">
+                                        <p class="text-lg text-gray-700">This property is currently not available for
+                                            booking (no landlord assigned).</p>
+                                    </div>
                                 @endif
                             @endif
+                        @else
+                            {{-- User is not authenticated (guest) --}}
+                            <div class="pt-6 mt-6 mb-8 border-t">
+                                <p class="text-lg text-gray-700">Please <a href="{{ route('login') }}"
+                                        class="font-semibold text-indigo-600 hover:underline">log in</a> or <a
+                                        href="{{ route('register') }}"
+                                        class="font-semibold text-indigo-600 hover:underline">register</a> to book a
+                                    property.</p>
+                            </div>
                         @endauth
 
                         @guest
@@ -274,7 +334,7 @@
         </section>
     </div>
 
-    {{-- Booking Modal (Only shown if user hasn't booked yet, is not the landlord, and house has a landlord) --}}
+    {{-- Booking Modal --}}
     @auth
         @if (
             $house->landlord &&
@@ -294,26 +354,33 @@
                     <form method="POST" action="{{ route('send.booking', ['house' => $house->id]) }}"
                         class="px-6 py-6">
                         @csrf
-                        @if ($errors->bookingMessageErrors->any())
-                            <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
-                                <p class="font-bold">Please correct the following error(s):</p>
-                                <ul class="list-disc list-inside">
-                                    @foreach ($errors->bookingMessageErrors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                        <div class="mb-4">
+                            <label for="month_duration" class="block mb-1 text-sm font-medium text-gray-700">Your Required
+                                Duration</label>
+                            <input type="number" name="month_duration" id="month_duration"
+                                placeholder="Enter Your Month Duration"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('month_duration', 'sendBookingFormErrors') border-red-500 @enderror"{{ old('month_duration') }}>
+                        </div>
                         <div class="mb-4">
                             <label for="booking_message" class="block mb-1 text-sm font-medium text-gray-700">Your Message
                                 (Optional)</label>
                             <textarea name="booking_message" id="booking_message" rows="5"
                                 placeholder="E.g., I'm interested in viewing this property. What are the next steps?"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('booking_message', 'bookingMessageErrors') border-red-500 @enderror">{{ old('booking_message') }}</textarea>
-                            {{-- @error('booking_message', 'bookingMessageErrors')
-                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                            @enderror --}}
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('booking_message', 'sendBookingFormErrors') border-red-500 @enderror">{{ old('booking_message') }}</textarea>
                         </div>
+
+                        @if ($errors->sendBookingFormErrors->any())
+                            <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+                                <p class="font-bold">Please correct the following error(s):</p>
+                                <ul class="list-disc list-inside">
+                                    @foreach ($errors->sendBookingFormErrors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+
                         <div class="flex justify-end">
                             <button type="submit"
                                 class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
@@ -434,12 +501,39 @@
 
                 // Keep booking modal open if there are validation errors for it
                 // Ensure your controller redirects back with errors in the 'bookingMessageErrors' bag
-                @if ($errors->hasBag('bookingMessageErrors') && $errors->bookingMessageErrors->any())
+                @if ($errors->hasBag('sendBookingFormErrors') && $errors->sendBookingFormErrors->any())
                     if (bookingModal) { // Check if modal exists on the page (it should if errors are present for it)
                         bookingModal.style.display = 'flex';
                     }
                 @endif
+
             });
         </script>
     @endpush
+
+    @if ($house->latitude !== null && $house->longitude !== null)
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA550b4oUwPM5RoQAmGX3LIH_BkmJoPeFM&callback=initMap" async
+            defer></script>
+        <script>
+            let map;
+
+            function initMap() {
+                const houseLocation = {
+                    lat: parseFloat({{ $house->latitude }}),
+                    lng: parseFloat({{ $house->longitude }})
+                };
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: houseLocation,
+                    zoom: 15, // Adjust zoom level as needed
+                });
+
+                new google.maps.Marker({
+                    position: houseLocation,
+                    map: map,
+                    title: 'Property Location',
+                });
+            }
+        </script>
+    @endif
 </x-layout>

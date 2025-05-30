@@ -24,9 +24,20 @@
                             @if(isset($booking->tenant->full_name) && isset($booking->tenant->user_name) && $booking->tenant->full_name !== $booking->tenant->user_name)
                                 <p class="text-md text-gray-500">({{ $booking->tenant->user_name }})</p>
                             @endif
-                            <p class="text-gray-600 mt-1">
-                                <span class="font-semibold">Phone :</span> {{ $booking->tenant->first_phoneNumber ?? 'Not provided' }} | {{ $booking->tenant->second_phoneNumber ?? 'Not provided' }}
-                            </p>
+                            
+                           @if($booking->status === 'accepted')
+                                <p class="text-gray-600 mt-1">
+                                    <span class="font-semibold">Phone :</span>
+                                    {{ $booking->tenant->first_phoneNumber ?? 'Not provided' }}
+                                    @if($booking->tenant->second_phoneNumber)
+                                        | {{ $booking->tenant->second_phoneNumber }}
+                                    @endif
+                                </p>
+                            @else
+                                <p class="text-gray-600 mt-1">
+                                    <span class="font-semibold">Phone :</span> <span class="italic text-gray-500">Visible upon booking acceptance</span>
+                                </p>
+                            @endif
                         </div>
                     </div>
                 </section>
@@ -48,6 +59,8 @@
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm sm:text-base">
                         <div>
+                            <p class="text-gray-700"><strong class="text-gray-900">Requared Duration:</strong></p>
+                            <p class="mb-2 text-indigo-700 font-medium">{{ (int)$booking->month_duration }} Month{{ (int)$booking->month_duration > 1 ? 's' : '' }}</p>
                             <p class="text-gray-700"><strong class="text-gray-900">Booking Sent:</strong></p>
                             <p class="text-indigo-700 font-medium">{{ $booking->created_at->format('F j, Y, g:i a') }}</p>
                             <p class="text-xs text-gray-500">({{ $booking->created_at->diffForHumans() }})</p>

@@ -176,6 +176,22 @@
             justify-content: center;
         }
 
+        .btn-accept {
+            background-color: #218838;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-accept:hover {
+            background-color: #218838;
+        }
+
         .btn-reject {
             background-color: #dc3545;
             border: none;
@@ -210,7 +226,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('houses') }}">
+                    <a class="nav-link activee" href="{{ route('houses') }}">
                         <i class="bi bi-house-door"></i>
                         <span>Manage House</span>
                     </a>
@@ -234,7 +250,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link activee" href="{{ route('feedback') }}">
+                    <a class="nav-link" href="{{ route('feedback') }}">
                         <i class="bi bi-chat-dots"></i>
                         <span>Feedback</span>
                     </a>
@@ -249,49 +265,78 @@
         </nav>
 
         <div class="main-content" id="mainContent">
-            <h1>Feedbacks</h1>
-            <p>Grow with feedback.</p>
+            <h1>Manage House</h1>
+            <p>This is your main content section.</p>
+
 
             <div class="">
                 <div class="container py-5">
+                    <div class="search" style="margin-bottom:3%;">
+                        <h3 style="color:rgb(50, 149, 235);">Search For House</h3>
+                        <input type="text" id="houseSearchInput" class="form-control" placeholder="Search house...">
+                    </div>
+
                     <div class="card custom-table">
 
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0" style="font-size: 12px;">
+                            <table id="houseTable" class="table table-hover mb-0" style="font-size: 12px;">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>About</th>
-                                        <th>Message</th>
-                                        <th></th>
+                                        <th scope="col">House type</th>
+                                        <th scope="col">Address 1</th>
+                                        <th scope="col">Address 2</th>
+                                        <th scope="col">City</th>
+                                        <th scope="col">No. Rooms</th>
+                                        <th scope="col">Area</th>
+                                        <th scope="col">Rent price</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Photo</th>
+                                        <th scope="col">Deactivate</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($data as $feedback)
-                                        <tr>
-                                            <td>
-                                                {{ $feedback->name }}
-                                            </td>
-                                            <td>
-                                                {{ $feedback->email }}
-                                            </td>
-                                            <td>
-                                                {{ $feedback->title }}
-                                            </td>
-                                            <td>
-                                                {{ $feedback->description }}
-                                            </td>
-                                            <td>
-                                                <a href="{{ url('delete-feedback', $feedback->id) }}"
-                                                    onclick="return confirm('Are you sure you want to reject this house rental?')"><button
-                                                        class="btn-reject">Delete</button></a>
-                                            </td>
-                                        </tr>
+
+                                    @foreach ($houses as $house)
+                                        @if ($house->status == 'available')
+                                            <tr>
+                                                <td>{{ $house->title }}</td>
+                                                <td>{{ $house->first_address }}</td>
+                                                <td>{{ $house->second_address }}</td>
+                                                <td>{{ $house->city }}</td>
+                                                <td>
+                                                    @php $i = 1; @endphp
+                                                    @foreach ($floors as $floor)
+                                                        @if ($floor->house_id == $house->id)
+                                                            <p>floor{{ $i }}: {{ $floor->num_room }}</p>
+                                                            @php $i++; @endphp
+                                                        @endif
+                                                    @endforeach
+                                                </td>
+                                                <td>{{ $house->square_footage }}m&sup2;</td>
+                                                <td>${{ $house->rent_amount }}</td>
+                                                <td>{{ $house->description }}</td>
+                                                <td>
+                                                    @foreach ($images as $image)
+                                                        @if ($image->house_id == $house->id)
+                                                            <img src="{{ $image->image_url }}" width="80px"
+                                                                height="80px" alt="">
+                                                        @endif
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <a href="{{ url('deactivate-house', $house->id) }}"
+                                                            onclick="return confirm('Are you sure you want to reject this house rental?')"><button
+                                                                class="btn-reject">Deactivate</button></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+
 
                     </div>
                 </div>
@@ -316,21 +361,44 @@
             }
         });
 
-        function removeFeedback(feedbackId) {
-            if (confirm('Are you sure you want to remove this feedback? This action cannot be undone.')) {
-                // Add your remove feedback logic here
-                console.log('Removing feedback with ID:', feedbackId);
-                // You can make an AJAX call to your Laravel route here Example:
-                // fetch('/remove-feedback/' + feedbackId, {     method: 'DELETE',     headers:
-                // {         'X-CSRF-TOKEN':
-                // document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                // 'Content-Type': 'application/json'     } }) .then(response =>
-                // response.json()) .then(data => {     if(data.success) {          Remove the
-                // row from table or reload page         location.reload();     } })
-                // .catch(error => console.error('Error:', error));
+        function approveHouse(houseId) {
+            if (confirm('Are you sure you want to approve this house rental?')) {
+                console.log('Approving house with ID:', houseId);
+                // Example AJAX call:
+                // fetch('/approve-house/' + houseId, { method: 'POST' })
+                //     .then(response => response.json())
+                //     .then(data => console.log(data));
+            }
+        }
+
+        function rejectHouse(houseId) {
+            if (confirm('Are you sure you want to reject this house rental?')) {
+                console.log('Rejecting house with ID:', houseId);
+                // Example AJAX call:
+                // fetch('/reject-house/' + houseId, { method: 'POST' })
+                //     .then(response => response.json())
+                //     .then(data => console.log(data));
             }
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('houseSearchInput');
+            const rows = document.querySelectorAll('#houseTable tbody tr');
+
+            input.addEventListener('keyup', function() {
+                const filter = input.value.toLowerCase();
+
+                rows.forEach(function(row) {
+                    const rowText = row.textContent.toLowerCase();
+                    row.style.display = rowText.includes(filter) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+
+
+
 </body>
 
 </html>
