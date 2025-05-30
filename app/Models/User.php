@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -85,5 +86,24 @@ class User extends Authenticatable
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * The houses that the user has favorited.
+     */
+    public function favorites(): BelongsToMany
+    {
+        return $this->belongsToMany(House::class, 'favorites', 'user_id', 'house_id')->withTimestamps();
+    }
+
+    /**
+     * Check if the user has favorited a specific house.
+     *
+     * @param House $house
+     * @return bool
+     */
+    public function hasFavorited(House $house): bool
+    {
+        return $this->favorites()->where('house_id', $house->id)->exists();
     }
 }

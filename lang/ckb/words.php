@@ -29,4 +29,11 @@ return [
     //Index
     'Our_Services' => 'خزمەت گووزاریەکانمان',
     'Profile' => 'پڕۆفایل',
+
+    // Favorites Modal
+    'Login Required' => 'پێویستە بچیتە ژوورەوە',
+    'Please' => 'تکایە',
+    'or' => 'یان',
+    'to add properties to your favorites' => 'بۆ زیادکردنی موڵک بۆ لیستی دڵخوازەکانت.',
+    'Close' => 'داخستن',
 ];
