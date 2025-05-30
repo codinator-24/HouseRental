@@ -1,6 +1,6 @@
 <x-layout>
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">Edit Property</h1>
+        <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Edit Property</h1> {{-- Centered and more margin --}}
 
         {{-- Display validation errors if any (from main form submission) --}}
         @if ($errors->any())
@@ -29,240 +29,240 @@
         @endif
 
         <form action="{{ route('Myhouse.update', $house) }}" method="post" enctype="multipart/form-data"
-            class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            class="bg-white shadow-xl rounded-lg p-8 mx-auto max-w-6xl mb-4"> {{-- Updated class --}}
             @csrf
             @method('PUT')
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{-- Section 1: Basic Property Information --}}
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Basic Property Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {{-- Title --}}
+                    <div class="mb-4">
+                        <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                        <input type="text" id="title" name="title" value="{{ old('title', $house->title) }}"
+                            required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('title') border-red-500 @enderror">
+                        @error('title')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                {{-- Title --}}
-                <div class="mb-4">
-                    <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
-                    <input type="text" id="title" name="title" value="{{ old('title', $house->title) }}"
-                        required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('title') border-red-500 @enderror">
-                    @error('title')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Property Type --}}
-                <div class="mb-4">
-                    <label for="property_type" class="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
-                    <select id="property_type" name="property_type"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white @error('property_type') border-red-500 @enderror"
-                        required>
-                        <option value="" {{ old('property_type', $house->property_type) === '' ? 'selected' : '' }}>Select Property Type</option>
-                        <option value="apartment" {{ old('property_type', $house->property_type) == 'apartment' ? 'selected' : '' }}>Apartment</option>
-                        <option value="house" {{ old('property_type', $house->property_type) == 'house' ? 'selected' : '' }}>House</option>
-                        <option value="condo" {{ old('property_type', $house->property_type) == 'condo' ? 'selected' : '' }}>Condo</option>
-                        <option value="studio" {{ old('property_type', $house->property_type) == 'studio' ? 'selected' : '' }}>Studio</option>
-                    </select>
-                    @error('property_type')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- City --}}
-                <div class="mb-4">
-                    <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
-                    <select id="city" name="city" required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('city') border-red-500 @enderror">
-                        <option value="" {{ old('city', $house->city) == '' ? 'selected' : '' }}>Select City</option>
-                        <option value="Sulaymaniyah" {{ old('city', $house->city) == 'Sulaymaniyah' ? 'selected' : '' }}>Sulaymaniyah</option>
-                        <option value="Hawler" {{ old('city', $house->city) == 'Hawler' ? 'selected' : '' }}>Hawler</option>
-                        <option value="Karkuk" {{ old('city', $house->city) == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
-                        <option value="Dhok" {{ old('city', $house->city) == 'Dhok' ? 'selected' : '' }}>Dhok</option>
-                        <option value="Halabja" {{ old('city', $house->city) == 'Halabja' ? 'selected' : '' }}>Halabja</option>
-                    </select>
-                    @error('city')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Combined Neighborhood and Second Address --}}
-                <div class="md:col-span-2 mb-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {{-- Neighborhood (Replaces First Address) --}}
-                        <div>
-                            <label for="neighborhood" class="block text-gray-700 text-sm font-bold mb-2">Neighborhood:</label>
-                            <select id="neighborhood" name="neighborhood" required
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('neighborhood') border-red-500 @enderror">
-                                <option value="">Select Neighborhood</option> {{-- Options populated by JS --}}
-                            </select>
-                            @error('neighborhood')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Second Address (Moved into sub-grid) --}}
-                        <div>
-                            <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">Second Address Line <span class="text-gray-500 text-xs">(Optional)</span>:</label>
-                            <input type="text" id="second_address" name="second_address" value="{{ old('second_address', $house->second_address) }}"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('second_address') border-red-500 @enderror">
-                            @error('second_address')
-                                <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    {{-- Property Type --}}
+                    <div class="mb-4">
+                        <label for="property_type" class="block text-sm font-medium text-gray-700 mb-2">Property Type:</label>
+                        <select id="property_type" name="property_type"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white shadow appearance-none @error('property_type') border-red-500 @enderror"
+                            required>
+                            <option value="" {{ old('property_type', $house->property_type) === '' ? 'selected' : '' }}>Select Property Type</option>
+                            <option value="apartment" {{ old('property_type', $house->property_type) == 'apartment' ? 'selected' : '' }}>Apartment</option>
+                            <option value="house" {{ old('property_type', $house->property_type) == 'house' ? 'selected' : '' }}>House</option>
+                            <option value="condo" {{ old('property_type', $house->property_type) == 'condo' ? 'selected' : '' }}>Condo</option>
+                            <option value="studio" {{ old('property_type', $house->property_type) == 'studio' ? 'selected' : '' }}>Studio</option>
+                        </select>
+                        @error('property_type')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
+            </div>
 
-                {{-- Location URL --}}
-                <div class="mb-4 md:col-span-2">
-                    <label for="location_url" class="block text-gray-700 text-sm font-bold mb-2">Location URL <span class="text-gray-500 text-xs">(e.g., Google Maps, Optional)</span>:</label>
-                    <input type="url" id="location_url" name="location_url" value="{{ old('location_url', $house->location_url) }}"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('location_url') border-red-500 @enderror">
-                    @error('location_url')
+            {{-- Section 2: Location Details --}}
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Location Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                    {{-- City --}}
+                    <div class="mb-4">
+                        <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
+                        <select id="city" name="city" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('city') border-red-500 @enderror">
+                            <option value="" {{ old('city', $house->city) == '' ? 'selected' : '' }}>Select City</option>
+                            <option value="Sulaymaniyah" {{ old('city', $house->city) == 'Sulaymaniyah' ? 'selected' : '' }}>Sulaymaniyah</option>
+                            <option value="Hawler" {{ old('city', $house->city) == 'Hawler' ? 'selected' : '' }}>Hawler</option>
+                            <option value="Karkuk" {{ old('city', $house->city) == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
+                            <option value="Dhok" {{ old('city', $house->city) == 'Dhok' ? 'selected' : '' }}>Dhok</option>
+                            <option value="Halabja" {{ old('city', $house->city) == 'Halabja' ? 'selected' : '' }}>Halabja</option>
+                        </select>
+                        @error('city')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Neighborhood --}}
+                    <div class="mb-4">
+                        <label for="neighborhood" class="block text-gray-700 text-sm font-bold mb-2">Neighborhood:</label>
+                        <select id="neighborhood" name="neighborhood" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('neighborhood') border-red-500 @enderror">
+                            <option value="">Select Neighborhood</option> {{-- Options populated by JS --}}
+                        </select>
+                        @error('neighborhood')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                {{-- Second Address --}}
+                <div class="mb-6"> {{-- Increased bottom margin --}}
+                    <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">Second Address Line <span class="text-gray-500 text-xs">(Optional)</span>:</label>
+                    <input type="text" id="second_address" name="second_address" value="{{ old('second_address', $house->second_address) }}"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('second_address') border-red-500 @enderror">
+                    @error('second_address')
                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
 
-                {{-- Square Footage --}}
-                <div class="mb-4">
-                    <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">Square Meter (m<sup>2</sup>):</label>
-                    <input type="number" id="square_footage" name="square_footage" value="{{ old('square_footage', $house->square_footage) }}"
-                        min="0" required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('square_footage') border-red-500 @enderror">
-                    @error('square_footage')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
+            {{-- Section 3: Property Specifications --}}
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Property Specifications</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {{-- Square Footage --}}
+                    <div class="mb-4">
+                        <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">Square Meter (m<sup>2</sup>):</label>
+                        <input type="number" id="square_footage" name="square_footage" value="{{ old('square_footage', $house->square_footage) }}"
+                            min="0" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('square_footage') border-red-500 @enderror">
+                        @error('square_footage')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Rent Amount --}}
+                    <div class="mb-4">
+                        <label for="rent_amount" class="block text-gray-700 text-sm font-bold mb-2">Rent Amount (per month):</label>
+                        <input type="number" id="rent_amount" name="rent_amount" value="{{ old('rent_amount', $house->rent_amount) }}"
+                            min="0" step="0.01" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('rent_amount') border-red-500 @enderror">
+                        @error('rent_amount')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
+            </div>
 
-                {{-- Rent Amount --}}
-                <div class="mb-4">
-                    <label for="rent_amount" class="block text-gray-700 text-sm font-bold mb-2">Rent Amount (per month):</label>
-                    <input type="number" id="rent_amount" name="rent_amount" value="{{ old('rent_amount', $house->rent_amount) }}"
-                        min="0" step="0.01" required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('rent_amount') border-red-500 @enderror">
-                    @error('rent_amount')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
+            {{-- Section 4: Floor Details --}}
+            <div class="mb-8"> {{-- Replaced md:col-span-2, border-t, pt-6, mt-4 with mb-8 for consistency --}}
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Floor Details</h2> {{-- Consistent heading style --}}
+                <div id="floors_container" class="space-y-6">
+                    @php
+                        // Prepare default floor data from existing house floors
+                        $defaultFloorsData = $house->floors->map(function ($floor) {
+                            return [
+                                'number_of_rooms' => $floor->num_room,
+                                'bathrooms' => (string)$floor->bathroom, // Ensure string for select comparison
+                            ];
+                        })->all();
 
-                {{-- Floors Details Section --}}
-                <div class="mb-2 md:col-span-2 border-t pt-6 mt-4">
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">Floor Details</h2>
-                    <div id="floors_container" class="space-y-6">
-                        @php
-                            // Prepare default floor data from existing house floors
-                            $defaultFloorsData = $house->floors->map(function ($floor) {
-                                return [
-                                    'number_of_rooms' => $floor->num_room,
-                                    'bathrooms' => (string)$floor->bathroom, // Ensure string for select comparison
-                                ];
-                            })->all();
+                        // If the house has no floors, and it's the initial load (not a validation error redirect),
+                        // provide one default empty floor structure.
+                        if (empty($defaultFloorsData) && !old('floors') && request()->isMethod('get')) {
+                            $defaultFloorsData = [['number_of_rooms' => '', 'bathrooms' => '0']];
+                        }
 
-                            // If the house has no floors, and it's the initial load (not a validation error redirect),
-                            // provide one default empty floor structure.
-                            if (empty($defaultFloorsData) && !old('floors') && request()->isMethod('get')) {
-                                $defaultFloorsData = [['number_of_rooms' => '', 'bathrooms' => '0']];
-                            }
+                        // Use old input for floors if available (validation failed), otherwise use the prepared default data.
+                        $floorEntries = old('floors', $defaultFloorsData);
+                    @endphp
 
-                            // Use old input for floors if available (validation failed), otherwise use the prepared default data.
-                            $floorEntries = old('floors', $defaultFloorsData);
-                        @endphp
-
-                        @foreach($floorEntries as $index => $floorData)
-                            <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50" data-index="{{ $index }}">
-                                <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor {{ $index + 1 }}</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="floor_{{ $index }}_number_of_rooms" class="block text-gray-700 text-sm font-bold mb-1">Number of Rooms:</label>
-                                        <input type="number" id="floor_{{ $index }}_number_of_rooms" name="floors[{{ $index }}][number_of_rooms]"
-                                               value="{{ $floorData['number_of_rooms'] ?? '' }}" min="0" required
-                                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('floors.'.$index.'.number_of_rooms') border-red-500 @enderror">
-                                        @error('floors.'.$index.'.number_of_rooms') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
-                                    </div>
-                                    <div>
-                                        <label for="floor_{{ $index }}_bathrooms" class="block text-gray-700 text-sm font-bold mb-1">Bathrooms:</label>
-                                        <select id="floor_{{ $index }}_bathrooms" name="floors[{{ $index }}][bathrooms]"
-                                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('floors.'.$index.'.bathrooms') border-red-500 @enderror" required>
-                                            <option value="0" {{ (isset($floorData['bathrooms']) && $floorData['bathrooms'] == '0') ? 'selected' : '' }}>Not Exists</option>
-                                            <option value="1" {{ (isset($floorData['bathrooms']) && $floorData['bathrooms'] == '1') ? 'selected' : '' }}>Exists</option>
-                                        </select>
-                                        @error('floors.'.$index.'.bathrooms') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
-                                    </div>
+                    @foreach($floorEntries as $index => $floorData)
+                        <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50" data-index="{{ $index }}">
+                            <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor {{ $index + 1 }}</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="floor_{{ $index }}_number_of_rooms" class="block text-gray-700 text-sm font-bold mb-1">Number of Rooms:</label>
+                                    <input type="number" id="floor_{{ $index }}_number_of_rooms" name="floors[{{ $index }}][number_of_rooms]"
+                                           value="{{ $floorData['number_of_rooms'] ?? '' }}" min="0" required
+                                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('floors.'.$index.'.number_of_rooms') border-red-500 @enderror">
+                                    @error('floors.'.$index.'.number_of_rooms') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
                                 </div>
-                                {{-- Always allow removing floors in edit mode, backend validation will check for min 1 floor --}}
-                                <div class="mt-3 text-right">
-                                    <button type="button" class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove Floor</button>
+                                <div>
+                                    <label for="floor_{{ $index }}_bathrooms" class="block text-gray-700 text-sm font-bold mb-1">Bathrooms:</label>
+                                    <select id="floor_{{ $index }}_bathrooms" name="floors[{{ $index }}][bathrooms]"
+                                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('floors.'.$index.'.bathrooms') border-red-500 @enderror" required>
+                                        <option value="0" {{ (isset($floorData['bathrooms']) && $floorData['bathrooms'] == '0') ? 'selected' : '' }}>Not Exists</option>
+                                        <option value="1" {{ (isset($floorData['bathrooms']) && $floorData['bathrooms'] == '1') ? 'selected' : '' }}>Exists</option>
+                                    </select>
+                                    @error('floors.'.$index.'.bathrooms') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
                                 </div>
+                            </div>
+                            {{-- Always allow removing floors in edit mode, backend validation will check for min 1 floor --}}
+                            <div class="mt-3 text-right">
+                                <button type="button" class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove Floor</button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="mt-6">
+                    <button type="button" id="addFloorButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Another Floor</button>
+                </div>
+            </div>
+
+            {{-- Section 5: Description --}}
+            <div class="mb-8"> {{-- Replaced md:col-span-2 with mb-8 --}}
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Description</h2>
+                <label for="description" class="block text-gray-700 text-sm font-bold mb-2 sr-only">Description:</label>
+                <textarea id="description" name="description" rows="4" required
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('description') border-red-500 @enderror">{{ old('description', $house->description) }}</textarea>
+                @error('description')
+                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Section 7: House Pictures (Moved from original position, will be Section 6 after map) --}}
+            {{-- Note: The heading for this section will be added in the next step to match AddHouse.blade.php --}}
+            <div class="mb-8"> {{-- Replaced md:col-span-2, border-t, pt-6, mt-4 with mb-8 --}}
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">House Pictures</h2>
+                <label class="block text-gray-700 text-sm font-bold mb-2 sr-only">Current Pictures:</label>
+                @if ($house->pictures && $house->pictures->count() > 0)
+                    {{-- Container for pictures, used by JS to check if it's empty --}}
+                    <div id="pictures-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+                        @foreach ($house->pictures as $picture)
+                            {{-- Each picture item wrapper --}}
+                            <div id="picture-{{ $picture->id }}" class="relative h-32 group picture-item">
+                                <img src="{{ asset($picture->image_url) }}"
+                                    alt="House picture {{ $loop->iteration }}"
+                                    class="w-full h-full object-cover rounded-md shadow-md">
+
+                                {{-- MODIFIED: Delete Button - Now type="button" and uses JavaScript --}}
+                                <button type="button"
+                                        data-delete-url="{{ route('myhouse.picture.destroy', $picture->id) }}"
+                                        onclick="confirmDeletePicture(this)"
+                                        class="absolute top-1 right-1 z-10 bg-red-600 hover:bg-red-800 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                        title="Delete Picture">
+                                    × {{-- This is an 'X' character --}}
+                                </button>
                             </div>
                         @endforeach
                     </div>
-                    <div class="mt-6">
-                        <button type="button" id="addFloorButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Another Floor</button>
-                    </div>
-                </div>
+                @else
+                    <p id="no-pictures-message" class="text-gray-500 text-sm mb-4">No pictures currently uploaded for this property.</p>
+                @endif
 
-                {{-- Description --}}
-                <div class="mb-4 md:col-span-2">
-                    <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-                    <textarea id="description" name="description" rows="4" required
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('description') border-red-500 @enderror">{{ old('description', $house->description) }}</textarea>
-                    @error('description')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
+                <label for="pictures" class="block text-gray-700 text-sm font-bold mb-2 pt-4 border-t mt-4">
+                    Upload New/Additional Pictures:
+                    <span class="text-gray-500 text-xs">(Leave empty to keep current pictures)</span>
+                </label>
+                <input type="file" id="pictures" name="pictures[]" multiple accept="image/*"
+                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none @error('pictures.*') border-red-500 @enderror @error('pictures') border-red-500 @enderror">
+                <p class="mt-1 text-sm text-gray-500" id="file_input_help">PNG, JPG, GIF, WEBP. You can select multiple images.</p>
+                @error('pictures')
+                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                @enderror
+                @error('pictures.*')
+                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
-                {{-- House Pictures --}}
-                <div class="mb-6 md:col-span-2 border-t pt-6 mt-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Current Pictures:</label>
-                    @if ($house->pictures && $house->pictures->count() > 0)
-                        {{-- Container for pictures, used by JS to check if it's empty --}}
-                        <div id="pictures-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
-                            @foreach ($house->pictures as $picture)
-                                {{-- Each picture item wrapper --}}
-                                <div id="picture-{{ $picture->id }}" class="relative h-32 group picture-item">
-                                    <img src="{{ asset($picture->image_url) }}"
-                                        alt="House picture {{ $loop->iteration }}"
-                                        class="w-full h-full object-cover rounded-md shadow-md">
+            {{-- Section 6: Property Location (Map) --}}
+            <div class="mb-8"> {{-- Replaced mt-6, border-t, pt-6, md:col-span-2 with mb-8 --}}
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Property Location</h2> {{-- Consistent heading --}}
+                <div id="map" style="height: 400px; width: 100%;" class="rounded-md border"></div>
+                <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $house->latitude) }}">
+                <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $house->longitude) }}">
+                @error('latitude') <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p> @enderror
+                @error('longitude') <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p> @enderror
+            </div>
 
-                                    {{-- MODIFIED: Delete Button - Now type="button" and uses JavaScript --}}
-                                    <button type="button"
-                                            data-delete-url="{{ route('myhouse.picture.destroy', $picture->id) }}"
-                                            onclick="confirmDeletePicture(this)"
-                                            class="absolute top-1 right-1 z-10 bg-red-600 hover:bg-red-800 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                            title="Delete Picture">
-                                        × {{-- This is an 'X' character --}}
-                                    </button>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p id="no-pictures-message" class="text-gray-500 text-sm mb-4">No pictures currently uploaded for this property.</p>
-                    @endif
-
-                    <label for="pictures" class="block text-gray-700 text-sm font-bold mb-2 pt-4 border-t mt-4">
-                        Upload New/Additional Pictures:
-                        <span class="text-gray-500 text-xs">(Leave empty to keep current pictures)</span>
-                    </label>
-                    <input type="file" id="pictures" name="pictures[]" multiple accept="image/*"
-                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none @error('pictures.*') border-red-500 @enderror @error('pictures') border-red-500 @enderror">
-                    <p class="mt-1 text-sm text-gray-500" id="file_input_help">PNG, JPG, GIF, WEBP. You can select multiple images.</p>
-                    @error('pictures')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                    @error('pictures.*')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Location Map Section --}}
-                <div class="mt-6 border-t pt-6 md:col-span-2">
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">Property Location</h2>
-                    <div id="map" style="height: 400px; width: 100%;"></div>
-                    <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $house->latitude) }}">
-                    <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $house->longitude) }}">
-                    @error('latitude') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
-                    @error('longitude') <p class="text-red-500 text-xs italic">{{ $message }}</p> @enderror
-                </div>
-
-
-            </div> {{-- End Grid --}}
-
-            {{-- Submit Button for the main form (should now work correctly) --}}
-            <div class="flex items-center justify-end mt-6">
+            {{-- Submit Button --}}
+            <div class="flex items-center justify-end mt-8 pt-6 border-t"> {{-- Increased top margin & added border-t --}}
                 <button type="submit"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Update House
