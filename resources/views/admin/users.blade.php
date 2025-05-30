@@ -248,7 +248,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('agreement') }}">
                       <i class="bi bi-file-earmark-text"></i>
-                        <span>Agreements & Payments</span>
+                        <span>Agreements</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('payment') }}">
+                        <i class="bi bi-credit-card"></i>
+                        <span>Payments</span>
                     </a>
                 </li>
             </ul>

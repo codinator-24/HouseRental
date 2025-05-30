@@ -213,11 +213,15 @@ class AdminController extends  Controller
             'booking.house.landlord' // To get house info and landlord info
         ])->latest()->get();
 
+        return view('admin.agreements', compact('agreements'));
+    }
+    public function ViewPayment()
+    {
         // Fetch payments with necessary relationships
         $payments = Payment::with([
-            'agreement.booking.tenant',
-            'agreement.booking.house'
+            'agreement.booking.tenant', // To get tenant info
+            'agreement.booking.house'   // To get house info
         ])->latest()->get();
-        return view('admin.agreements', compact('agreements', 'payments'));
+        return view('admin.payments', compact('payments'));
     }
 }

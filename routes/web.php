@@ -120,6 +120,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
     Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
     Route::get('/agreements', [AdminController::class, 'ViewAgreement'])->name('agreement');
+    Route::get('/payments', [AdminController::class, 'ViewPayment'])->name('payment');
 
     // Admin routes for managing reports
     Route::get('/admin/reports/{report}', [AdminController::class, 'showReportDetails'])->name('admin.reports.show');
