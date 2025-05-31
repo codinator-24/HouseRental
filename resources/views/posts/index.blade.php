@@ -471,6 +471,68 @@
                     }, 600);
                 });
             });
+
+            // --- Guest Favorite Login Modal Script for Index Page ---
+            const guestFavoriteBtnsIndex = document.querySelectorAll('.favorite-btn-guest');
+            const guestFavoriteLoginModalIndex = document.getElementById('guestFavoriteLoginModal'); // Assuming one modal for the page
+            const closeGuestFavoriteLoginModalBtnTopIndex = document.getElementById('closeGuestFavoriteLoginModalBtnTop');
+            const closeGuestFavoriteLoginModalBtnBottomIndex = document.getElementById('closeGuestFavoriteLoginModalBtnBottom');
+
+            if (guestFavoriteLoginModalIndex && closeGuestFavoriteLoginModalBtnTopIndex && closeGuestFavoriteLoginModalBtnBottomIndex) {
+                function openGuestFavoriteModal() {
+                    guestFavoriteLoginModalIndex.classList.remove('hidden');
+                    guestFavoriteLoginModalIndex.classList.add('flex');
+                }
+
+                function closeGuestFavoriteModal() {
+                    guestFavoriteLoginModalIndex.classList.add('hidden');
+                    guestFavoriteLoginModalIndex.classList.remove('flex');
+                }
+
+                guestFavoriteBtnsIndex.forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault(); // Prevent default action if any
+                        openGuestFavoriteModal();
+                    });
+                });
+
+                closeGuestFavoriteLoginModalBtnTopIndex.addEventListener('click', closeGuestFavoriteModal);
+                closeGuestFavoriteLoginModalBtnBottomIndex.addEventListener('click', closeGuestFavoriteModal);
+
+                guestFavoriteLoginModalIndex.addEventListener('click', function(event) {
+                    if (event.target === guestFavoriteLoginModalIndex) { // Click on overlay
+                        closeGuestFavoriteModal();
+                    }
+                });
+
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && !guestFavoriteLoginModalIndex.classList.contains('hidden')) {
+                        closeGuestFavoriteModal();
+                    }
+                });
+            }
         });
     </script>
+
+<!-- Guest Favorite Login Modal (for index page) -->
+<div id="guestFavoriteLoginModal" class="fixed inset-0 z-[80] flex items-center justify-center  bg-opacity-60 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-labelledby="guestFavoriteLoginModalTitle">
+    <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
+        <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+            <h1 id="guestFavoriteLoginModalTitle" class="text-xl font-semibold text-gray-700">Login Required</h1>
+            <button id="closeGuestFavoriteLoginModalBtnTop" aria-label="Close login required modal" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        <div class="px-6 py-6">
+            <p class="text-gray-700">
+                Please <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:underline">Login</a> or <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:underline">Register</a> to add properties to your favorites.
+            </p>
+            <div class="flex justify-end mt-6">
+                <button id="closeGuestFavoriteLoginModalBtnBottom" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Guest Favorite Login Modal -->
+
 </x-layout>

@@ -331,25 +331,6 @@
         {{ $slot }}
     </main>
 
-    <!-- Login Required Modal -->
-    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="loginRequiredModalLabel">@lang('words.Login Required')</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            @lang('words.Please') <a href="{{ route('login') }}" class="text-blue-600 hover:underline">@lang('words.Login')</a> @lang('words.or') <a href="{{ route('register') }}" class="text-blue-600 hover:underline">@lang('words.Register')</a> @lang('words.to add properties to your favorites').
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('words.Close')</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- End Login Required Modal -->
-
     <footer class="py-12 bg-slate-800 text-slate-300">
         <div class="container grid grid-cols-1 gap-8 px-6 mx-auto md:grid-cols-3">
             <!-- ORS Info -->

@@ -1,25 +1,6 @@
 import './bootstrap';
 
 document.addEventListener('DOMContentLoaded', function () {
-    // For guest users - triggering the login modal
-    const guestFavoriteButtons = document.querySelectorAll('.favorite-btn-guest');
-    guestFavoriteButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            // Ensure Bootstrap's Modal class is available
-            if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
-                var loginModalElement = document.getElementById('loginRequiredModal');
-                if (loginModalElement) {
-                    var loginModal = new bootstrap.Modal(loginModalElement);
-                    loginModal.show();
-                } else {
-                    console.error('Login required modal element not found.');
-                }
-            } else {
-                console.error('Bootstrap Modal class not found. Make sure Bootstrap JS is loaded.');
-            }
-        });
-    });
-
     // For authenticated users - toggling favorite status
     const favoriteButtons = document.querySelectorAll('.favorite-btn');
     favoriteButtons.forEach(button => {
