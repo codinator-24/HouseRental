@@ -12,9 +12,18 @@
                     <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl relative">
 
                         @if ($booking->house)
-                            <a href="{{ route('bookings.show', $booking->id) }}"
-                                class="absolute top-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-4 rounded">View
-                                Details</a>
+                            <div class="absolute top-6 right-6 flex space-x-2">
+                                @if ($booking->agreement && $booking->agreement->status === 'active')
+                                    <a href="{{ route('agreements.messages.index', $booking->agreement->id) }}"
+                                        class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2 px-4 rounded">
+                                        View Messages
+                                    </a>
+                                @endif
+                                <a href="{{ route('bookings.show', $booking->id) }}"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-4 rounded">
+                                    View Details
+                                </a>
+                            </div>
                         @endif
                         <h2 class="text-xl font-semibold mb-2">Booking for: {{ $booking->house->title ?? 'N/A' }}</h2>
                         <p class="text-gray-700 mb-1"><strong>House:</strong> {{ $booking->house->title ?? 'N/A' }}</p>
