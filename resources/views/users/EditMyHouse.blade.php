@@ -528,5 +528,6 @@
     // The `async defer` on the script tag handles the timing, but this is a fallback/alternative
     // window.onload = initMap; // This might conflict with the callback in the script tag
     // Better to rely on the `callback=initMap` in the script tag.
+    
 </script>
 </x-layout>
