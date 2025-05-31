@@ -1,5 +1,39 @@
+<style>
+    @keyframes bubble {
+        0% {
+            transform: scale(0);
+            opacity: 0.8;
+        }
+
+        50% {
+            transform: scale(1.2);
+            opacity: 0.4;
+        }
+
+        100% {
+            transform: scale(1.6);
+            opacity: 0;
+        }
+    }
+
+    .bubble-effect.animate {
+        animation: bubble 0.6s ease-out;
+    }
+</style>
+
 <x-layout>
 
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
     @guest
         {{-- Hero Section --}}
         <section class="relative h-[500px] bg-cover bg-center flex items-center justify-center text-white"
@@ -128,7 +162,33 @@
                 <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                     @forelse ($houses as $house)
                         {{-- Property Card --}}
-                        <div class="flex flex-col overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md">
+                        <div
+                            class="relative flex flex-col overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md">
+                            {{-- Favorite Button - Positioned in upper right corner --}}
+                            @auth
+                                <button
+                                    class="absolute top-3 right-3 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
+                                    data-house-id="{{ $house->id }}" title="Favorite">
+                                    @if (auth()->user()->hasFavorited($house))
+                                        <i class="text-sm text-red-500 fas fa-heart"></i>
+                                    @else
+                                        <i class="text-sm text-gray-600 far fa-heart"></i>
+                                    @endif
+                                    {{-- Click bubble effect --}}
+                                    <span
+                                        class="absolute inset-0 rounded-full bg-red-300/30 scale-0 opacity-0 pointer-events-none bubble-effect"></span>
+                                </button>
+                            @else
+                                <button
+                                    class="absolute top-3 right-3 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn-guest hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
+                                    title="Favorite">
+                                    <i class="text-sm text-gray-600 far fa-heart"></i>
+                                    {{-- Click bubble effect --}}
+                                    <span
+                                        class="absolute inset-0 rounded-full bg-red-300/30 scale-0 opacity-0 pointer-events-none bubble-effect"></span>
+                                </button>
+                            @endguest
+
                             {{-- Use first picture if available, otherwise a placeholder --}}
                             @php
                                 $imageUrl = $house->pictures->first()?->image_url
@@ -147,7 +207,8 @@
                                     {{ $house->second_address ? ', ' . $house->second_address : '' }}
                                 </p>
                                 <div class="flex items-center justify-between mb-4">
-                                    <span class="text-2xl font-bold text-blue-600 convertible-price" data-base-price-usd="{{ $house->rent_amount }}">
+                                    <span class="text-2xl font-bold text-blue-600 convertible-price"
+                                        data-base-price-usd="{{ $house->rent_amount }}">
                                         {{-- Initial display, will be updated by JS --}}
                                         ${{ number_format($house->rent_amount, 2) }}
                                     </span>
@@ -161,24 +222,11 @@
                                     <span><i class="mr-1 fas fa-ruler-combined"></i> {{ $house->square_footage }}
                                         m<sup>2</sup></span>
                                 </div>
-                                <div class="flex items-center mt-auto"> {{-- Flex container for button and icon --}}
+                                <div class="mt-auto">
                                     <a href="{{ route('house.details', $house) }}"
-                                        class="block w-full px-4 py-2 font-bold text-center text-white transition duration-300 bg-blue-600 rounded-l-md hover:bg-blue-700">
+                                        class="block w-full px-4 py-2 font-bold text-center text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
                                         View Details
                                     </a>
-                                    @auth
-                                        <button class="p-2 px-3 bg-blue-600 rounded-r-md favorite-btn hover:bg-blue-700 focus:outline-none" data-house-id="{{ $house->id }}" title="Favorite">
-                                            @if(auth()->user()->hasFavorited($house))
-                                                <i class="text-xl text-red-500 fas fa-heart"></i>
-                                            @else
-                                                <i class="text-xl text-white far fa-heart"></i> {{-- White heart on blue background --}}
-                                            @endif
-                                        </button>
-                                    @else
-                                        <button class="p-2 px-3 bg-blue-600 rounded-r-md favorite-btn-guest hover:bg-blue-700 focus:outline-none" title="Favorite">
-                                            <i class="text-xl text-white far fa-heart"></i>
-                                        </button>
-                                    @endguest
                                 </div>
                             </div>
                         </div>
@@ -187,6 +235,7 @@
                             moment.</p>
                     @endforelse
                 </div>
+
             </div>
         </section>
     </div>
@@ -203,8 +252,8 @@
                     <div class="flex justify-center mb-4">
                         <div class="inline-flex p-4 text-blue-600 bg-blue-100 rounded-full">
                             {{-- Placeholder for Location Icon --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -394,6 +443,34 @@
                 // Initial population of neighborhoods when the page loads
                 updateNeighborhoodOptions();
             }
+        });
+
+
+        // FOR FAVORITES BUTTON
+        document.addEventListener('DOMContentLoaded', function() {
+    
+            // Add bubble effect to all favorite buttons
+            const favoriteButtons = document.querySelectorAll('.favorite-btn, .favorite-btn-guest');
+
+            favoriteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const bubbleEffect = this.querySelector('.bubble-effect');
+
+                    // Remove existing animation
+                    bubbleEffect.classList.remove('animate');
+
+                    // Trigger reflow to restart animation
+                    void bubbleEffect.offsetWidth;
+
+                    // Add animation class
+                    bubbleEffect.classList.add('animate');
+
+                    // Remove animation class after animation completes
+                    setTimeout(() => {
+                        bubbleEffect.classList.remove('animate');
+                    }, 600);
+                });
+            });
         });
     </script>
 </x-layout>

@@ -176,6 +176,12 @@ class BookingController extends Controller
             abort(403, 'Unauthorized action. You do not own the house associated with this booking.');
         }
 
+        // Check if the house itself is already booked
+        if ($booking->house->status === 'booked') {
+            // If this booking is still pending, it means another booking was accepted for this house.
+            return redirect()->route('bookings.show', $booking)->with('error', 'This property is already booked and no longer available.');
+        }
+
         // Prevent re-processing if already accepted or rejected
         if ($booking->status !== 'pending') {
             return redirect()->route('bookings.show', $booking)->with('info', 'This booking has already been processed.');
@@ -195,6 +201,25 @@ class BookingController extends Controller
                 $house->status = 'booked'; // Assuming 'booked' is a valid status in your House model
                 $house->save();
             }
+
+             // --- START: Reject other pending bookings for the same house ---
+            $otherPendingBookings = Booking::where('house_id', $house->id)
+                ->where('id', '!=', $booking->id) // Exclude the current booking being accepted
+                ->where('status', 'pending')
+                ->with('tenant') // Eager load tenant for notification
+                ->get();
+
+            foreach ($otherPendingBookings as $otherBooking) {
+                $otherBooking->status = 'rejected';
+                $otherBooking->save();
+
+                // Notify the tenant of the other booking that it has been rejected
+                if ($otherBooking->tenant) {
+                    $otherBooking->tenant->notify(new BookingStatusUpdated($otherBooking, 'rejected'));
+                }
+                Log::info("Booking ID {$otherBooking->id} for House ID {$house->id} automatically rejected due to acceptance of Booking ID {$booking->id}.");
+            }
+            // --- END: Reject other pending bookings ---
 
             // --- START: Logic for creating Agreement and Payment ---
             $agreementCreated = false;

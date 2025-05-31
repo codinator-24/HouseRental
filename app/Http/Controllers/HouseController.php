@@ -52,7 +52,6 @@ class HouseController extends Controller
             'neighborhood' => 'required|string|max:255',
             'second_address' => 'nullable|string|max:255',
             'city' => 'required|string|max:100',
-            'location_url' => 'nullable|url|max:500',
             'property_type' => 'required|string|max:100',
             'square_footage' => 'required|numeric|min:0',
             'rent_amount' => 'required|numeric|min:0',
@@ -78,7 +77,6 @@ class HouseController extends Controller
                 'neighborhood' => $validatedData['neighborhood'],
                 'second_address' => $validatedData['second_address'],
                 'city' => $validatedData['city'],
-                'location_url' => $validatedData['location_url'],
                 'property_type' => $validatedData['property_type'],
                 'square_footage' => $validatedData['square_footage'],
                 'rent_amount' => $validatedData['rent_amount'],
@@ -116,7 +114,7 @@ class HouseController extends Controller
             DB::commit();
 
             // 5. Redirect with Success Message
-            return redirect()->route('home')->with('success', 'House listing added successfully!');
+            return redirect()->route('home')->with('success', 'House listing added successfully!.. Please wait for admin approval.');
         } catch (\Exception $e) {
             // Rollback Transaction on error
             DB::rollBack();
@@ -130,39 +128,7 @@ class HouseController extends Controller
         }
     }
 
-    public function houseDetails(House $house)
-    {
-        $house->load('pictures', 'floors', 'landlord'); // Eager load landlord, pictures, and floors
-
-        // Mask phone numbers for privacy
-        if ($house->landlord) {
-            $house->landlord->masked_first_phone = $this->maskPhoneNumber($house->landlord->first_phoneNumber);
-            $house->landlord->masked_second_phone = $this->maskPhoneNumber($house->landlord->second_phoneNumber);
-        }
-
-        $userBookingForThisHouse = null;
-        if (Auth::check() && $house && $house->id) {
-            $userBookingForThisHouse = Booking::where('tenant_id', Auth::id())
-                ->where('house_id', $house->id)
-                // Optional: Add conditions like ->where('status', '!=', 'cancelled')
-                ->first();
-        }
-        return view('posts.detailsHouse', compact('house', 'userBookingForThisHouse'));
-    }
-
-    public function MyHouses()
-    {
-        $query = House::with('pictures');
-
-        // If the user is authenticated, exclude their own houses
-        if (Auth::check()) {
-            $query->where('landlord_id', '=', Auth::id());
-        }
-        $houses = $query->get();
-        return view('users.MyHouses', ['houses' => $houses]); // Pass houses to the view
-    }
-
-    public function editMyHouse(House $house)
+        public function editMyHouse(House $house)
     {
         // Authorization: Ensure the authenticated user is the landlord of this house.
         if (Auth::id() !== $house->landlord_id) {
@@ -188,7 +154,6 @@ class HouseController extends Controller
             'neighborhood' => 'required|string|max:255',
             'second_address' => 'nullable|string|max:255',
             'city' => 'required|string|max:100',
-            'location_url' => 'nullable|url|max:500',
             'property_type' => 'required|string|max:100',
             'square_footage' => 'required|numeric|min:0',
             'rent_amount' => 'required|numeric|min:0',
@@ -212,7 +177,6 @@ class HouseController extends Controller
                 'neighborhood' => $validatedData['neighborhood'],
                 'second_address' => $validatedData['second_address'],
                 'city' => $validatedData['city'],
-                'location_url' => $validatedData['location_url'],
                 'property_type' => $validatedData['property_type'],
                 'square_footage' => $validatedData['square_footage'],
                 'rent_amount' => $validatedData['rent_amount'],
@@ -253,6 +217,38 @@ class HouseController extends Controller
             return back()->withInput()->with('error', 'Failed to update house listing. Please try again. Details: ' . $e->getMessage());
             // return back()->withInput()->with('error', 'Failed to update house listing. Please try again.');
         }
+    }
+
+    public function houseDetails(House $house)
+    {
+        $house->load('pictures', 'floors', 'landlord'); // Eager load landlord, pictures, and floors
+
+        // Mask phone numbers for privacy
+        if ($house->landlord) {
+            $house->landlord->masked_first_phone = $this->maskPhoneNumber($house->landlord->first_phoneNumber);
+            $house->landlord->masked_second_phone = $this->maskPhoneNumber($house->landlord->second_phoneNumber);
+        }
+
+        $userBookingForThisHouse = null;
+        if (Auth::check() && $house && $house->id) {
+            $userBookingForThisHouse = Booking::where('tenant_id', Auth::id())
+                ->where('house_id', $house->id)
+                // Optional: Add conditions like ->where('status', '!=', 'cancelled')
+                ->first();
+        }
+        return view('posts.detailsHouse', compact('house', 'userBookingForThisHouse'));
+    }
+
+    public function MyHouses()
+    {
+        $query = House::with('pictures');
+
+        // If the user is authenticated, exclude their own houses
+        if (Auth::check()) {
+            $query->where('landlord_id', '=', Auth::id());
+        }
+        $houses = $query->get();
+        return view('users.MyHouses', ['houses' => $houses]); // Pass houses to the view
     }
 
     public function deleteMyHouse(House $house)

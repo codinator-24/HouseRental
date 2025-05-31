@@ -215,6 +215,12 @@
                                 <a href="{{ route('dashboard') }}"
                                     class="block py-2 pl-4 pr-8 hover:bg-slate-100">@lang('words.Dashboard')</a>
 
+                                <a href="{{ route('favorites.show') }}"
+                                    class="block py-2 pl-4 pr-8 hover:bg-slate-100">My Favorites</a>
+
+                                <a href="{{ route('Show.house.add') }}"
+                                    class="block py-2 pl-4 pr-8 hover:bg-slate-100">Add Properties</a>
+
 
                                 <form action="{{ route('logout') }}" method="post">
                                     @csrf

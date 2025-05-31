@@ -207,7 +207,12 @@
             <section class="py-8">
                 <div>
                     <div class="flex justify-between items-center mb-8">
-                        <h2 class="text-2xl font-semibold text-gray-700">My Properties</h2> {{-- Adjusted heading size for consistency --}}
+                      <h2 class="text-2xl font-semibold text-gray-700">My Properties</h2>
+                        <a href="{{ route('Show.house.add') }}"
+                           class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-150 flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add New Property
+                        </a>
                     </div>
 
                     {{-- Properties Grid --}}
@@ -276,7 +281,7 @@
                             {{-- "View More Properties" as a card in the grid --}}
                             <div
                                 class="bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-full items-center justify-center p-4 transition-all duration-300 hover:shadow-xl hover:border-indigo-300">
-                                <a href="{{ route('my.houses.index') }}" {{-- Make sure this route exists and lists all user's properties --}}
+                                <a href="{{ route('my.houses') }}" {{-- Make sure this route exists and lists all user's properties --}}
                                     class="text-sm text-indigo-500 hover:text-indigo-700 font-semibold hover:underline flex flex-col items-center text-center p-2">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         class="h-8 w-8 mb-1 text-indigo-500 group-hover:text-indigo-700"

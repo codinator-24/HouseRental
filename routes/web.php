@@ -69,6 +69,7 @@ Route::middleware('lang')->group(function () {
 
         // Favorite a house
         Route::post('/favorites/{house}/toggle', [FavoriteController::class, 'toggleFavorite'])->name('favorites.toggle');
+        Route::get('/favorites', [FavoriteController::class, 'showFavorites'])->name('favorites.show');
     });
 
     // Currency Switcher Route - accessible by guests and authenticated users
