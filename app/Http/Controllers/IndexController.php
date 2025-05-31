@@ -11,7 +11,7 @@ class IndexController extends Controller
     // Handle the homepage request
     public function index(Request $request)
     {
-        $query = House::query()->with('pictures'); // Start a query and eager load pictures
+        $query = House::query()->with(['pictures', 'floors']); // Eager load pictures and floors
 
         // 1. Filter by City (updated from general location search)
         if ($request->filled('city')) {

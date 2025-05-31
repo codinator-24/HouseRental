@@ -58,9 +58,42 @@ class House extends Model
         return $this->hasMany(HousePicture::class);
     }
 
-    public function floors(): HasMany // <-- Add this method
+    public function floors(): HasMany
     {
         return $this->hasMany(Floor::class);
+    }
+
+    /**
+     * Accessor for the total number of floors.
+     *
+     * @return int
+     */
+    public function getNumFloorAttribute(): int
+    {
+        // Check if the floors relationship is loaded to avoid N+1
+        if ($this->relationLoaded('floors')) {
+            return $this->floors->count();
+        }
+        // If not loaded, load it and count
+        return $this->floors()->count();
+    }
+
+    /**
+     * Accessor for the total number of rooms.
+     *
+     * @return int
+     */
+    public function getNumRoomAttribute(): int
+    {
+        // Check if the floors relationship is loaded
+        if ($this->relationLoaded('floors')) {
+            return $this->floors->sum('num_room');
+        }
+        // If not loaded, load it and sum
+        // This could still be an N+1 if floors() itself isn't constrained
+        // but for sum, it's often handled efficiently by Eloquent.
+        // For optimal performance, ensure 'floors' is eager loaded.
+        return $this->floors()->sum('num_room');
     }
 
     /**

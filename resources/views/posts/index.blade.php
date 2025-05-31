@@ -80,11 +80,11 @@
 
     {{-- Search Bar Section --}}
     <section id="search"
-        class="container relative z-20 max-w-4xl px-5 py-6 mx-auto -mt-16 bg-white rounded-lg shadow-lg">
+        class="container relative z-20 max-w-5xl px-5 py-6 mx-auto -mt-16 bg-white rounded-lg shadow-lg">
         {{-- Submit to the current URL to re-load the page with query parameters --}}
-        <form action="{{ route('home') }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-5">
+        <form action="{{ route('home') }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-11">
             {{-- City Dropdown --}}
-            <div>
+            <div class="md:col-span-2">
                 <label for="city" class="block mb-1 text-sm font-medium text-gray-700">City</label>
                 <select id="city" name="city"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
@@ -99,7 +99,7 @@
             </div>
 
             {{-- Neighborhood Dropdown --}}
-            <div>
+            <div class="md:col-span-3">
                 <label for="neighborhood" class="block mb-1 text-sm font-medium text-gray-700">Neighborhood</label>
                 <select id="neighborhood" name="neighborhood"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
@@ -109,7 +109,7 @@
             </div>
 
             {{-- Price --}}
-            <div>
+            <div class="md:col-span-2">
                 <label for="price" class="block mb-1 text-sm font-medium text-gray-700">Price</label>
                 <select id="price" name="price"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
@@ -124,7 +124,7 @@
             </div>
 
             {{-- Property Type --}}
-            <div>
+            <div class="md:col-span-2">
                 <label for="property_type" class="block mb-1 text-sm font-medium text-gray-700">Property Type</label>
                 <select id="property_type" name="property_type"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
@@ -140,8 +140,9 @@
 
             {{-- Search Button --}}
             <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md w-full h-[42px]">
+                class="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md w-full h-[42px] flex items-center justify-center">
                 Search
+                <i class="fas fa-search fa-flip-horizontal ml-2"></i>
             </button>
         </form>
     </section>
@@ -163,16 +164,16 @@
                     @forelse ($houses as $house)
                         {{-- Property Card --}}
                         <div
-                            class="relative flex flex-col overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md">
+                            class="relative flex flex-col overflow-hidden bg-white border border-gray-200 rounded-xl shadow-lg">
                             {{-- Favorite Button - Positioned in upper right corner --}}
                             @auth
                                 <button
-                                    class="absolute top-3 right-3 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
+                                    class="absolute top-3 right-3 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
                                     data-house-id="{{ $house->id }}" title="Favorite">
                                     @if (auth()->user()->hasFavorited($house))
-                                        <i class="text-sm text-red-500 fas fa-heart"></i>
+                                        <i class="text-lg text-red-500 fas fa-heart"></i>
                                     @else
-                                        <i class="text-sm text-gray-600 far fa-heart"></i>
+                                        <i class="text-lg text-gray-600 far fa-heart"></i>
                                     @endif
                                     {{-- Click bubble effect --}}
                                     <span
@@ -180,9 +181,9 @@
                                 </button>
                             @else
                                 <button
-                                    class="absolute top-3 right-3 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn-guest hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
+                                    class="absolute top-3 right-3 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn-guest hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
                                     title="Favorite">
-                                    <i class="text-sm text-gray-600 far fa-heart"></i>
+                                    <i class="text-lg text-gray-600 far fa-heart"></i>
                                     {{-- Click bubble effect --}}
                                     <span
                                         class="absolute inset-0 rounded-full bg-red-300/30 scale-0 opacity-0 pointer-events-none bubble-effect"></span>
@@ -195,9 +196,9 @@
                                     ? asset($house->pictures->first()->image_url)
                                     : 'https://images.pexels.com/photos/731082/pexels-photo-731082.jpeg';
                             @endphp
-                            <img src="{{ $imageUrl }}" alt="{{ $house->title }}" class="object-cover w-full h-48">
+                            <img src="{{ $imageUrl }}" alt="{{ $house->title }}" class="object-cover w-full h-60">
                             <div class="flex flex-col flex-grow p-6">
-                                <h3 class="mb-2 text-xl font-semibold">{{ $house->title }}</h3>
+                                <h3 class="mb-2 text-2xl font-semibold">{{ $house->title }}</h3>
                                 <p class="flex-grow mb-4 text-sm text-gray-600">
                                     <i class="mr-1 fas fa-map-marker-alt text-slate-500"></i>
                                     {{ $house->city }}, {{ $house->first_address }}
@@ -206,25 +207,34 @@
                                     {{ $house->neighborhood }}
                                     {{ $house->second_address ? ', ' . $house->second_address : '' }}
                                 </p>
-                                <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-baseline mb-4 text-center justify-center">
                                     <span class="text-2xl font-bold text-blue-600 convertible-price"
                                         data-base-price-usd="{{ $house->rent_amount }}">
                                         {{-- Initial display, will be updated by JS --}}
                                         ${{ number_format($house->rent_amount, 2) }}
                                     </span>
-                                    <span class="text-sm text-gray-600">per month</span>
+                                    <span class="ml-1 text-xs text-gray-500">/month</span>
                                 </div>
-                                <div class="flex justify-between pt-4 mb-4 text-sm text-gray-600 border-t">
-                                    <span><i class="mr-1 fas fa-bed"></i> {{ $house->num_room }}
-                                        {{ Str::plural('Room', $house->num_room) }}</span>
-                                    <span><i class="mr-1 fas fa-layer-group"></i> {{ $house->num_floor }}
-                                        {{ Str::plural('Floor', $house->num_floor) }}</span>
-                                    <span><i class="mr-1 fas fa-ruler-combined"></i> {{ $house->square_footage }}
-                                        m<sup>2</sup></span>
+                                <div class="grid grid-cols-3 gap-x-4 py-3 my-3 border-t border-b">
+                                    <div class="flex flex-col items-center text-center">
+                                        <i class="mb-1 fas fa-bed text-gray-500"></i>
+                                        <span class="block text-lg font-semibold text-gray-900">{{ $house->num_room ?? 0 }}</span>
+                                        <span class="block text-xs text-gray-500">{{ Str::plural('Room', $house->num_room ?? 0) }}</span>
+                                    </div>
+                                    <div class="flex flex-col items-center text-center">
+                                        <i class="mb-1 fas fa-layer-group text-gray-500"></i>
+                                        <span class="block text-lg font-semibold text-gray-900">{{ $house->num_floor ?? 0 }}</span>
+                                        <span class="block text-xs text-gray-500">{{ Str::plural('Floor', $house->num_floor ?? 0) }}</span>
+                                    </div>
+                                    <div class="flex flex-col items-center text-center">
+                                        <i class="mb-1 fas fa-ruler-combined text-gray-500"></i>
+                                        <span class="block text-lg font-semibold text-gray-900">{{ $house->square_footage ?? 0 }}</span>
+                                        <span class="block text-xs text-gray-500">m<sup>2</sup></span>
+                                    </div>
                                 </div>
                                 <div class="mt-auto">
                                     <a href="{{ route('house.details', $house) }}"
-                                        class="block w-full px-4 py-2 font-bold text-center text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
+                                        class="block w-full px-5 py-3 text-base font-semibold text-center text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
                                         View Details
                                     </a>
                                 </div>
