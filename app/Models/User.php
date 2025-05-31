@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
+use App\Models\Message; // Added for Message relationship
 
 /**
  * App\Models\User
@@ -105,5 +106,21 @@ class User extends Authenticatable
     public function hasFavorited(House $house): bool
     {
         return $this->favorites()->where('house_id', $house->id)->exists();
+    }
+
+    /**
+     * Get the messages sent by the user.
+     */
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Get the messages received by the user.
+     */
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\CurrencyController; // Add this line for currency switc
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AuthAdminController;
 use App\Http\Controllers\FavoriteController; // Added FavoriteController
+use App\Http\Controllers\MessageController; // Added MessageController
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReportController; // Added ReportController
 use App\Http\Controllers\StripeController;
@@ -70,6 +71,11 @@ Route::middleware('lang')->group(function () {
         // Favorite a house
         Route::post('/favorites/{house}/toggle', [FavoriteController::class, 'toggleFavorite'])->name('favorites.toggle');
         Route::get('/favorites', [FavoriteController::class, 'showFavorites'])->name('favorites.show');
+
+        // Messaging Routes
+        Route::get('/messages', [MessageController::class, 'allMessagesOverview'])->name('messages.overview');
+        Route::get('/agreements/{agreement}/messages', [MessageController::class, 'index'])->name('agreements.messages.index');
+        Route::post('/agreements/{agreement}/messages', [MessageController::class, 'store'])->name('agreements.messages.store');
     });
 
     // Currency Switcher Route - accessible by guests and authenticated users

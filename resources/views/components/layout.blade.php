@@ -101,6 +101,15 @@
                 </div>
 
                 @auth
+                    <!-- Messages Icon -->
+                    <a href="{{ route('messages.overview') }}" title="My Messages"
+                        class="relative p-2 text-gray-600 rounded-full hover:text-blue-600 focus:outline-none hover:bg-gray-100">
+                        <span class="sr-only">View Messages</span>
+                        <i class="text-xl fa-solid fa-message"></i>
+                        {{-- You can add an unread messages counter here later if needed --}}
+                        {{-- Example: <span class="absolute flex items-center justify-center w-4 h-4 text-xs text-white bg-blue-500 border-white rounded-full -top-1 -right-1">3</span> --}}
+                    </a>
+
                     <!-- Notification Icon with Dropdown -->
                         <div class="relative" x-data="notificationsComponent()" x-init="init()">
                             <button @click="toggleDropdown()" type="button" title="Notifications"

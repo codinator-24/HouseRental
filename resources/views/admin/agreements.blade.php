@@ -163,4 +163,57 @@
         </script>
     @endpush
 
+<<<<<<< HEAD
 </x-adminLayout>
+=======
+
+        const searchInput = document.getElementById('agreementSearchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const agreementTableRows = document.querySelectorAll('#agreementTable tbody tr');
+
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
+
+            agreementTableRows.forEach(function(row) {
+                const textContent = (row.textContent || row.innerText).toLowerCase();
+                // Assuming the status is in the 9th column (index 8)
+                // and the badge span is the first child of the td
+                const statusCell = row.cells[8]; 
+                let rowStatusText = '';
+                if (statusCell && statusCell.querySelector('span.badge')) {
+                    rowStatusText = statusCell.querySelector('span.badge').textContent.trim().toLowerCase();
+                }
+
+                let matchesSearch = textContent.includes(searchTerm);
+                let matchesStatus = false;
+
+                if (selectedStatus === "") { // "All Statuses"
+                    matchesStatus = true;
+                } else if (selectedStatus === "pending") {
+                    matchesStatus = (rowStatusText === "pending" || rowStatusText === "pending signature");
+                } else if (selectedStatus === "agreed") {
+                    matchesStatus = (rowStatusText === "agreed");
+                } else if (selectedStatus === "expired") {
+                    matchesStatus = (rowStatusText === "expired");
+                }
+
+                if (matchesSearch && matchesStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        searchInput.addEventListener('keyup', filterTable);
+        statusFilter.addEventListener('change', filterTable);
+
+
+    </script>
+    {{-- Bootstrap JS bundle is generally good to keep if other Bootstrap components are used in your layout or might be added later. --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+</html>
+>>>>>>> b439fc903b6d3b26c31bc7c8b30e2c0e91572b44
