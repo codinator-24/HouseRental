@@ -42,7 +42,7 @@
                 @guest
                     <div class="items-center hidden gap-2 md:flex">
                         <a href="{{ route('login') }}"
-                            class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('words.Login')</a>
+                            class="px-3 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 hover:text-blue-700">@lang('words.Login')</a>
                         <a href="{{ route('register') }}"
                             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">@lang('words.Register')</a>
                     </div>
@@ -263,7 +263,7 @@
 
                 @guest
                     <a href="{{ route('login') }}"
-                        class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.Login')</a>
+                        class="block px-3 py-2 text-base font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 hover:text-blue-700">@lang('words.Login')</a>
                     <a href="{{ route('register') }}"
                         class="block px-3 py-2 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">@lang('words.Register')</a>
                 @endguest
