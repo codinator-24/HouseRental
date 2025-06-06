@@ -7,12 +7,12 @@
             <div class="container py-5">
                 <div class="card custom-table">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" style="font-size: 12px;">
+                        <table class="table table-hover mb-0" style="font-size: 12px; width">
                             <thead>
                                 <tr>
                                     <th scope="col">House type</th>
                                     <th scope="col">Address 1</th>
-                                    <th scope="col">Address 2</th>
+                                    <th scope="col">Address <br> 2</th>
                                     <th scope="col">City</th>
                                     <th scope="col">No. Rooms</th>
                                     <th scope="col">Area</th>
@@ -53,13 +53,65 @@
                                             </td>
                                             <td>
                                                 <div class="action-buttons">
-                                                    <a href="{{ url('approve-house/' . $house->id) }}"
-                                                        onclick="return confirm('Are you sure you want to approve this house rental?')"><button
-                                                            class="btn btn-sm btn-success">Accept</button></a>
-                                                    <a href="{{ url('delete-aprove', $house->id) }}"
-                                                        onclick="return confirm('Are you sure you want to reject this house rental?')"><button
-                                                            class="btn btn-sm btn-danger">Reject</button></a>
-                                                </div>
+                                                    <!-- Accept Button -->
+<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveHouseModal-{{ $house->id }}">
+    Accept
+</button>
+
+<!-- Approve House Modal -->
+<div class="modal fade" id="approveHouseModal-{{ $house->id }}" tabindex="-1" aria-labelledby="approveHouseModalLabel-{{ $house->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="approveHouseModalLabel-{{ $house->id }}">Confirm Approval</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to approve the rental listing for <strong>{{ $house->title ?? 'this house' }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url('approve-house/' . $house->id) }}" method="GET">
+            @csrf
+            <a href="{{ url('approve-house/' . $house->id) }}"><button
+                                                            class="btn btn-success">Accept</button></a>
+                                                            
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+ </div>
+ <!-- Reject Button -->
+<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectHouseModal-{{ $house->id }}" style="margin-top:7px; width:100%;">
+    Reject
+</button>
+
+<!-- Reject House Modal -->
+<div class="modal fade" id="rejectHouseModal-{{ $house->id }}" tabindex="-1" aria-labelledby="rejectHouseModalLabel-{{ $house->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rejectHouseModalLabel-{{ $house->id }}">Confirm Rejection</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to reject the rental listing for <strong>{{ $house->title ?? 'this house' }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url('delete-aprove', $house->id) }}" method="GET">
+            @csrf
+            @method('GET') 
+            <a href="{{ url('delete-aprove', $house->id) }}"><button
+                                                            class="btn btn-danger">Reject</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
                                             </td>
                                         </tr>
                                     @endif

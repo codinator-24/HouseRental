@@ -17,7 +17,7 @@
                                 <tr>
                                     <th scope="col">House type</th>
                                     <th scope="col">Address 1</th>
-                                    <th scope="col">Address 2</th>
+                                    <th scope="col">Address <br>2</th>
                                     <th scope="col">City</th>
                                     <th scope="col">No. Rooms</th>
                                     <th scope="col">Area</th>
@@ -58,9 +58,34 @@
                                             </td>
                                             <td>
                                                 <div class="action-buttons">
-                                                    <a href="{{ url('deactivate-house', $house->id) }}"
-                                                        onclick="return confirm('Are you sure you want to deactivate this house listing?')"><button
-                                                            class="btn btn-sm btn-danger">Deactivate</button></a>
+                                                    <!-- Deactivate House Button -->
+<button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deactivateHouseModal-{{ $house->id }}">
+    Deactivate
+</button>
+
+<!-- Deactivate House Modal -->
+<div class="modal fade" id="deactivateHouseModal-{{ $house->id }}" tabindex="-1" aria-labelledby="deactivateHouseModalLabel-{{ $house->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deactivateHouseModalLabel-{{ $house->id }}">Confirm Deactivation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to deactivate the listing for <strong>{{ $house->title ?? 'this house' }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url('deactivate-house', $house->id) }}" method="GET">
+            @csrf
+            @method('GET') <!-- Use DELETE if your route uses it -->
+            <a href="{{ url('deactivate-house', $house->id) }}"><button class="btn btn-sm btn-danger">Deactivate</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
                                                 </div>
                                             </td>
                                         </tr>

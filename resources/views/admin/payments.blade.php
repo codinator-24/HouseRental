@@ -53,7 +53,7 @@
                                             <td>
                                                 <span
                                                     class="badge 
-                                                    @if ($payment->status == 'succeeded' || $payment->status == 'paid') bg-success 
+                                                    @if ($payment->status == 'completed' || $payment->status == 'paid') bg-success 
                                                     @elseif($payment->status == 'pending') bg-warning text-dark
                                                     @elseif($payment->status == 'failed') bg-danger
                                                     @else bg-secondary @endif">
@@ -64,8 +64,10 @@
                                             </td>
                                             <td>{{ Str::limit($payment->notes, 30) ?: 'N/A' }}</td>
                                             <td class="action-buttons">
-                                                <a href="#" class="btn btn-sm btn-info">View</a>
-                                                {{-- Add other actions like receipt if needed --}}
+                                                <a href="#" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPaymentModal-{{ $payment->id }}">
+                                                    View
+                                                        </a>
+
                                             </td>
                                         </tr>
                                     @empty
@@ -81,6 +83,59 @@
             </div>
         </div>
     </div>
+
+    <!-- Payment Detail Modal -->
+<div class="modal fade" id="viewPaymentModal-{{ $payment->id }}" tabindex="-1" aria-labelledby="paymentModalLabel-{{ $payment->id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- Large modal -->
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h5 class="modal-title w-100" id="paymentModalLabel-{{ $payment->id }}">Payment Details  ID- {{ $payment->id }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <dl class="row justify-content-center">
+          <dt class="col-sm-4">Agreement ID</dt>
+          <dd class="col-sm-8">{{ $payment->agreement_id }}</dd>
+
+          <dt class="col-sm-4">Tenant</dt>
+          <dd class="col-sm-8">{{ $payment->agreement->booking->tenant->full_name ?? 'N/A' }}</dd>
+
+          <dt class="col-sm-4">House Title</dt>
+          <dd class="col-sm-8">{{ $payment->agreement->booking->house->title ?? 'N/A' }}</dd>
+
+          <dt class="col-sm-4">Amount</dt>
+          <dd class="col-sm-8">${{ number_format($payment->amount, 2) }}</dd>
+
+          <dt class="col-sm-4">Payment Method</dt>
+          <dd class="col-sm-8">{{ ucfirst(str_replace('_', ' ', $payment->payment_method)) }}</dd>
+
+          <dt class="col-sm-4">Status</dt>
+          <dd class="col-sm-8">
+            <span class="badge 
+              @if ($payment->status == 'completed' || $payment->status == 'paid') bg-success 
+              @elseif($payment->status == 'pending') bg-warning text-dark
+              @elseif($payment->status == 'failed') bg-danger
+              @else bg-secondary @endif">
+              {{ ucfirst(str_replace('_', ' ', $payment->status)) }}
+            </span>
+          </dd>
+
+          <dt class="col-sm-4">Paid At</dt>
+          <dd class="col-sm-8">{{ $payment->paid_at ? \Carbon\Carbon::parse($payment->paid_at)->format('Y-m-d H:i') : 'N/A' }}</dd>
+
+          <dt class="col-sm-4">Notes</dt>
+          <dd class="col-sm-8">{{ $payment->notes ?: 'N/A' }}</dd>
+        </dl>
+      </div>
+
+      <div class="modal-footer justify-content-center">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     @push('scripts')
         <script>

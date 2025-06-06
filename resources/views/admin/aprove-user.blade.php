@@ -72,12 +72,63 @@
                                                 @endif
                                             </td>
                                             <td data-label="گۆرینی ڕؤڵ یان سڕینەوە">
-                                                <a href="{{ url('approve-user/' . $user->id) }}"
-                                                    onclick="return confirm('Are you sure you want to approve this user?')"><button
-                                                        class="btn btn-sm btn-success">Accept</button></a>
-                                                <a href="{{ url('delete-user', $user->id) }}"
-                                                    onclick="return confirm('Are you sure you want to reject this user registration?')"><button
-                                                        class="btn btn-sm btn-danger">Reject</button></a>
+                                                <!-- Accept Button -->
+<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#acceptModal-{{ $user->id }}">
+    Accept
+</button>
+
+<!-- Accept Modal -->
+<div class="modal fade" id="acceptModal-{{ $user->id }}" tabindex="-1" aria-labelledby="acceptModalLabel-{{ $user->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="acceptModalLabel-{{ $user->id }}">Confirm Approval</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to approve <strong>{{ $user->full_name }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url('approve-user/' . $user->id) }}" method="GET">
+            @csrf
+            <a href="{{ url('approve-user/' . $user->id) }}"><button
+                                                        class="btn btn-success">Accept</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Reject Button -->
+<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal-{{ $user->id }}">
+    Reject
+</button>
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal-{{ $user->id }}" tabindex="-1" aria-labelledby="rejectModalLabel-{{ $user->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rejectModalLabel-{{ $user->id }}">Confirm Rejection</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to reject the registration of <strong>{{ $user->full_name }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url('delete-user/' . $user->id) }}" method="POST">
+            @csrf
+            @method('GET')
+             <a href="{{ url('delete-user', $user->id) }}"><button
+                                                        class="btn btn-danger">Reject</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
                                             </td>
                                         </tr>
                                     @endif

@@ -59,7 +59,7 @@
                                         <td>
                                             <span
                                                 class="badge 
-                                                            @if ($agreement->status == 'active') bg-success 
+                                                            @if ($agreement->status == 'agreed') bg-success 
                                                             @elseif($agreement->status == 'expired') bg-danger
                                                             @elseif($agreement->status == 'pending' || $agreement->status == 'pending_signature') bg-warning text-dark
                                                             @else bg-secondary @endif">
@@ -67,7 +67,10 @@
                                             </span>
                                         </td>
                                         <td class="action-buttons">
-                                            <a href="#" class="btn btn-sm btn-info">View</a>
+                                            <!-- View Button -->
+                                    <a href="#" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewAgreementModal-{{ $agreement->id }}">
+                                              View
+                                            </a>
                                             {{-- Add other actions like edit/delete if needed --}}
                                         </td>
                                     </tr>
@@ -84,6 +87,58 @@
             {{-- End of Agreements Table Section --}}
         </div>
     </div>
+
+    <!-- Agreement Detail Modal -->
+     
+<div class="modal fade" id="viewAgreementModal-{{ $agreement->id }}" tabindex="-1" aria-labelledby="agreementModalLabel-{{ $agreement->id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- large modal for better layout -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agreementModalLabel-{{ $agreement->id }}">Agreement Details ID -{{ $agreement->id }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <dl class="row">
+          <dt class="col-sm-4">Tenant</dt>
+          <dd class="col-sm-8">{{ $agreement->booking->tenant->full_name ?? 'N/A' }}</dd>
+
+          <dt class="col-sm-4">Landlord</dt>
+          <dd class="col-sm-8">{{ $agreement->booking->house->landlord->full_name ?? 'N/A' }}</dd>
+
+          <dt class="col-sm-4">House Title</dt>
+          <dd class="col-sm-8">{{ $agreement->booking->house->title ?? 'N/A' }}</dd>
+
+          <dt class="col-sm-4">City</dt>
+          <dd class="col-sm-8">{{ $agreement->booking->house->city ?? 'N/A' }}</dd>
+
+          <dt class="col-sm-4">Signed At</dt>
+          <dd class="col-sm-8">{{ $agreement->signed_at ? \Carbon\Carbon::parse($agreement->signed_at)->format('Y-m-d') : 'N/A' }}</dd>
+
+          <dt class="col-sm-4">Expires At</dt>
+          <dd class="col-sm-8">{{ $agreement->expires_at ? \Carbon\Carbon::parse($agreement->expires_at)->format('Y-m-d') : 'N/A' }}</dd>
+
+          <dt class="col-sm-4">Rent Amount</dt>
+          <dd class="col-sm-8">${{ number_format($agreement->rent_amount, 2) }}</dd>
+
+          <dt class="col-sm-4">Status</dt>
+          <dd class="col-sm-8">
+            <span class="badge 
+              @if ($agreement->status == 'agreed') bg-success 
+              @elseif($agreement->status == 'reject') bg-danger
+              @elseif($agreement->status == 'pending' || $agreement->status == 'pending_signature') bg-warning text-dark
+              @else bg-secondary @endif">
+              {{ ucfirst(str_replace('_', ' ', $agreement->status)) }}
+            </span>
+          </dd>
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     @push('scripts')
         <script>
@@ -163,57 +218,4 @@
         </script>
     @endpush
 
-<<<<<<< HEAD
 </x-adminLayout>
-=======
-
-        const searchInput = document.getElementById('agreementSearchInput');
-        const statusFilter = document.getElementById('statusFilter');
-        const agreementTableRows = document.querySelectorAll('#agreementTable tbody tr');
-
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const selectedStatus = statusFilter.value;
-
-            agreementTableRows.forEach(function(row) {
-                const textContent = (row.textContent || row.innerText).toLowerCase();
-                // Assuming the status is in the 9th column (index 8)
-                // and the badge span is the first child of the td
-                const statusCell = row.cells[8]; 
-                let rowStatusText = '';
-                if (statusCell && statusCell.querySelector('span.badge')) {
-                    rowStatusText = statusCell.querySelector('span.badge').textContent.trim().toLowerCase();
-                }
-
-                let matchesSearch = textContent.includes(searchTerm);
-                let matchesStatus = false;
-
-                if (selectedStatus === "") { // "All Statuses"
-                    matchesStatus = true;
-                } else if (selectedStatus === "pending") {
-                    matchesStatus = (rowStatusText === "pending" || rowStatusText === "pending signature");
-                } else if (selectedStatus === "agreed") {
-                    matchesStatus = (rowStatusText === "agreed");
-                } else if (selectedStatus === "expired") {
-                    matchesStatus = (rowStatusText === "expired");
-                }
-
-                if (matchesSearch && matchesStatus) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        searchInput.addEventListener('keyup', filterTable);
-        statusFilter.addEventListener('change', filterTable);
-
-
-    </script>
-    {{-- Bootstrap JS bundle is generally good to keep if other Bootstrap components are used in your layout or might be added later. --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</body>
-
-</html>
->>>>>>> b439fc903b6d3b26c31bc7c8b30e2c0e91572b44

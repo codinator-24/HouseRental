@@ -51,10 +51,39 @@
                                         <td>{{ Str::limit($feedback->description, 100) }}</td>
                                         <td>{{ $feedback->created_at->format('Y-m-d H:i') }}</td>
                                         <td>
-                                            <a href="{{ url('delete-feedback', $feedback->id) }}"
-                                                onclick="return confirm('Are you sure you want to delete this feedback?')">
-                                                <button class="btn btn-sm btn-danger">Delete</button>
+                                            <!-- Delete Button -->
+<button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFeedbackModal-{{ $feedback->id }}" style="width:60%;">
+    Delete
+</button>
+
+<!-- Delete Feedback Modal -->
+<div class="modal fade" id="deleteFeedbackModal-{{ $feedback->id }}" tabindex="-1" aria-labelledby="deleteFeedbackModalLabel-{{ $feedback->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteFeedbackModalLabel-{{ $feedback->id }}">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this <strong>feedback</strong>?
+        <blockquote class="blockquote mt-2 mb-0">
+            <p class="mb-0">{{ $feedback->description ?? 'No message available.' }}</p>
+        </blockquote>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url('delete-feedback', $feedback->id) }}" method="GET">
+            @csrf
+            @method('GET') 
+            <a href="{{ url('delete-feedback', $feedback->id) }}">
+                                                <button class="btn btn-danger">Delete</button>
                                             </a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
                                         </td>
                                     </tr>
                                 @empty

@@ -9,49 +9,8 @@
                     <h3 style="color:rgb(50, 149, 235);">Search For Users</h3>
                     <input type="text" id="userSearchInput" class="form-control" placeholder="Search users...">
                 </div>
-<<<<<<< HEAD
-                <ul class="nav nav-pills flex-column w-100">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{route('AdminDashboard')}}">
-                            <i class="bi bi-grid"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{route('houses')}}">
-                             <i class="bi bi-house-door"></i>
-                            <span>Manage House</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{route('aprove')}}">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Approve Rents</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link activee" href="{{route('users')}}">
-                            <i class="bi bi-people"></i>
-                            <span>Manage User</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href="{{route('approve-user')}}">
-                            <i class="bi bi-person-exclamation"></i>
-                            <span>Verify User</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{route('feedback')}}">
-                            <i class="bi bi-chat-dots"></i>
-                            <span>Feedback</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-=======
->>>>>>> 234550a4284944a16d8fbb5653c9072080d83158
 
+                
                 <div class="card custom-table">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="userTable" style="font-size: 12px;">
@@ -89,10 +48,37 @@
                                                 {{ $user->role }}
                                             </td>
                                             <td data-label="Actions">
-                                                <a href="{{ url('deactivate-user', $user->id) }}"
-                                                    onclick="return confirm('Are you sure you want to deactivate this user?')">
+                                                <!-- Deactivate Button -->
+<button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deactivateModal-{{ $user->id }}">
+    Deactivate
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="deactivateModal-{{ $user->id }}" tabindex="-1" aria-labelledby="deactivateModalLabel-{{ $user->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deactivateModalLabel-{{ $user->id }}">Confirm Deactivation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to deactivate <strong>{{ $user->full_name }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+        <form action="{{ url('deactivate-user', $user->id) }}" method="POST">
+            @csrf
+            @method('GET') <!-- or DELETE, depending on your route setup -->
+            <a href="{{ url('deactivate-user', $user->id) }}">
                                                     <button class="btn btn-sm btn-danger">Deactivate</button>
                                                 </a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
                                             </td>
                                         </tr>
                                     @endif
