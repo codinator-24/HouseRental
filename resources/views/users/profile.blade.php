@@ -71,6 +71,9 @@
                         @endif
                     </p>
                 </div>
+                <div class="mb-4">
+                    <p>User Role: {{$user->role}}</p>
+                </div>
                 {{-- Full Name --}}
                 <div class="mb-4">
                     <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>

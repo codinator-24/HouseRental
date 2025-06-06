@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agreement;
 use App\Models\Booking;
 use App\Models\House;
+use App\Models\Payment;
 use App\Notifications\BookingStatusUpdated;
 use App\Notifications\NewBookingRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;
@@ -148,7 +152,7 @@ class BookingController extends Controller
 
         $booking->delete();
 
-         $house = $booking->house;
+        $house = $booking->house;
         if ($house) {
             $house->status = 'available'; // Assuming 'booked' is a valid status in your House model
             $house->save();
@@ -159,7 +163,7 @@ class BookingController extends Controller
 
     public function acceptBooking(Booking $booking): RedirectResponse
     {
-        $booking->load('house'); // Ensure house relation is loaded
+        $booking->load('house', 'tenant'); // Ensure house and tenant relations are loaded
 
         if (!$booking->house) {
             // This case should ideally be prevented by foreign key constraints or soft deletes
@@ -172,29 +176,93 @@ class BookingController extends Controller
             abort(403, 'Unauthorized action. You do not own the house associated with this booking.');
         }
 
+        // Check if the house itself is already booked
+        if ($booking->house->status === 'booked') {
+            // If this booking is still pending, it means another booking was accepted for this house.
+            return redirect()->route('bookings.show', $booking)->with('error', 'This property is already booked and no longer available.');
+        }
+
         // Prevent re-processing if already accepted or rejected
         if ($booking->status !== 'pending') {
             return redirect()->route('bookings.show', $booking)->with('info', 'This booking has already been processed.');
         }
 
-        $newStatus = 'accepted';
-        $booking->status = $newStatus;
-        $booking->save();
+        // Start a database transaction to ensure atomicity
+        DB::beginTransaction();
 
-        // Update the house status to 'booked'
-        $house = $booking->house;
-        if ($house) {
-            $house->status = 'booked'; // Assuming 'booked' is a valid status in your House model
-            $house->save();
+        try {
+            $newStatus = 'accepted';
+            $booking->status = $newStatus;
+            $booking->save();
+
+            // Update the house status to 'booked'
+            $house = $booking->house;
+            if ($house) {
+                $house->status = 'booked'; // Assuming 'booked' is a valid status in your House model
+                $house->save();
+            }
+
+             // --- START: Reject other pending bookings for the same house ---
+            $otherPendingBookings = Booking::where('house_id', $house->id)
+                ->where('id', '!=', $booking->id) // Exclude the current booking being accepted
+                ->where('status', 'pending')
+                ->with('tenant') // Eager load tenant for notification
+                ->get();
+
+            foreach ($otherPendingBookings as $otherBooking) {
+                $otherBooking->status = 'rejected';
+                $otherBooking->save();
+
+                // Notify the tenant of the other booking that it has been rejected
+                if ($otherBooking->tenant) {
+                    $otherBooking->tenant->notify(new BookingStatusUpdated($otherBooking, 'rejected'));
+                }
+                Log::info("Booking ID {$otherBooking->id} for House ID {$house->id} automatically rejected due to acceptance of Booking ID {$booking->id}.");
+            }
+            // --- END: Reject other pending bookings ---
+
+            // --- START: Logic for creating Agreement and Payment ---
+            $agreementCreated = false;
+            $agreementMessageSegment = '';
+
+            // Check if an agreement already exists for this booking to prevent duplicates
+            $existingAgreement = Agreement::where('booking_id', $booking->id)->first();
+
+            if (!$existingAgreement) {
+                // Create the Agreement
+                $expiresDate = Carbon::now()->copy()->addMonths($booking->month_duration ?? 1); // Default to 1 month if duration not set
+                $rentAmount = $house->rent_amount;
+
+                $agreement = Agreement::create([
+                    'booking_id' => $booking->id,
+                    'rent_amount' => $rentAmount,
+                    'rent_frequency' => 'monthly', // Default, adjust if necessary
+                    'status' => 'pending', // Agreement is active upon booking acceptance
+                ]);
+
+                // Create the initial Payment record (status: pending)
+                $agreementCreated = true;
+                $agreementMessageSegment = ' Agreement record created.';
+            } else {
+                Log::info("Agreement already exists for Booking ID {$booking->id}. Skipping new agreement/payment creation.");
+                $agreementMessageSegment = ' An agreement for this booking already exists.';
+            }
+            // --- END: Logic for creating Agreement and Payment ---
+
+            DB::commit(); // Commit transaction if all successful
+
+            // Notify the tenant
+            $tenant = $booking->tenant;
+            if ($tenant) {
+                $tenant->notify(new BookingStatusUpdated($booking, $newStatus));
+            }
+
+            return redirect()->route('bookings.show', $booking)->with('success', 'Booking accepted successfully.' . $agreementMessageSegment);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback transaction on error
+            Log::error("Error accepting booking or creating agreement/payment for Booking ID {$booking->id}: " . $e->getMessage());
+            return redirect()->route('bookings.show', $booking)->with('error', 'An error occurred while processing the booking. Please try again.');
         }
-
-        $tenant = $booking->tenant;
-
-        if ($tenant) {
-            $tenant->notify(new BookingStatusUpdated($booking, $newStatus));
-        }
-
-        return redirect()->route('bookings.show', $booking)->with('success', 'Booking accepted successfully.');
     }
 
     public function rejectBooking(Booking $booking): RedirectResponse

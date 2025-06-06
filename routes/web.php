@@ -6,10 +6,14 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HouseController;
 use App\Http\Controllers\IndexController; // Add this line
+use App\Http\Controllers\CurrencyController; // Add this line for currency switching
 
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AuthAdminController;
+use App\Http\Controllers\FavoriteController; // Added FavoriteController
+use App\Http\Controllers\MessageController; // Added MessageController
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ReportController; // Added ReportController
 use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
 use Stripe\Stripe;
@@ -60,7 +64,22 @@ Route::middleware('lang')->group(function () {
         Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
         Route::get('/agreement/{booking}/create', [AgreementController::class, 'create'])->name('agreement.create');
+
+        // Report a house
+        Route::post('/houses/{house}/report', [ReportController::class, 'store'])->name('house.report');
+
+        // Favorite a house
+        Route::post('/favorites/{house}/toggle', [FavoriteController::class, 'toggleFavorite'])->name('favorites.toggle');
+        Route::get('/favorites', [FavoriteController::class, 'showFavorites'])->name('favorites.show');
+
+        // Messaging Routes
+        Route::get('/messages', [MessageController::class, 'allMessagesOverview'])->name('messages.overview');
+        Route::get('/agreements/{agreement}/messages', [MessageController::class, 'index'])->name('agreements.messages.index');
+        Route::post('/agreements/{agreement}/messages', [MessageController::class, 'store'])->name('agreements.messages.store');
     });
+
+    // Currency Switcher Route - accessible by guests and authenticated users
+    Route::post('/currency/switch', [CurrencyController::class, 'switch'])->name('currency.switch');
 });
 
 
@@ -106,11 +125,14 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/approve-user/{id}', [AdminController::class, 'approve_user']);
     Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
     Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
-   });
+    Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
+    Route::get('/agreements', [AdminController::class, 'ViewAgreement'])->name('agreement');
+    Route::get('/payments', [AdminController::class, 'ViewPayment'])->name('payment');
 
-//Route bo pishandany data bo Admin
-// Route::get('/aprove',[AdminController::class,'viewaprove']);
-// Route::get('/users',[AdminController::class,'viewusers']);
+    // Admin routes for managing reports
+    Route::get('/admin/reports/{report}', [AdminController::class, 'showReportDetails'])->name('admin.reports.show');
+    Route::post('/admin/reports/{report}/status', [AdminController::class, 'updateReportStatus'])->name('admin.reports.updateStatus');
+   });
 
 //Stable
 
@@ -118,5 +140,3 @@ Route::middleware('admin.auth')->group(function () {
 Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
 Route::get('/contactUs', [DashboardController::class, 'show_contact'])->name('contact');
 Route::post('/add_contact', [DashboardController::class, 'insert_contact'])->name('submit.contact');
-
-

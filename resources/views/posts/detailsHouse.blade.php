@@ -1,25 +1,25 @@
 <x-layout>
     <style>
-          .custom-btn {
-      background-color: #4a90e2;
-      color: white;
-      padding: 8px 15px;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
+        .custom-btn {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    .custom-btn:hover {
-      background-color: #3a78c2;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
+        .custom-btn:hover {
+            background-color: #3a78c2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
 
-    .custom-btn:active {
-      transform: scale(0.98);
-    }
+        .custom-btn:active {
+            transform: scale(0.98);
+        }
     </style>
     <div class="px-25 bg-gray-50">
         <section class="py-12">
@@ -38,7 +38,27 @@
                     </a>
                 </div>
 
-                <div class="overflow-hidden bg-white rounded-lg shadow-lg">
+                <div class="relative overflow-hidden bg-white rounded-lg shadow-lg">
+                    {{-- Favorite Button --}}
+                    <div class="absolute top-4 right-4 z-40"> {{-- z-40 to be above carousel controls --}}
+                        @auth
+                            <button
+                                class="p-2 bg-white rounded-full shadow-md favorite-btn hover:bg-gray-100 focus:outline-none"
+                                data-house-id="{{ $house->id }}" title="Favorite">
+                                @if (auth()->user()->hasFavorited($house))
+                                    <i class="text-2xl text-red-500 fas fa-heart"></i> {{-- Filled heart --}}
+                                @else
+                                    <i class="text-2xl text-gray-600 far fa-heart"></i> {{-- Empty heart, standardized to gray-600 --}}
+                                @endif
+                            </button>
+                        @else
+                            <button
+                                class="p-2 bg-white rounded-full shadow-md favorite-btn-guest hover:bg-gray-100 focus:outline-none"
+                                title="Favorite">
+                                <i class="text-2xl text-gray-600 far fa-heart"></i> {{-- Empty heart for guests, standardized to gray-600 --}}
+                            </button>
+                        @endguest
+                    </div>
 
                     @if (session('success'))
                         <div class="relative px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded"
@@ -124,8 +144,12 @@
                         <div class="flex flex-col justify-between mb-4 md:flex-row md:items-center">
                             <h1 class="mb-2 text-3xl font-bold text-gray-800 md:text-4xl md:mb-0">{{ $house->title }}
                             </h1>
-                            <span class="text-3xl font-bold text-blue-600">${{ number_format($house->rent_amount) }} /
-                                month</span>
+                            <span class="text-3xl font-bold text-blue-600 convertible-price"
+                                data-base-price-usd="{{ $house->rent_amount }}">
+                                {{-- Initial display, will be updated by JS --}}
+                                ${{ number_format($house->rent_amount, 2) }}
+                            </span>
+                            <span class="ml-1 text-xl text-gray-600 md:text-2xl">/ month</span> {{-- Adjusted styling for "/ month" --}}
                         </div>
 
                         {{-- Address --}}
@@ -186,8 +210,8 @@
                                             <h3 class="text-lg font-semibold text-gray-700">Floor {{ $index + 1 }}:
                                             </h3>
                                             <p class="text-sm text-gray-600">
-                                                {{ $floor->num_room }} Rooms and Bathroom is
-                                                {{ $floor->bathroom ? 'Exists' : 'not Exists' }}.
+                                                {{ $floor->num_room }} {{ Str::plural('Room', $floor->num_room) }}.
+                                                Bathroom: {{ $floor->bathroom ? 'Yes' : 'No' }}.
                                             </p>
                                         </div>
                                     @endforeach
@@ -204,22 +228,26 @@
                                         <i class="mr-2 fas fa-user text-slate-500"></i>
                                         <strong>Name:</strong> {{ $house->landlord->full_name ?? 'N/A' }}
                                     </p>
+
                                     <p>
                                         <i class="mr-2 fas fa-phone text-slate-500"></i>
                                         <strong>Phone Numbers:</strong>
-                                        {{ $house->landlord->first_phoneNumber ?? 'N/A' }}
-                                        @if ($house->landlord->second_phoneNumber)
-                                            / {{ $house->landlord->second_phoneNumber }}
+                                        {{ $house->landlord->masked_first_phone ?? 'N/A' }}
+                                        @if ($house->landlord->masked_second_phone)
+                                            / {{ $house->landlord->masked_second_phone }}
                                         @endif
                                     </p>
-                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                        <i class="fas fa-envelope mr-2 fas fa-phone text-slate-500"
-                                            style="margin-bottom:8px;"></i>
-                                        
-                                            <h2 class="mb-3 font-bold text-gray-800 color color-primary">For Feedback:</h2>
-                                                <a href="{{ route('contact') }}"><button class="custom-btn">Feedback</button></a>
-                                        
-                                    </div>
+                                    @auth
+                                        @if (Auth::id() !== $house->landlord_id)
+                                            {{-- Ensure user is not the landlord of this house --}}
+                                            <div class="mt-4">
+                                                <button type="button" id="openReportModalBtn"
+                                                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                                    <i class="mr-2 fas fa-flag"></i> Report Property
+                                                </button>
+                                            </div>
+                                        @endif
+                                    @endauth
                                 </div>
                             </div>
                         @endif
@@ -274,45 +302,47 @@
                                 <div class="pt-6 mt-6 mb-8 border-t">
                                     <p class="text-lg text-orange-600">Wait until your account is verified.</p>
                                 </div>
+                            @elseif (auth()->user()->role === 'landlord')
+                                <div class="pt-6 mt-6 mb-8 border-t">
+                                    <p class="text-lg text-gray-700">As a landlord, you cannot book properties.</p>
+                                </div>
                             @else
-                                @if ($house->landlord) {{-- Ensure landlord exists for this house --}}
-                                    @if (auth()->id() === $house->landlord->id)
-                                        {{-- User IS the landlord --}}
+                                @if ($house->landlord)
+                                    @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
+                                        {{-- User has already booked this house --}}
                                         <div class="pt-6 mt-6 mb-8 border-t">
-                                            <p class="text-lg text-gray-700">This is your property. You cannot book it.</p>
-                                            {{-- Optionally, add a link to manage this property or view its bookings --}}
+                                            <p class="mb-3 text-lg text-gray-700">You have already sent a booking
+                                                request for this property.</p>
+                                            <a href="{{ route('bookings.details.show', $userBookingForThisHouse->id) }}"
+                                                class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
+                                                View Your Booking Details
+                                            </a>
                                         </div>
                                     @else
-                                        {{-- User is authenticated and is NOT the landlord --}}
-                                        {{-- Assumes $userBookingForThisHouse is passed from controller --}}
-                                        {{-- $userBookingForThisHouse = Booking::where('tenant_id', auth()->id())->where('house_id', $house->id)->first(); --}}
-                                        @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
-                                            {{-- User has already booked this house --}}
-                                            <div class="pt-6 mt-6 mb-8 border-t">
-                                                <p class="mb-3 text-lg text-gray-700">You have already sent a booking
-                                                    request for this property.</p>
-                                                <a href="{{ route('bookings.details.show', $userBookingForThisHouse->id) }}"
-                                                    class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                                                    View Your Booking Details
-                                                </a>
-                                                {{-- <a href="{{ route('bookings.show.sent', $userBookingForThisHouse->id) }}"
-                           class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                            View Your Booking Details
-                        </a> --}}
-                                            </div>
-                                        @else
-                                            {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
-                                            <div class="pt-6 mt-6 mb-8 border-t">
-                                                <button type="button" id="openBookingMessageModalBtn"
-                                                    class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
-                                                    Book This Property Now
-                                                </button>
-                                            </div>
-                                        @endif
+                                        {{-- User has not booked this house yet: Show "Book This Property Now" button --}}
+                                        <div class="pt-6 mt-6 mb-8 border-t">
+                                            <button type="button" id="openBookingMessageModalBtn"
+                                                class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
+                                                Book This Property Now
+                                            </button>
+                                        </div>
                                     @endif
                                 @else
+                                    <div class="pt-6 mt-6 mb-8 border-t">
+                                        <p class="text-lg text-gray-700">This property is currently not available for
+                                            booking (no landlord assigned).</p>
+                                    </div>
                                 @endif
                             @endif
+                        @else
+                            {{-- User is not authenticated (guest) --}}
+                            <div class="pt-6 mt-6 mb-8 border-t">
+                                <p class="text-lg text-gray-700">Please <a href="{{ route('login') }}"
+                                        class="font-semibold text-indigo-600 hover:underline">log in</a> or <a
+                                        href="{{ route('register') }}"
+                                        class="font-semibold text-indigo-600 hover:underline">register</a> to book a
+                                    property.</p>
+                            </div>
                         @endauth
 
                         @guest
@@ -332,6 +362,86 @@
 
     {{-- Booking Modal --}}
     @auth
+        {{-- Report Modal --}}
+        @if ($house->landlord && Auth::id() !== $house->landlord_id)
+            <div id="reportModal"
+                class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
+                style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+                <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
+                    <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+                        <h1 id="reportModalTitle" class="text-xl font-semibold text-gray-700">Report This Property</h1>
+                        <button id="closeReportModalBtn" aria-label="Close report modal"
+                            class="text-2xl text-gray-500 hover:text-gray-700">×</button>
+                    </div>
+
+                    <form method="POST" action="{{ route('house.report', ['house' => $house->id]) }}"
+                        class="px-6 py-6">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="reason_category" class="block mb-1 text-sm font-medium text-gray-700">Reason for
+                                Reporting</label>
+                            <select name="reason_category" id="reason_category"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('reason_category', 'reportFormErrors') border-red-500 @enderror">
+                                <option value="">Select a reason...</option>
+                                <option value="Misleading Information"
+                                    {{ old('reason_category') == 'Misleading Information' ? 'selected' : '' }}>Misleading
+                                    Information</option>
+                                <option value="Safety Concern"
+                                    {{ old('reason_category') == 'Safety Concern' ? 'selected' : '' }}>Safety Concern
+                                </option>
+                                <option value="Landlord Behavior"
+                                    {{ old('reason_category') == 'Landlord Behavior' ? 'selected' : '' }}>Landlord Behavior
+                                </option>
+                                <option value="Scam/Fraud" {{ old('reason_category') == 'Scam/Fraud' ? 'selected' : '' }}>
+                                    Scam/Fraud</option>
+                                <option value="Technical Issue with Listing"
+                                    {{ old('reason_category') == 'Technical Issue with Listing' ? 'selected' : '' }}>
+                                    Technical Issue with Listing</option>
+                                <option value="Other" {{ old('reason_category') == 'Other' ? 'selected' : '' }}>Other
+                                </option>
+                            </select>
+                            @error('reason_category', 'reportFormErrors')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="report_description"
+                                class="block mb-1 text-sm font-medium text-gray-700">Description</label>
+                            <textarea name="description" id="report_description" rows="5"
+                                placeholder="Please provide details about the issue."
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'reportFormErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
+                            @error('description', 'reportFormErrors')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        @if (
+                            $errors->reportFormErrors->any() &&
+                                !$errors->reportFormErrors->has('reason_category') &&
+                                !$errors->reportFormErrors->has('description'))
+                            <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+                                <p class="font-bold">Please correct the following error(s):</p>
+                                <ul class="list-disc list-inside">
+                                    @foreach ($errors->reportFormErrors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                Submit Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endif
+
+
         @if (
             $house->landlord &&
                 auth()->id() !== $house->landlord->id &&
@@ -390,6 +500,28 @@
     @endauth
 
     @push('scripts')
+
+<!-- Guest Favorite Login Modal -->
+<div id="guestFavoriteLoginModal" class="fixed inset-0 z-[80] flex items-center justify-center bg-opacity-60 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-labelledby="guestFavoriteLoginModalTitle">
+    <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
+        <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+            <h1 id="guestFavoriteLoginModalTitle" class="text-xl font-semibold text-gray-700">Login Required</h1>
+            <button id="closeGuestFavoriteLoginModalBtnTop" aria-label="Close login required modal" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        <div class="px-6 py-6">
+            <p class="text-gray-700">
+                Please <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:underline">Login</a> or <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:underline">Register</a> to add properties to your favorites.
+            </p>
+            <div class="flex justify-end mt-6">
+                <button id="closeGuestFavoriteLoginModalBtnBottom" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Guest Favorite Login Modal -->
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // --- Carousel Script (Existing) ---
@@ -487,7 +619,6 @@
                         }
                     });
 
-                    // Close with Escape key
                     document.addEventListener('keydown', function(event) {
                         if (event.key === 'Escape' && bookingModal.style.display === 'flex') {
                             bookingModal.style.display = 'none';
@@ -495,14 +626,79 @@
                     });
                 }
 
-                // Keep booking modal open if there are validation errors for it
-                // Ensure your controller redirects back with errors in the 'bookingMessageErrors' bag
                 @if ($errors->hasBag('sendBookingFormErrors') && $errors->sendBookingFormErrors->any())
-                    if (bookingModal) { // Check if modal exists on the page (it should if errors are present for it)
+                    if (bookingModal) {
                         bookingModal.style.display = 'flex';
                     }
                 @endif
 
+                // --- Report Modal Script ---
+                const openReportBtn = document.getElementById('openReportModalBtn');
+                const closeReportBtn = document.getElementById('closeReportModalBtn');
+                const reportModal = document.getElementById('reportModal');
+
+                if (openReportBtn && closeReportBtn && reportModal) {
+                    openReportBtn.addEventListener('click', function() {
+                        reportModal.style.display = 'flex';
+                    });
+
+                    closeReportBtn.addEventListener('click', function() {
+                        reportModal.style.display = 'none';
+                    });
+
+                    reportModal.addEventListener('click', function(event) {
+                        if (event.target === reportModal) { // Click on overlay
+                            reportModal.style.display = 'none';
+                        }
+                    });
+
+                    document.addEventListener('keydown', function(event) {
+                        if (event.key === 'Escape' && reportModal.style.display === 'flex') {
+                            reportModal.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Keep report modal open if there are validation errors for it
+                @if ($errors->hasBag('reportFormErrors') && $errors->reportFormErrors->any())
+                    if (reportModal) {
+                        reportModal.style.display = 'flex';
+                    }
+                @endif
+
+                // --- Guest Favorite Login Modal Script ---
+                const guestFavoriteBtn = document.querySelector('.favorite-btn-guest');
+                const guestFavoriteLoginModal = document.getElementById('guestFavoriteLoginModal');
+                const closeGuestFavoriteLoginModalBtnTop = document.getElementById('closeGuestFavoriteLoginModalBtnTop');
+                const closeGuestFavoriteLoginModalBtnBottom = document.getElementById('closeGuestFavoriteLoginModalBtnBottom');
+
+                if (guestFavoriteBtn && guestFavoriteLoginModal && closeGuestFavoriteLoginModalBtnTop && closeGuestFavoriteLoginModalBtnBottom) {
+                    guestFavoriteBtn.addEventListener('click', function(event) {
+                        event.preventDefault(); // Prevent any default action
+                        guestFavoriteLoginModal.classList.remove('hidden');
+                        guestFavoriteLoginModal.classList.add('flex');
+                    });
+
+                    function closeTheModal() {
+                        guestFavoriteLoginModal.classList.add('hidden');
+                        guestFavoriteLoginModal.classList.remove('flex');
+                    }
+
+                    closeGuestFavoriteLoginModalBtnTop.addEventListener('click', closeTheModal);
+                    closeGuestFavoriteLoginModalBtnBottom.addEventListener('click', closeTheModal);
+
+                    guestFavoriteLoginModal.addEventListener('click', function(event) {
+                        if (event.target === guestFavoriteLoginModal) { // Click on overlay
+                            closeTheModal();
+                        }
+                    });
+
+                    document.addEventListener('keydown', function(event) {
+                        if (event.key === 'Escape' && !guestFavoriteLoginModal.classList.contains('hidden')) {
+                            closeTheModal();
+                        }
+                    });
+                }
             });
         </script>
     @endpush

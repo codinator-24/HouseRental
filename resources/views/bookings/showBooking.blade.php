@@ -24,9 +24,20 @@
                             @if(isset($booking->tenant->full_name) && isset($booking->tenant->user_name) && $booking->tenant->full_name !== $booking->tenant->user_name)
                                 <p class="text-md text-gray-500">({{ $booking->tenant->user_name }})</p>
                             @endif
-                            <p class="text-gray-600 mt-1">
-                                <span class="font-semibold">Phone :</span> {{ $booking->tenant->first_phoneNumber ?? 'Not provided' }} | {{ $booking->tenant->second_phoneNumber ?? 'Not provided' }}
-                            </p>
+                            
+                           @if($booking->status === 'accepted')
+                                <p class="text-gray-600 mt-1">
+                                    <span class="font-semibold">Phone :</span>
+                                    {{ $booking->tenant->first_phoneNumber ?? 'Not provided' }}
+                                    @if($booking->tenant->second_phoneNumber)
+                                        | {{ $booking->tenant->second_phoneNumber }}
+                                    @endif
+                                </p>
+                            @else
+                                <p class="text-gray-600 mt-1">
+                                    <span class="font-semibold">Phone :</span> <span class="italic text-gray-500">Visible upon booking acceptance</span>
+                                </p>
+                            @endif
                         </div>
                     </div>
                 </section>

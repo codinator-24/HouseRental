@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Agreement;
 use Illuminate\Http\Request;
 use App\Models\House;
 use App\Models\User;
@@ -11,6 +12,8 @@ use App\Notifications\AccountVerified;
 use App\Notifications\HouseApproved;
 use App\Models\Floor;
 use App\Models\Feedback;
+use App\Models\Payment;
+use App\Models\Report; // Added Report model
 
 class AdminController extends  Controller
 {
@@ -19,7 +22,7 @@ class AdminController extends  Controller
     {
         //this is to count all tables data
         $users = User::count();
-        $houses = House::where('status','available')->count();
+        $houses = House::where('status', 'available')->count();
         $feedbacks = Feedback::count();
         $aproves = House::where('status', 'disagree')->count();
         $landlords = User::where('role', 'lordland')->count();
@@ -32,25 +35,25 @@ class AdminController extends  Controller
     public function viewaprove()
     {
         $houses = House::all();
-        $images= HousePicture::all();
+        $images = HousePicture::all();
         $floors = Floor::all();
-        return view('admin/aprove', compact('houses','images','floors'));
+        return view('admin/aprove', compact('houses', 'images', 'floors'));
     }
 
     public function view_house()
     {
         $houses = House::all();
-        $images= HousePicture::all();
+        $images = HousePicture::all();
         $floors = Floor::all();
-        return view('admin/houses', compact('houses','images','floors'));
+        return view('admin/houses', compact('houses', 'images', 'floors'));
     }
 
     public function view_allhouse()
     {
         $houses = House::all();
-        $images= HousePicture::all();
+        $images = HousePicture::all();
         $floors = Floor::all();
-        return view('admin/houses', compact('houses','images','floors'));
+        return view('admin/houses', compact('houses', 'images', 'floors'));
     }
 
     public function viewusers()
@@ -60,9 +63,32 @@ class AdminController extends  Controller
     }
     public function viewfeedback()
     {
-        $data = Feedback::all();
-        return view('admin/feedback',compact('data'));
+        $feedbacks = Feedback::latest()->get();
+        $reports = Report::with(['reporter', 'house', 'reportedUser'])->latest()->get();
+        return view('admin/feedback', compact('feedbacks', 'reports'));
     }
+
+    public function updateReportStatus(Request $request, Report $report)
+    {
+        $request->validate([
+            'status' => 'required|string|in:pending,under_review,resolved,dismissed',
+        ]);
+
+        $report->status = $request->status;
+        $report->save();
+
+        return redirect()->route('feedback')->with('success', 'Report status updated successfully.');
+    }
+
+    // Potentially for a dedicated report view page or AJAX data source for modal
+    public function showReportDetails(Report $report)
+    {
+        // For now, if accessed directly, redirect back or show a simple view.
+        // Or, return as JSON if we decide to fetch modal content via AJAX.
+        // For simplicity with current plan, modal will be populated by data already on page.
+        return response()->json($report->load(['reporter', 'house', 'reportedUser']));
+    }
+
     public function view_aprove_user()
     {
         $data = User::all();
@@ -138,8 +164,64 @@ class AdminController extends  Controller
         $house->status = 'disagree';
         $house->save();
         return redirect()->back();
-}
+    }
+
+    // Example in your AdminController.php (or relevant controller)
+    public function ViewProfit()
+    {
+        // --- Fetch or calculate your data ---
+        // Example:
+        $profitData = [
+            'labels' => ['Luxury Apartments', 'Standard Houses', 'Commissions'],
+            'data' => [15000, 25000, 2250],
+        ];
+
+        // You might also want to generate colors dynamically or have a predefined set
+        $colors = [
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            // Add more colors if needed
+        ];
+        $borderColors = [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+        ];
 
 
+        $chartDataFromServer = [
+            'labels' => $profitData['labels'],
+            'datasets' => [
+                [
+                    'label' => 'Profit Distribution',
+                    'data' => $profitData['data'],
+                    'backgroundColor' => array_slice($colors, 0, count($profitData['data'])),
+                    'borderColor' => array_slice($borderColors, 0, count($profitData['data'])),
+                    'borderWidth' => 1
+                ]
+            ]
+        ];
 
+        return view('admin.profit', compact('chartDataFromServer'));
+    }
+    public function ViewAgreement()
+    {
+        // Fetch agreements with necessary relationships
+        $agreements = Agreement::with([
+            'booking.tenant', // To get tenant info
+            'booking.house.landlord' // To get house info and landlord info
+        ])->latest()->get();
+
+        return view('admin.agreements', compact('agreements'));
+    }
+    public function ViewPayment()
+    {
+        // Fetch payments with necessary relationships
+        $payments = Payment::with([
+            'agreement.booking.tenant', // To get tenant info
+            'agreement.booking.house'   // To get house info
+        ])->latest()->get();
+        return view('admin.payments', compact('payments'));
+    }
 }

@@ -55,7 +55,7 @@
                                                     </span>
                                                 @elseif ($booking->status === 'accepted')
                                                     <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-green-800">
                                                         Accepted
                                                     </span>
                                                 @elseif ($booking->status === 'rejected')
@@ -72,12 +72,12 @@
                                 </div>
                                 <div class="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center space-x-2">
 
-                                    @if ($booking->status === 'accepted')
+                                    {{-- @if ($booking->status === 'accepted') --}}
                                         <a href="{{ route('agreement.create', $booking->id) }}"
                                             class="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
                                             Create Agreement
                                         </a>
-                                    @endif
+                                    {{-- @endif --}}
                                     
                                     <a href="{{ route('bookings.details.show', $booking->id) }}"
                                         class="bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
@@ -124,7 +124,7 @@
     </div>
 
     <!-- Cash Appointment Modal -->
-    <div x-data="{ show: false, bookingId: null }" x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId"
+    {{-- <div x-data="{ show: false, bookingId: null }" x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId"
         x-show="show" x-cloak class="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-50">
         <div @click.away="show = false" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
@@ -161,7 +161,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Hidden Credit Checkout Form -->
     <form id="credit-checkout-form" action="{{ route('checkout') }}" method="POST" style="display: none;">
