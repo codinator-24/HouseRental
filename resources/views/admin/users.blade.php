@@ -217,7 +217,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{route('houses')}}">
-                            < <i class="bi bi-house-door"></i>
+                             <i class="bi bi-house-door"></i>
                             <span>Manage House</span>
                         </a>
                     </li>
