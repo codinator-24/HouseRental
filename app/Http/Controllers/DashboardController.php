@@ -35,10 +35,10 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-       // Check if there are more than 5 sent bookings in total
+        // Check if there are more than 5 sent bookings in total
         $hasMoreSentBookings = Booking::where('tenant_id', $userId)->count() > 5;
 
-       // Fetch the latest 5 bookings received by the user (for their properties)
+        // Fetch the latest 5 bookings received by the user (for their properties)
         $receivedBookingsQuery = Booking::with(['house', 'tenant'])
             ->whereHas('house', function ($query) use ($userId) { // $userId is landlord_id here
                 $query->where('landlord_id', $userId);
@@ -50,7 +50,7 @@ class DashboardController extends Controller
             $query->where('landlord_id', $userId);
         })->count() > 5;
 
- // Fetch houses the tenant is currently associated with (e.g., for maintenance requests)
+        // Fetch houses the tenant is currently associated with (e.g., for maintenance requests)
         $rentedHouses = collect(); // Default to an empty collection
         if (Auth::user()->role === 'tenant' || Auth::user()->role === 'both') {
             // Fetch houses for which the tenant has an 'agreed' rental agreement.
@@ -58,7 +58,7 @@ class DashboardController extends Controller
                 ->whereHas('booking', function ($bookingQuery) use ($userId) {
                     $bookingQuery->where('tenant_id', $userId);
                 })
-               ->with([
+                ->with([
                     'booking.house.pictures', // Eager load pictures for the house
                     'booking.house.landlord'  // Eager load landlord for the house
                 ])
@@ -71,35 +71,70 @@ class DashboardController extends Controller
                 ->unique('id'); // Get unique houses
         }
 
-        // Fetch Maintenance Requests
-        $maintenanceRequestsQuery = Maintenance::query()->with(['house', 'tenant']);
+        // Maintenance Requests Logic
+        $user = Auth::user();
 
-        if (Auth::user()->role === 'tenant') {
-            $maintenanceRequestsQuery->where('tenant_id', $userId);
-        } elseif (Auth::user()->role === 'landlord') {
-            $maintenanceRequestsQuery->whereHas('house', function ($q) use ($userId) {
-                $q->where('landlord_id', $userId);
-            });
-        } elseif (Auth::user()->role === 'both') {
-            $maintenanceRequestsQuery->where(function ($query) use ($userId) {
-                $query->where('tenant_id', $userId) // Requests they submitted
-                      ->orWhereHas('house', function ($q) use ($userId) { // Requests for their properties
-                          $q->where('landlord_id', $userId);
-                      });
-            });
+        // For the "Sent Maintenance Requests" section (visible to tenant & both)
+        // Passed as 'maintenanceRequests' and 'hasMoreMaintenance' for Blade compatibility.
+        $maintenanceRequests = collect(); // Default for landlord-only role
+        $hasMoreMaintenance = false;    // Default for landlord-only role
+
+        if ($user->role === 'tenant' || $user->role === 'both') {
+            $sentMaintenanceQuery = Maintenance::with(['house', 'tenant'])
+                ->where('tenant_id', $userId);
+            $totalSentCount = (clone $sentMaintenanceQuery)->count();
+            $hasMoreMaintenance = $totalSentCount > 5;
+            $maintenanceRequests = $sentMaintenanceQuery->latest()->take(5)->get();
         }
 
-        $maintenanceRequests = $maintenanceRequestsQuery->latest()->take(5)->get();
-        
-        // Re-query for total count for $hasMoreMaintenance without limit
-        $totalMaintenanceCount = $maintenanceRequestsQuery->reorder()->count(); // Reset order and count
-        $hasMoreMaintenance = $totalMaintenanceCount > 5;
+        // For the "Received Maintenance Requests" section (visible to landlord & both)
+        $receivedMaintenanceRequests = collect();
+        $hasMoreReceivedMaintenance = false;
+
+        if ($user->role === 'landlord' || $user->role === 'both') {
+            $receivedMaintenanceQuery = Maintenance::with(['house', 'tenant', 'house.landlord'])
+                ->whereHas('house', function ($q) use ($userId) {
+                    $q->where('landlord_id', $userId);
+                });
+            $totalReceivedCount = (clone $receivedMaintenanceQuery)->count();
+            $hasMoreReceivedMaintenance = $totalReceivedCount > 5;
+            $receivedMaintenanceRequests = $receivedMaintenanceQuery->latest()->take(5)->get();
+        }
+
+        // For the "Maintenance" tab badge count
+        $totalMaintenanceItemsForBadge = 0;
+        if ($user->role === 'tenant') {
+            // Total sent requests
+            $totalMaintenanceItemsForBadge = Maintenance::where('tenant_id', $userId)->count();
+        } elseif ($user->role === 'landlord') {
+            // Total received requests
+            $totalMaintenanceItemsForBadge = Maintenance::whereHas('house', function ($q) use ($userId) {
+                $q->where('landlord_id', $userId);
+            })->count();
+        } elseif ($user->role === 'both') {
+            // Total unique requests (sent by them OR for their properties)
+            $totalMaintenanceItemsForBadge = Maintenance::where(function ($query) use ($userId) {
+                $query->where('tenant_id', $userId)
+                      ->orWhereHas('house', function ($q) use ($userId) {
+                          $q->where('landlord_id', $userId);
+                      });
+            })->count();
+        }
 
 
         return view('users.dashboard', compact(
-            'houses', 'hasMoreProperties', 'sentBookings', 'hasMoreSentBookings',
-            'receivedBookings', 'hasMoreReceivedBookings', 'rentedHouses',
-            'maintenanceRequests', 'hasMoreMaintenance'
+            'houses',
+            'hasMoreProperties',
+            'sentBookings',
+            'hasMoreSentBookings',
+            'receivedBookings',
+            'hasMoreReceivedBookings',
+            'rentedHouses',
+            'maintenanceRequests', // Sent requests for tenant/both
+            'hasMoreMaintenance',  // For sent requests
+            'receivedMaintenanceRequests',
+            'hasMoreReceivedMaintenance',
+            'totalMaintenanceItemsForBadge'
         ));
     }
 
@@ -126,7 +161,7 @@ class DashboardController extends Controller
             // If it is, name and email would be null, or you might want to redirect.
             // For now, we'll let it proceed, but validation for name/email would fail if they were required for guests.
             // However, since we are removing them for guests, this path is less likely.
-             return redirect()->route('login')->with('error', 'Please login to submit feedback.');
+            return redirect()->route('login')->with('error', 'Please login to submit feedback.');
         }
 
         $data->title = $request->title;

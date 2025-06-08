@@ -45,7 +45,7 @@
                     <i class="fas fa-wrench text-sm"></i>
                     <span>Maintenance</span>
                     <span
-                        class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $maintenanceRequests->count() ?? 0 }}</span>
+                        class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $totalMaintenanceItemsForBadge ?? 0 }}</span>
                 </button>
             </div>
         </div>
@@ -231,71 +231,74 @@
 
             <!-- Maintenance Tab -->
             <div id="content-maintenance" class="tab-panel hidden">
+
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Maintenance Requests</h2>
-                        @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
+
+                    {{-- tenant Maintenance section --}}
+                    @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
+                        <h2 class="text-2xl font-bold text-gray-800">Sent Maintenance Requests</h2>
+                        <div class="flex justify-between items-center mb-6">
                             <button type="button" id="openNewMaintenanceModalBtn"
                                 class="text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2"
                                 style="background: linear-gradient(135deg, #1b61c2, #3b82f6);">
                                 <i class="fas fa-plus"></i>New Request
                             </button>
-                        @endif
-                    </div>
+                        </div>
 
-                    @if (isset($maintenanceRequests) && $maintenanceRequests->isNotEmpty())
-                        <div
-                            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                            @foreach ($maintenanceRequests as $request)
-                                <div
-                                    class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden">
-                                    <div class="p-5">
-                                        <div class="flex items-center justify-between mb-3">
-                                            <h3 class="text-lg font-bold text-gray-800 truncate"
-                                                title="{{ $request->area_of_house }} - {{ Str::limit($request->description, 70) }}">
-                                                {{ Str::limit($request->area_of_house ?? 'Maintenance Request', 25) }}
-                                            </h3>
-                                            {{-- Priority not in model, removed for now
+                        @if ($maintenanceRequests->isNotEmpty())
+                            <div
+                                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                                @foreach ($maintenanceRequests as $request)
+                                    <div
+                                        class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden">
+                                        <div class="p-5">
+                                            <div class="mb-3">
+                                                <h3 class="text-lg font-bold text-gray-800 truncate"
+                                                    title="{{ $request->area_of_house }} - {{ Str::limit($request->description, 70) }}">
+                                                    {{ Str::limit($request->area_of_house ?? 'Maintenance Request', 25) }}
+                                                </h3>
+                                                {{-- Priority not in model, removed for now
                                             <span class="px-2 py-1 rounded-full text-xs font-semibold ...">
                                                 {{ ucfirst($request->priority ?? 'Normal') }}
                                             </span>
                                             --}}
-                                        </div>
-
-                                        @if ($request->house)
-                                            <p class="text-sm text-gray-500 mb-3 flex items-center">
-                                                <i class="fas fa-home mr-2" style="color: #1b61c2;"></i>
-                                                {{ Str::limit($request->house->title ?? 'Property N/A', 30) }}
-                                            </p>
-                                        @endif
-
-                                        <div class="space-y-2 mb-4">
-                                            <div class="flex items-center text-sm text-gray-600">
-                                                <i class="fas fa-calendar w-4 mr-2" style="color: #1b61c2;"></i>
-                                                <span>{{ $request->created_at->format('M d, Y') }}</span>
                                             </div>
-                                            <div class="flex items-center text-sm text-gray-600">
-                                                <i class="fas fa-user w-4 mr-2" style="color: #1b61c2;"></i>
-                                                <span>{{ $request->tenant->full_name ?? ($request->tenant->user_name ?? 'Tenant N/A') }}</span>
-                                            </div>
-                                            {{-- Display landlord if current user is tenant and vice-versa, or if admin --}}
-                                            {{-- For now, just showing requester (tenant) --}}
-                                            <div class="flex items-center">
-                                                <i class="fas fa-info-circle w-4 mr-2" style="color: #1b61c2;"></i>
-                                                <span
-                                                    class="px-2 py-1 rounded-full text-xs font-semibold border
+
+                                            @if ($request->house)
+                                                <p class="text-sm text-gray-500 mb-3 flex items-center">
+                                                    <i class="fas fa-home mr-2" style="color: #1b61c2;"></i>
+                                                    {{ Str::limit($request->house->title ?? 'Property N/A', 30) }}
+                                                </p>
+                                            @endif
+
+                                            <div class="space-y-2 mb-4">
+                                                <div class="flex items-center text-sm text-gray-600">
+                                                    <i class="fas fa-calendar w-4 mr-2" style="color: #1b61c2;"></i>
+                                                    <span>{{ $request->created_at->format('M d, Y') }}</span>
+                                                </div>
+                                                <div class="flex items-center text-sm text-gray-600">
+                                                    <i class="fas fa-user w-4 mr-2" style="color: #1b61c2;"></i>
+                                                    <span>{{ $request->tenant->full_name ?? ($request->tenant->user_name ?? 'Tenant N/A') }}</span>
+                                                </div>
+                                                {{-- Display landlord if current user is tenant and vice-versa, or if admin --}}
+                                                {{-- For now, just showing requester (tenant) --}}
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-info-circle w-4 mr-2"
+                                                        style="color: #1b61c2;"></i>
+                                                    <span
+                                                        class="px-2 py-1 rounded-full text-xs font-semibold border
                                                         {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : '' }}
                                                         {{ $request->status === 'in_progress' ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
                                                         {{ $request->status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
                                                         {{ $request->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
                                                         {{ !in_array($request->status, ['pending', 'in_progress', 'completed', 'cancelled']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}">
-                                                    {{ ucfirst(str_replace('_', ' ', $request->status ?? 'Pending')) }}
-                                                </span>
+                                                        {{ ucfirst(str_replace('_', ' ', $request->status ?? 'Pending')) }}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="border-t border-gray-100 mt-4 pt-4">
-                                            {{--
+                                            <div class="border-t border-gray-100 mt-4 pt-4">
+                                                {{--
                                             Route 'maintenance.show' is not defined.
                                             You'll need to create this route and a controller method if you want a details page.
                                             <a href="{{-- route('maintenance.show', $request->id)"
@@ -306,40 +309,138 @@
                                             <i class="fas fa-eye"></i>View Details
                                             </a>
                                             --}}
-                                            <p class="text-sm text-gray-500">Details view not yet implemented.</p>
+                                                <p class="text-sm text-gray-500">Details view not yet implemented.</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
 
-                            @if (isset($hasMoreMaintenance) && $hasMoreMaintenance)
-                                <div
-                                    class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 card-hover flex flex-col items-center justify-center p-6 min-h-[280px] sm:min-h-[400px]">
-                                    {{-- Route 'maintenance.index' is not defined. Create if needed.
-                                    <a href="{{-- route('maintenance.index') --}}" class="text-center">
+                                @if ($hasMoreMaintenance)
+                                    <div
+                                        class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 card-hover flex flex-col items-center justify-center p-6 min-h-[280px] sm:min-h-[400px]">
+                                        {{-- Route 'maintenance.index' is not defined. Create if needed.
+                                    <a href="{{-- route('maintenance.index')" class="text-center">
                                     --}}
-                                    <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
-                                        style="background-color: rgba(27, 97, 194, 0.1);">
-                                        <i class="fas fa-ellipsis-h text-xl" style="color: #1b61c2;"></i>
+                                        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
+                                            style="background-color: rgba(27, 97, 194, 0.1);">
+                                            <i class="fas fa-ellipsis-h text-xl" style="color: #1b61c2;"></i>
+                                        </div>
+                                        <p class="font-semibold mb-1" style="color: #1b61c2;">More Requests</p>
+                                        <p class="text-sm text-gray-500">Full list view not yet implemented.</p>
                                     </div>
-                                    <p class="font-semibold mb-1" style="color: #1b61c2;">More Requests</p>
-                                    <p class="text-sm text-gray-500">Full list view not yet implemented.</p>
-                                </div>
-                            @endif
-                        </div>
-                    @else
-                        <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
-                            </svg>
-                            <p class="mt-4 text-lg font-medium text-gray-700">No Maintenance Requests</p>
-                            <p class="text-sm text-gray-500 mt-1">When maintenance requests are submitted, they will
-                                appear here.</p>
-                        </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+                                </svg>
+                                <p class="mt-4 text-lg font-medium text-gray-700">No Maintenance Requests</p>
+                                <p class="text-sm text-gray-500 mt-1">When maintenance requests are submitted, they
+                                    will appear here.</p>
+                            </div>
+                        @endif
                     @endif
+                    {{-- end of tenant maintenance section --}}
+
+                    {{-- landlord maintenance section --}}
+                    @if (auth()->user()->role === 'landlord' || auth()->user()->role === 'both')
+                        <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-6">Received Maintenance Requests</h2>
+
+                        @if ($receivedMaintenanceRequests->isNotEmpty())
+                            <div
+                                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                                @foreach ($receivedMaintenanceRequests as $request)
+                                    <div
+                                        class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden">
+                                        <div class="p-5">
+                                            <div class="mb-3">
+                                                <h3 class="text-lg font-bold text-gray-800 truncate"
+                                                    title="{{ $request->area_of_house }} - {{ Str::limit($request->description, 70) }}">
+                                                    {{ Str::limit($request->area_of_house ?? 'Maintenance Request', 25) }}
+                                                </h3>
+                                            </div>
+
+                                            @if ($request->house)
+                                                <p class="text-sm text-gray-500 mb-3 flex items-center">
+                                                    <i class="fas fa-home mr-2" style="color: #1b61c2;"></i>
+                                                    For: {{ Str::limit($request->house->title ?? 'Property N/A', 30) }}
+                                                </p>
+                                            @endif
+
+                                            <div class="space-y-2 mb-4">
+                                                <div class="flex items-center text-sm text-gray-600">
+                                                    <i class="fas fa-calendar w-4 mr-2" style="color: #1b61c2;"></i>
+                                                    <span>{{ $request->created_at->format('M d, Y') }}</span>
+                                                </div>
+                                                <div class="flex items-center text-sm text-gray-600">
+                                                    <i class="fas fa-user w-4 mr-2" style="color: #1b61c2;"></i>
+                                                    <span>By: {{ $request->tenant->full_name ?? ($request->tenant->user_name ?? 'Tenant N/A') }}</span>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-info-circle w-4 mr-2"
+                                                        style="color: #1b61c2;"></i>
+                                                    <span
+                                                        class="px-2 py-1 rounded-full text-xs font-semibold border
+                                                        {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : '' }}
+                                                        {{ $request->status === 'in_progress' ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
+                                                        {{ $request->status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
+                                                        {{ $request->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
+                                                        {{ !in_array($request->status, ['pending', 'in_progress', 'completed', 'cancelled']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}">
+                                                        {{ ucfirst(str_replace('_', ' ', $request->status ?? 'Pending')) }}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="border-t border-gray-100 mt-4 pt-4">
+                                                {{--
+                                                Route 'maintenance.show_received' or similar would be needed for a details page.
+                                                <a href="{{-- route('maintenance.show_received', $request->id)"
+                                                class="w-full text-center py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2"
+                                                style="color: #1b61c2;"
+                                                onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
+                                                onmouseout="this.style.backgroundColor='transparent'">
+                                                <i class="fas fa-eye"></i>View Details
+                                                </a>
+                                                --}}
+                                                <p class="text-sm text-gray-500">Details view not yet implemented.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                                @if ($hasMoreReceivedMaintenance)
+                                    <div
+                                        class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 card-hover flex flex-col items-center justify-center p-6 min-h-[280px]">
+                                        {{-- Route 'maintenance.received_index' is not defined. Create if needed. --}}
+                                        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
+                                            style="background-color: rgba(27, 97, 194, 0.1);">
+                                            <i class="fas fa-ellipsis-h text-xl" style="color: #1b61c2;"></i>
+                                        </div>
+                                        <p class="font-semibold mb-1" style="color: #1b61c2;">More Requests</p>
+                                        <p class="text-sm text-gray-500">Full list view not yet implemented.</p>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 13.5V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v8.25m-18 0A2.25 2.25 0 005.25 15h9.75A2.25 2.25 0 0017.25 13.5m-14.25 0H21m-3.75 3.75h.008v.008h-.008v-.008zm0 0H12m3.75 0a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" />
+                                </svg>
+                                <p class="mt-4 text-lg font-medium text-gray-700">No Received Maintenance Requests</p>
+                                <p class="text-sm text-gray-500 mt-1">When tenants submit maintenance requests for your
+                                    properties, they will appear here.</p>
+                            </div>
+                        @endif
+                    @endif
+                    {{-- end of landlord maintenance section --}}
+
                 </div>
+
             </div>
 
             @if (auth()->user()->role === 'landlord' || auth()->user()->role === 'both')
