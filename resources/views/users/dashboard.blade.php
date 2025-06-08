@@ -17,6 +17,13 @@
                         <span
                             class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $sentBookings->count() }}</span>
                     </button>
+                    <button onclick="switchTab('rented-houses')" id="tab-rented-houses"
+                        class="tab-btn px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
+                        <i class="fas fa-house-user text-sm"></i>
+                        <span>My Rented Houses</span>
+                        <span
+                            class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $rentedHouses->count() }}</span>
+                    </button>
                 @endif
                 @if (auth()->user()->role === 'landlord' || auth()->user()->role === 'both')
                     <button onclick="switchTab('received-bookings')" id="tab-received-bookings"
@@ -142,6 +149,86 @@
                     </div>
                 </div>
             @endif
+
+            @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
+                <!-- My Rented Houses Tab -->
+                <div id="content-rented-houses" class="tab-panel hidden">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">My Rented Houses</h2>
+                            {{-- Optional: Add a "View All Rented Houses" button if you implement a separate page --}}
+                        </div>
+
+                        @if ($rentedHouses->isNotEmpty())
+                            <div
+                                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                                @foreach ($rentedHouses as $house)
+                                    <div
+                                        class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden">
+                                        @php
+                                            $imageUrl = $house->pictures->first()?->image_url
+                                                ? asset($house->pictures->first()->image_url)
+                                                : 'https://images.pexels.com/photos/731082/pexels-photo-731082.jpeg';
+                                        @endphp
+                                        <a href="{{ route('house.details', $house->id) }}">
+                                            <img src="{{ $imageUrl }}" alt="{{ $house->title }}"
+                                                class="w-full h-48 object-cover">
+                                        </a>
+                                        <div class="p-5">
+                                            <h3 class="text-lg font-bold text-gray-800 mb-2 truncate"
+                                                title="{{ $house->title }}">
+                                                <a href="{{ route('house.details', $house->id) }}"
+                                                    class="hover:underline">
+                                                    {{ Str::limit($house->title, 45) }}
+                                                </a>
+                                            </h3>
+                                            <p class="text-sm text-gray-500 mb-3 flex items-center">
+                                                <i class="fas fa-map-marker-alt mr-2" style="color: #1b61c2;"></i>
+                                                {{ Str::limit($house->full_address, 70) }}
+                                            </p>
+
+                                            @if ($house->landlord)
+                                                <p class="text-sm text-gray-500 mb-3 flex items-center">
+                                                    <i class="fas fa-user-tie mr-2" style="color: #1b61c2;"></i>
+                                                    Landlord:
+                                                    {{ $house->landlord->full_name ?? $house->landlord->user_name }}
+                                                </p>
+                                            @endif
+
+                                            <p class="text-lg font-semibold mb-4" style="color: #1b61c2;">
+                                                ${{ number_format($house->rent_amount, 2) }}/month
+                                            </p>
+
+                                            <div class="border-t border-gray-100 mt-4 pt-4">
+                                                <a href="{{ route('house.details', $house->id) }}"
+                                                    class="w-full text-center py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2"
+                                                    style="color: #1b61c2;"
+                                                    onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
+                                                    onmouseout="this.style.backgroundColor='transparent'">
+                                                    <i class="fas fa-eye"></i>View Property Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                {{-- Add "View All" card if $hasMoreRentedHouses logic is implemented --}}
+                            </div>
+                        @else
+                            <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5M3.75 18.75V9.75m0 9V6.75m0 0H2.25m1.5 0H5.25m0 0H3.75m0 0h7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 6.75h.008v.008H12v-.008z" />
+                                </svg>
+                                <p class="mt-4 text-lg font-medium text-gray-700">No Rented Houses</p>
+                                <p class="text-sm text-gray-500 mt-1">You are not currently renting any properties with
+                                    an active agreement.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
             <!-- Maintenance Tab -->
             <div id="content-maintenance" class="tab-panel hidden">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -157,7 +244,8 @@
                     </div>
 
                     @if (isset($maintenanceRequests) && $maintenanceRequests->isNotEmpty())
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                             @foreach ($maintenanceRequests as $request)
                                 <div
                                     class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden">
@@ -500,10 +588,10 @@
                                 @foreach ($rentedHouses as $house)
                                     <option value="{{ $house->id }}"
                                         {{ old('house_id') == $house->id ? 'selected' : '' }}>
-                                          {{ $house->title }}
-                                          @if(!empty($house->full_address))
+                                        {{ $house->title }}
+                                        @if (!empty($house->full_address))
                                             ({{ Str::limit($house->full_address, 40) }})
-                                          @endif
+                                        @endif
                                     </option>
                                 @endforeach
                             @else

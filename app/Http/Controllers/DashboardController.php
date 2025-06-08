@@ -58,7 +58,10 @@ class DashboardController extends Controller
                 ->whereHas('booking', function ($bookingQuery) use ($userId) {
                     $bookingQuery->where('tenant_id', $userId);
                 })
-                ->with('booking.house') // Eager load booking and then house through booking
+               ->with([
+                    'booking.house.pictures', // Eager load pictures for the house
+                    'booking.house.landlord'  // Eager load landlord for the house
+                ])
                 ->get()
                 ->map(function ($agreement) {
                     // Ensure booking and house exist to prevent errors
