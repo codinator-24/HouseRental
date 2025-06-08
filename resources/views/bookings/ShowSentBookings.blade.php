@@ -125,7 +125,7 @@
 
                         {{-- Form for updating booking details --}}
                         <section class="py-6">
-                            <form method="POST" action="{{ route('bookings.sent.update', $booking->id) }}">
+                            <form method="POST" action="{{ route('bookings.sent.update', $booking->id) }}" id="updateBookingForm">
                                 @csrf
                                 @method('PATCH')
 
@@ -137,7 +137,7 @@
                                         <input type="number" name="month_duration" id="month_duration"
                                             value="{{ old('month_duration', (int) $booking->month_duration) }}"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('month_duration') border-red-500 @enderror"
-                                            required min="1">
+                                            required min="1" {{ $booking->status !== 'pending' ? 'disabled' : '' }}>
                                         {{-- @error('month_duration')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror --}}
@@ -148,40 +148,50 @@
                                             Message</label>
                                         <textarea name="message" id="message" rows="5"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('message') border-red-500 @enderror"
-                                            placeholder="Update your message to the landlord (optional)">{{ old('message', $booking->message) }}</textarea>
+                                            placeholder="Update your message to the landlord (optional)" {{ $booking->status !== 'pending' ? 'disabled' : '' }}>{{ old('message', $booking->message) }}</textarea>
                                         {{-- @error('message')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror --}}
                                     </div>
                                 </div>
-
-                                {{-- Actions for Update Form and Delete action --}}
-                                    {{-- Update Button (submit for the main form) --}}
-                                    @if (Auth::id() == $booking->tenant_id && in_array($booking->status, ['pending']))
-                                        <button type="submit"
-                                            class="w-full sm:w-auto justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 border border-transparent rounded-md shadow-sm text-sm transition duration-150 ease-in-out mt-3">
-                                            Update Booking
-                                        </button>
-                                    @endif
-
                             </form> {{-- End of update form --}}
 
-                                  {{-- Delete Button (as a separate form) --}}
-                                    @if (Auth::id() == $booking->tenant_id && in_array($booking->status, ['pending','rejected','accepted']))
-                                        <form method="POST"
-                                            action="{{ route('bookings.sent.destroy', $booking->id) }}"
-                                            onsubmit="return confirm('Are you sure you want to delete this booking request? This action cannot be undone.');"
-                                            class="w-full sm:w-auto">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                              class="w-full sm:w-auto flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 border border-transparent rounded-md shadow-sm text-sm transition duration-150 mt-3">
+                            {{-- Actions Container --}}
+                            <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-3 sm:space-y-0">
+                                {{-- Update Button (now uses form attribute) --}}
+                                @if (Auth::id() == $booking->tenant_id && $booking->status === 'pending')
+                                    <button type="submit" form="updateBookingForm"
+                                        class="w-full sm:w-auto justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 border border-transparent rounded-md shadow-sm text-sm transition duration-150 ease-in-out">
+                                        Update Booking
+                                    </button>
+                                @endif
+
+                                {{-- Create Agreement Button --}}
+                                @if ($booking->house && $booking->status === 'accepted' && Auth::id() == $booking->tenant_id)
+                                    <a href="{{ route('agreement.create', $booking->id) }}"
+                                        class="w-full sm:w-auto flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 border border-transparent rounded-md shadow-sm text-sm transition duration-150 ease-in-out">
+                                        Create Agreement
+                                    </a>
+                                @endif
+
+                                {{-- Delete Button (as a separate form, styled to fit in) --}}
+                                @if (Auth::id() == $booking->tenant_id && in_array($booking->status, ['pending', 'rejected', 'accepted']))
+                                    <form method="POST"
+                                        action="{{ route('bookings.sent.destroy', $booking->id) }}"
+                                        onsubmit="return confirm('Are you sure you want to delete this booking request? This action cannot be undone.');"
+                                        class="w-full sm:w-auto">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                          class="w-full sm:w-auto flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 border border-transparent rounded-md shadow-sm text-sm transition duration-150">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
-                                            </button>
-                                        </form>
-                                    @endif
+                                            Delete Booking
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </section>
                         {{-- End of form section --}}
 

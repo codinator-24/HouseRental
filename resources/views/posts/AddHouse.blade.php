@@ -71,9 +71,7 @@
                                         Apartment</option>
                                     <option value="house" {{ old('property_type') == 'house' ? 'selected' : '' }}>House
                                     </option>
-                                    <option value="condo" {{ old('property_type') == 'condo' ? 'selected' : '' }}>Condo
-                                    </option>
-                                    <option value="studio" {{ old('property_type') == 'studio' ? 'selected' : '' }}>Studio
+                                    <option value="commercial" {{ old('property_type') == 'commercial' ? 'selected' : '' }}>Commercial
                                     </option>
                                 </select>
                                 @error('property_type')

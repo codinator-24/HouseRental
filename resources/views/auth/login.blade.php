@@ -1,7 +1,7 @@
 <x-layout>
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
         <div class="w-full max-w-xl p-12 space-y-6 bg-white rounded-lg shadow-md"> {{-- Changed max-w-lg to max-w-xl --}}
-            <h2 class="text-2xl font-bold text-center">Login</h2>
+            <h2 class="text-2xl font-bold text-center">@lang('words.Login')</h2>
             <form action="{{ route('login') }}" method="post" class="space-y-6">
                 @csrf
 
@@ -65,16 +65,16 @@
                 <div>
                     <button type="submit"
                             class="w-full px-4 py-2 font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Submit
+                        @lang('words.Submit')
                     </button>
                 </div>
             </form>
 
             {{-- Link to Register Page --}}
             <p class="mt-6 text-sm text-center text-gray-600">
-                Don't have an account?
+                @lang('words.Don\'t have an account?')
                 <a href="{{ route('register') }}" class="font-medium text-blue-600 hover:underline">
-                    Register
+                    @lang('words.Register')
                 </a>
             </p>
         </div>

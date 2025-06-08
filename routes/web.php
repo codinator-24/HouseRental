@@ -11,6 +11,7 @@ use App\Http\Controllers\CurrencyController; // Add this line for currency switc
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AuthAdminController;
 use App\Http\Controllers\FavoriteController; // Added FavoriteController
+use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MessageController; // Added MessageController
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReportController; // Added ReportController
@@ -76,6 +77,10 @@ Route::middleware('lang')->group(function () {
         Route::get('/messages', [MessageController::class, 'allMessagesOverview'])->name('messages.overview');
         Route::get('/agreements/{agreement}/messages', [MessageController::class, 'index'])->name('agreements.messages.index');
         Route::post('/agreements/{agreement}/messages', [MessageController::class, 'store'])->name('agreements.messages.store');
+
+        // Example (adjust middleware as needed)
+Route::post('/maintenance', [MaintenanceController::class, 'InsertMaintenance'])->name('maintenance.insert');
+
     });
 
     // Currency Switcher Route - accessible by guests and authenticated users

@@ -57,8 +57,7 @@
                             <option value="" {{ old('property_type', $house->property_type) === '' ? 'selected' : '' }}>Select Property Type</option>
                             <option value="apartment" {{ old('property_type', $house->property_type) == 'apartment' ? 'selected' : '' }}>Apartment</option>
                             <option value="house" {{ old('property_type', $house->property_type) == 'house' ? 'selected' : '' }}>House</option>
-                            <option value="condo" {{ old('property_type', $house->property_type) == 'condo' ? 'selected' : '' }}>Condo</option>
-                            <option value="studio" {{ old('property_type', $house->property_type) == 'studio' ? 'selected' : '' }}>Studio</option>
+                            <option value="commercial" {{ old('property_type', $house->property_type) == 'commercial' ? 'selected' : '' }}>Commercial</option>
                         </select>
                         @error('property_type')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>

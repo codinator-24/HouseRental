@@ -9,31 +9,39 @@
         <!-- Summary Cards -->
         <div class="row mb-4">
             @php
-                $totalProfit = 0;
-                if (
-                    isset($chartDataFromServer['datasets'][0]['data']) &&
-                    is_array($chartDataFromServer['datasets'][0]['data'])
-                ) {
-                    $totalProfit = array_sum($chartDataFromServer['datasets'][0]['data']);
-                }
+                $totalProfit = isset($additionalData['totalProfit']) ? $additionalData['totalProfit'] : 0;
+                $fivePercentOfTotal = isset($additionalData['fivePercentOfTotal']) ? $additionalData['fivePercentOfTotal'] : 0;
             @endphp
+            
+            <!-- Total Profit Card -->
             <div class="col-md-3 mb-3">
                 <div class="profit-card">
-                    <div class="profit-amount">${{ number_format($totalProfit) }}</div>
+                    <div class="profit-amount">${{ number_format($totalProfit, 1) }}K</div>
                     <div class="profit-label">Total Profit</div>
                 </div>
             </div>
+            
+            <!-- Individual Category Cards -->
             @if (isset($chartDataFromServer['labels']) && is_array($chartDataFromServer['labels']))
                 @foreach ($chartDataFromServer['labels'] as $index => $label)
                     <div class="col-md-3 mb-3">
                         <div class="profit-card">
                             <div class="profit-amount">
-                                ${{ number_format($chartDataFromServer['datasets'][0]['data'][$index] ?? 0) }}</div>
+                                ${{ number_format($chartDataFromServer['datasets'][0]['data'][$index] ?? 0, 1) }}K
+                            </div>
                             <div class="profit-label">{{ $label }}</div>
                         </div>
                     </div>
                 @endforeach
             @endif
+            
+            <!-- 5% of Total Profit Card -->
+            <div class="col-md-3 mb-3">
+                <div class="profit-card" style="border: 2px solid #28a745;">
+                    <div class="profit-amount text-success">${{ number_format($fivePercentOfTotal, 2) }}K</div>
+                    <div class="profit-label">5% of Total Profit</div>
+                </div>
+            </div>
         </div>
 
         <!-- Chart Section -->
@@ -63,7 +71,7 @@
                                     <span class="fw-bold">{{ $label }}</span>
                                     <div class="text-end">
                                         <div class="fw-bold">
-                                            ${{ number_format($chartDataFromServer['datasets'][0]['data'][$index] ?? 0) }}
+                                            ${{ number_format($chartDataFromServer['datasets'][0]['data'][$index] ?? 0, 1) }}K
                                         </div>
                                         <small class="text-muted">
                                             {{ number_format((($chartDataFromServer['datasets'][0]['data'][$index] ?? 0) / $totalProfit) * 100, 1) }}%
@@ -71,6 +79,23 @@
                                     </div>
                                 </div>
                             @endforeach
+                            
+                            <!-- Additional info section -->
+                            <hr class="my-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-light">
+                                <span class="fw-bold text-primary">Total Profit</span>
+                                <div class="text-end">
+                                    <div class="fw-bold text-primary">${{ number_format($totalProfit, 1) }}K</div>
+                                    <small class="text-muted">100%</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2 rounded" style="background-color: #28a74520;">
+                                <span class="fw-bold text-success">5% of Total</span>
+                                <div class="text-end">
+                                    <div class="fw-bold text-success">${{ number_format($fivePercentOfTotal, 2) }}K</div>
+                                    <small class="text-muted">Commission/Fee</small>
+                                </div>
+                            </div>
                         @else
                             <p class="text-muted text-center">No profit data to display breakdown.</p>
                         @endif
@@ -99,7 +124,7 @@
                                 plugins: {
                                     title: {
                                         display: true,
-                                        text: 'Profit Distribution by Category',
+                                        text: 'Profit Distribution by Property Type',
                                         font: {
                                             size: 16,
                                             weight: 'bold'
@@ -121,11 +146,9 @@
                                             label: function(context) {
                                                 const label = context.label || '';
                                                 const value = context.parsed;
-                                                const total = context.dataset.data.reduce((a, b) => a + b,
-                                                    0);
-                                                const percentage = total ? ((value / total) * 100).toFixed(
-                                                    1) : 0;
-                                                return `${label}: $${value.toLocaleString()} (${percentage}%)`;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = total ? ((value / total) * 100).toFixed(1) : 0;
+                                                return `${label}: $${value}K (${percentage}%)`;
                                             }
                                         }
                                     }
@@ -148,9 +171,8 @@
                             if (activePoints.length > 0) {
                                 const firstPoint = activePoints[0];
                                 const label = profitChart.data.labels[firstPoint.index];
-                                const value = profitChart.data.datasets[firstPoint.datasetIndex].data[firstPoint
-                                    .index];
-                                console.log(`Clicked on: ${label} - $${value}`);
+                                const value = profitChart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                                console.log(`Clicked on: ${label} - $${value}K`);
                             }
                         });
                     }
@@ -163,13 +185,6 @@
                     }
                 }
             });
-
-            // The deleteUser function seems out of place here, but kept from original if it has a purpose.
-            // function deleteUser(userId) {
-            //     if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-            //         console.log('Deleting user with ID:', userId);
-            //     }
-            // }
         </script>
     @endpush
 

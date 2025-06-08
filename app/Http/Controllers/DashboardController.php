@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Agreement;
 use App\Models\House;
+use App\Models\Maintenance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Feedback;
@@ -48,7 +50,54 @@ class DashboardController extends Controller
             $query->where('landlord_id', $userId);
         })->count() > 5;
 
-        return view('users.dashboard', compact('houses', 'hasMoreProperties', 'sentBookings', 'hasMoreSentBookings', 'receivedBookings', 'hasMoreReceivedBookings'));
+ // Fetch houses the tenant is currently associated with (e.g., for maintenance requests)
+        $rentedHouses = collect(); // Default to an empty collection
+        if (Auth::user()->role === 'tenant' || Auth::user()->role === 'both') {
+            // Fetch houses for which the tenant has an 'agreed' rental agreement.
+            $rentedHouses = Agreement::where('status', 'agreed') // Status set in StripeController on success
+                ->whereHas('booking', function ($bookingQuery) use ($userId) {
+                    $bookingQuery->where('tenant_id', $userId);
+                })
+                ->with('booking.house') // Eager load booking and then house through booking
+                ->get()
+                ->map(function ($agreement) {
+                    // Ensure booking and house exist to prevent errors
+                    return $agreement->booking && $agreement->booking->house ? $agreement->booking->house : null;
+                })
+                ->filter() // Remove any null house objects
+                ->unique('id'); // Get unique houses
+        }
+
+        // Fetch Maintenance Requests
+        $maintenanceRequestsQuery = Maintenance::query()->with(['house', 'tenant']);
+
+        if (Auth::user()->role === 'tenant') {
+            $maintenanceRequestsQuery->where('tenant_id', $userId);
+        } elseif (Auth::user()->role === 'landlord') {
+            $maintenanceRequestsQuery->whereHas('house', function ($q) use ($userId) {
+                $q->where('landlord_id', $userId);
+            });
+        } elseif (Auth::user()->role === 'both') {
+            $maintenanceRequestsQuery->where(function ($query) use ($userId) {
+                $query->where('tenant_id', $userId) // Requests they submitted
+                      ->orWhereHas('house', function ($q) use ($userId) { // Requests for their properties
+                          $q->where('landlord_id', $userId);
+                      });
+            });
+        }
+
+        $maintenanceRequests = $maintenanceRequestsQuery->latest()->take(5)->get();
+        
+        // Re-query for total count for $hasMoreMaintenance without limit
+        $totalMaintenanceCount = $maintenanceRequestsQuery->reorder()->count(); // Reset order and count
+        $hasMoreMaintenance = $totalMaintenanceCount > 5;
+
+
+        return view('users.dashboard', compact(
+            'houses', 'hasMoreProperties', 'sentBookings', 'hasMoreSentBookings',
+            'receivedBookings', 'hasMoreReceivedBookings', 'rentedHouses',
+            'maintenanceRequests', 'hasMoreMaintenance'
+        ));
     }
 
     public function show_contact()

@@ -28,8 +28,8 @@ class AdminController extends  Controller
         $landlords = User::where('role', 'lordland')->count();
         $tenants = User::where('role', 'Tenant')->count();
         $verify = User::where('status', 'Not Verified')->count();
-        $bosses = User::where('role', 'both')->count();
-        return view('admin.dashboard', compact('users', 'houses', 'landlords', 'tenants', 'aproves', 'verify', 'bosses', 'feedbacks'));
+        $bothes = User::where('role', 'both')->count();
+        return view('admin.dashboard', compact('users', 'houses', 'landlords', 'tenants', 'aproves', 'verify', 'bothes', 'feedbacks'));
     }
 
     public function viewaprove()
@@ -166,45 +166,53 @@ class AdminController extends  Controller
         return redirect()->back();
     }
 
-    // Example in your AdminController.php (or relevant controller)
-    public function ViewProfit()
-    {
-        // --- Fetch or calculate your data ---
-        // Example:
-        $profitData = [
-            'labels' => ['Luxury Apartments', 'Standard Houses', 'Commissions'],
-            'data' => [15000, 25000, 2250],
-        ];
-
-        // You might also want to generate colors dynamically or have a predefined set
-        $colors = [
-            'rgba(255, 99, 132, 0.7)',
-            'rgba(54, 162, 235, 0.7)',
-            'rgba(255, 206, 86, 0.7)',
-            // Add more colors if needed
-        ];
-        $borderColors = [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-        ];
-
-
-        $chartDataFromServer = [
-            'labels' => $profitData['labels'],
-            'datasets' => [
-                [
-                    'label' => 'Profit Distribution',
-                    'data' => $profitData['data'],
-                    'backgroundColor' => array_slice($colors, 0, count($profitData['data'])),
-                    'borderColor' => array_slice($borderColors, 0, count($profitData['data'])),
-                    'borderWidth' => 1
-                ]
+   public function ViewProfit()
+{
+    // Your new profit data
+    $profitData = [
+        'labels' => ['Houses', 'Apartments', 'Commercials'],
+        'data' => [25.3, 17.4, 12.0], // in thousands
+    ];
+    
+    // Calculate totals
+    $totalProfit = array_sum($profitData['data']);
+    $fivePercentOfTotal = $totalProfit * 0.05;
+    
+    // Colors for the chart segments
+    $colors = [
+        'rgba(54, 162, 235, 0.7)',   // Blue for Houses
+        'rgba(255, 99, 132, 0.7)',   // Red for Apartments
+        'rgba(255, 206, 86, 0.7)',   // Yellow for Commercials
+    ];
+    
+    $borderColors = [
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 206, 86, 1)',
+    ];
+    
+    $chartDataFromServer = [
+        'labels' => $profitData['labels'],
+        'datasets' => [
+            [
+                'label' => 'Profit Distribution',
+                'data' => $profitData['data'],
+                'backgroundColor' => array_slice($colors, 0, count($profitData['data'])),
+                'borderColor' => array_slice($borderColors, 0, count($profitData['data'])),
+                'borderWidth' => 2
             ]
-        ];
+        ]
+    ];
+    
+    // Pass additional data for display
+    $additionalData = [
+        'totalProfit' => $totalProfit,
+        'fivePercentOfTotal' => $fivePercentOfTotal
+    ];
+    
+    return view('admin.profit', compact('chartDataFromServer', 'additionalData'));
+}
 
-        return view('admin.profit', compact('chartDataFromServer'));
-    }
     public function ViewAgreement()
     {
         // Fetch agreements with necessary relationships
@@ -215,6 +223,7 @@ class AdminController extends  Controller
 
         return view('admin.agreements', compact('agreements'));
     }
+
     public function ViewPayment()
     {
         // Fetch payments with necessary relationships

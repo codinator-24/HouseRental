@@ -8,6 +8,7 @@ return [
     'Logout' => 'دەرچوون',
     'Language' => 'کوردی',
     'About' => 'دەربارە',
+    'Feedback' => 'ڕەخنەو پێشنیار',
     //Register
     'Register_New' => 'تۆمارکردنی ئەکاونتی نوێ',
     'Full_Name' => 'ناوی سیانی',
@@ -24,8 +25,12 @@ return [
     'Address' => 'ناونیشان',
     'Profile_Picture' => 'وێنەی پڕۆفایل',
     //Login
+    'Submit' => 'داخڵبون',
     'Welcome_Back' => 'بەخێربێیتەوە',
     'Remember_Me' => 'منت لەبیربێت',
+    'Don\'t have an account?' => 'ئەکاونتت نیە؟',
+    // 'Register' => 'تۆمارکردن',
+    
     //Index
     'Our_Services' => 'خزمەت گووزاریەکانمان',
     'Profile' => 'پڕۆفایل',

@@ -33,8 +33,8 @@
                 <div class="col">
                     <div class="card shadow rounded-4 p-3">
                         <i class="bi bi-people" style="color:#900C3F;"></i>
-                        <h5 class="mt-2">Boss Users</h5>
-                        <h3>{{ $bosses }}</h3>
+                        <h5 class="mt-2">Both Users</h5>
+                        <h3>{{ $bothes }}</h3>
                     </div>
                 </div>
 

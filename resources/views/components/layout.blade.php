@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() == 'ckb' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8">
@@ -35,7 +35,7 @@
                 <a href="#"
                     class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('words.About')</a>
                 <a href="{{ route('contact') }}"
-                    class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('Feedback')</a>
+                    class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('words.Feedback')</a>
                 {{-- Add other navigation links here if needed --}}
             </div>
 
@@ -268,7 +268,7 @@
                 <a href="#"
                     class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.About')</a>
                 <a href="{{ route('contact') }}"
-                    class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('Feedback')</a>
+                    class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.Feedback')</a>
 
                 @guest
                     <a href="{{ route('login') }}"

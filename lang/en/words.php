@@ -8,6 +8,7 @@ return [
     'Logout' => 'Logout',
     'Language' => 'EN',
     'About' => 'About',
+    'Feedback' => 'Feedback',
     //Register
     'Register_New' => 'Register New Account',
     'Full_Name' => 'Full Name',
@@ -24,8 +25,11 @@ return [
     'Address' => 'Address',
     'Profile_Picture' => 'Profile Picture',
     //Login
+    'Submit' => 'Submit',
     'Welcome_Back' => 'Welcome Back',
     'Remember_Me' => 'Remember me',
+    'Don\'t have an account?' => 'Don\'t have an account?',
+
     //Index
     'Our_Services' => 'Our Services',
 
