@@ -252,6 +252,73 @@
                             </div>
                         @endif
 
+                        {{-- Reviews Section --}}
+                        <div class="pt-6 mt-6 border-t">
+                            <h2 class="mb-4 text-2xl font-semibold text-gray-800">Ratings & Reviews</h2>
+                            @if ($house->total_approved_reviews > 0)
+                                <div class="flex items-center mb-6">
+                                    <span class="text-3xl font-bold text-yellow-500">{{ $house->average_rating }}</span>
+                                    <span class="ml-2 text-gray-600">/ 5</span>
+                                    <div class="ml-4">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="fas fa-star text-xl {{ $i <= floor($house->average_rating) ? 'text-yellow-400' : ($i - 0.5 <= $house->average_rating ? 'text-yellow-400 fas fa-star-half-alt' : 'text-gray-300') }}"></i>
+                                        @endfor
+                                        <p class="text-sm text-gray-500">Based on {{ $house->total_approved_reviews }} {{ Str::plural('review', $house->total_approved_reviews) }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-6">
+                                    @foreach ($house->reviews()->where('is_approved', true)->latest()->take(5)->get() as $review) {{-- Show latest 5 reviews --}}
+                                        <div class="p-4 border rounded-md bg-gray-50">
+                                            <div class="flex items-center mb-2">
+                                                <img src="{{ $review->user->picture ? asset($review->user->picture) : asset('images/default-profile.png') }}" alt="{{ $review->user->user_name }}" class="w-10 h-10 mr-3 rounded-full">
+                                                <div>
+                                                    <p class="font-semibold text-gray-800">{{ $review->user->full_name ?? $review->user->user_name }}</p>
+                                                    <p class="text-xs text-gray-500">{{ $review->created_at->format('M d, Y') }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center mb-2">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <i class="fas fa-star {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                                @endfor
+                                            </div>
+                                            @if($review->comment)
+                                                <p class="text-gray-700 leading-relaxed">{{ $review->comment }}</p>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                    @if($house->total_approved_reviews > 5)
+                                        {{-- Add a link to a page showing all reviews for this house if needed --}}
+                                        {{-- <a href="#" class="text-blue-600 hover:underline">View all reviews</a> --}}
+                                    @endif
+                                </div>
+                            @else
+                                <p class="text-gray-600">No reviews yet for this property.</p>
+                            @endif
+                             {{-- Link to write a review if user is eligible --}}
+                            @auth
+                                @php
+                                    // Check if the current user has a completed booking for this house
+                                    // and hasn't reviewed it yet.
+                                    $userEligibleBooking = Auth::user()->bookings()
+                                        ->where('house_id', $house->id)
+                                        ->where('status', 'completed')
+                                        ->whereDoesntHave('review') // Check if a review for this booking doesn't exist
+                                        ->get()
+                                        ->first(function ($booking) {
+                                            return $booking->isCompletedAndPast();
+                                        });
+                                @endphp
+                                @if ($userEligibleBooking)
+                                    <div class="mt-6">
+                                        <a href="{{ route('reviews.create', $userEligibleBooking) }}" class="inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                                            Write a Review for Your Stay
+                                        </a>
+                                    </div>
+                                @endif
+                            @endauth
+                        </div>
+
                         {{-- Location URL / Map Placeholder --}}
                         @if ($house->location_url)
                             <div class="mb-6">
