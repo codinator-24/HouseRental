@@ -281,6 +281,13 @@
                         <span>Feedback</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.reviews.index') ? 'activee' : '' }}"
+                        href="{{ route('admin.reviews.index') }}">
+                        <i class="bi bi-star-half"></i> {{-- Or bi-chat-right-quote --}}
+                        <span>Manage Reviews</span>
+                    </a>
+                </li>
                  </li>
                 {{-- 1. New Communications Nav Item --}}
                 <li class="nav-item">

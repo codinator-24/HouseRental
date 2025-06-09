@@ -34,7 +34,7 @@ class AuthController extends Controller
             'email.regex'     => 'Please enter a valid email address format.',
             'email.unique'    => 'This email address is already registered.',
             'user_name.unique' => 'This username is already taken.',
-            'IdCard.mimes' => 'The ID Card must be a file of type: pdf, jpeg, png, jpg, gif, webp.',
+            'IdCard.mimes' => 'The ID Card must be a file of type: pdf, jpeg, png, jpg, avif, gif, webp.',
         ]);
 
         // Hash the password

@@ -471,48 +471,59 @@
     </script>
     @endpush
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA550b4oUwPM5RoQAmGX3LIH_BkmJoPeFM&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy09TICTEciWuJe8Xq_fhNDcFAvBBL4IQ&callback=initEditHouseMap" async defer></script>
 <script>
-    let map;
-    let marker;
+    let editHouseMapInstance;
+    let editHouseMarkerInstance;
 
-    function initMap() {
-        const initialLat = parseFloat(document.getElementById('latitude').value)  || 35.555744; // Default bo nawarasti slemani
-        const initialLng = parseFloat(document.getElementById('longitude').value) || 45.435123; // Default bo nawarasti slemani
+    function initEditHouseMap() {
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
 
-        map = new google.maps.Map(document.getElementById('map'), {
+        const initialLat = parseFloat(latInput.value) || 35.555744; // Default to Sulaymaniyah center
+        const initialLng = parseFloat(lngInput.value) || 45.435123; // Default to Sulaymaniyah center
+
+        // Ensure the hidden inputs reflect the potentially defaulted values if they were initially empty/invalid
+        if (latInput.value === '' || isNaN(parseFloat(latInput.value))) {
+            latInput.value = initialLat;
+        }
+        if (lngInput.value === '' || isNaN(parseFloat(lngInput.value))) {
+            lngInput.value = initialLng;
+        }
+
+        editHouseMapInstance = new google.maps.Map(document.getElementById('map'), {
             center: { lat: initialLat, lng: initialLng },
             zoom: 12,
         });
 
-        marker = new google.maps.Marker({
+        editHouseMarkerInstance = new google.maps.Marker({
             position: { lat: initialLat, lng: initialLng },
-            map: map,
+            map: editHouseMapInstance,
             draggable: true, // Make the marker draggable
         });
 
         // Update hidden input fields when marker is dragged
-        marker.addListener('dragend', function() {
-            updateLatLngInputs(marker.getPosition());
+        editHouseMarkerInstance.addListener('dragend', function() {
+            updateLatLngInputs(editHouseMarkerInstance.getPosition());
         });
 
         // Allow placing marker by clicking on the map
-        map.addListener('click', function(event) {
+        editHouseMapInstance.addListener('click', function(event) {
             placeMarker(event.latLng);
         });
     }
 
     function placeMarker(location) {
-        if (marker) {
-            marker.setPosition(location);
+        if (editHouseMarkerInstance) {
+            editHouseMarkerInstance.setPosition(location);
         } else {
-            marker = new google.maps.Marker({
+            editHouseMarkerInstance = new google.maps.Marker({
                 position: location,
-                map: map,
+                map: editHouseMapInstance,
                 draggable: true,
             });
-             marker.addListener('dragend', function() {
-                updateLatLngInputs(marker.getPosition());
+             editHouseMarkerInstance.addListener('dragend', function() {
+                updateLatLngInputs(editHouseMarkerInstance.getPosition());
             });
         }
         updateLatLngInputs(location);
@@ -522,11 +533,6 @@
         document.getElementById('latitude').value = location.lat();
         document.getElementById('longitude').value = location.lng();
     }
-
-    // Initialize map when the window loads
-    // The `async defer` on the script tag handles the timing, but this is a fallback/alternative
-    // window.onload = initMap; // This might conflict with the callback in the script tag
-    // Better to rely on the `callback=initMap` in the script tag.
     
 </script>
 </x-layout>

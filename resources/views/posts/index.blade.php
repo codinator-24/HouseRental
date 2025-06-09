@@ -207,6 +207,19 @@
                                     {{ $house->neighborhood }}
                                     {{ $house->second_address ? ', ' . $house->second_address : '' }}
                                 </p>
+                                {{-- Display Average Rating --}}
+                                <div class="flex items-center mb-2">
+                                    @if ($house->total_approved_reviews > 0)
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="fas fa-star {{ $i <= $house->average_rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                        @endfor
+                                        <span class="ml-2 text-xs text-gray-600">
+                                            {{ $house->average_rating }} ({{ $house->total_approved_reviews }} {{ Str::plural('review', $house->total_approved_reviews) }})
+                                        </span>
+                                    @else
+                                        <span class="text-xs text-gray-500">No reviews yet</span>
+                                    @endif
+                                </div>
                                 <div class="flex items-baseline mb-4 text-center justify-center">
                                     <span class="text-2xl font-bold text-blue-600 convertible-price"
                                         data-base-price-usd="{{ $house->rent_amount }}">

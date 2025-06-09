@@ -47,6 +47,15 @@
                     <span
                         class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $totalMaintenanceItemsForBadge ?? 0 }}</span>
                 </button>
+                @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
+                    <button onclick="switchTab('my-reviews')" id="tab-my-reviews"
+                        class="tab-btn px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
+                        <i class="fas fa-star text-sm"></i>
+                        <span>My Reviews</span>
+                        {{-- You might want to add a count of pending reviews or total reviews here later --}}
+                        {{-- <span class="count-badge px-2 py-1 rounded-full text-xs font-bold">0</span> --}}
+                    </button>
+                @endif
             </div>
         </div>
 
@@ -621,6 +630,122 @@
                                 </div>
                             @endif
                         </div>
+                    </div>
+                </div>
+            @endif
+
+            @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
+                <!-- My Reviews Tab Panel -->
+                <div id="content-my-reviews" class="tab-panel hidden">
+                    {{-- The UserReviewController@index will pass 'bookings' (eligible for review) and 'submittedReviews' --}}
+                    {{-- We can reuse the view created in Step 16, or include its content here. --}}
+                    {{-- For simplicity, let's assume UserReviewController@index is called by a route,
+                         and this tab just links to that route, or we load content via AJAX.
+                         Alternatively, the DashboardController could prepare this data.
+                         For now, let's make this tab link to the dedicated reviews page.
+                         Or, better, include the content directly if DashboardController is updated.
+                         Let's assume DashboardController will be updated to provide $reviewableBookings and $userSubmittedReviews
+                    --}}
+                    @php
+                        // This data would ideally be passed from DashboardController if this tab is part of the main dashboard view
+                        // For now, this is a placeholder. The actual data loading is in UserReviewController@index
+                        // and this tab content will be populated by the view users.reviews.index when navigated to.
+                        // If you want this tab to show content directly without navigating, DashboardController needs to fetch this data.
+
+                        // Fetching data again here for direct display (not ideal for performance, better to pass from controller)
+                        $currentUser = Auth::user();
+                        $reviewableBookings = \App\Models\Booking::where('tenant_id', $currentUser->id)
+                            ->where('status', 'completed')
+                            ->with(['house', 'review'])
+                            ->get()
+                            ->filter(function ($booking) {
+                                return $booking->isCompletedAndPast() && is_null($booking->review);
+                            });
+                        $userSubmittedReviews = \App\Models\Review::where('user_id', $currentUser->id)
+                                                        ->with(['house', 'booking'])
+                                                        ->latest()
+                                                        ->paginate(5, ['*'], 'submitted_reviews_page'); // Paginate with a unique page name
+                    @endphp
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">My Reviews & Ratings</h2>
+                            {{-- Link to the full page if desired, or manage all here --}}
+                            <a href="{{ route('reviews.my') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700">
+                                View All My Reviews
+                            </a>
+                        </div>
+
+                        <!-- Section for Pending Reviews (Bookings to Review) -->
+                        <section class="mb-10">
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Rate Your Past Stays</h3>
+                            @if($reviewableBookings->isNotEmpty())
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach ($reviewableBookings as $booking)
+                                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                            @if($booking->house)
+                                                <h4 class="text-md font-bold text-gray-800 mb-1 truncate" title="{{ $booking->house->title }}">
+                                                    {{ Str::limit($booking->house->title, 30) }}
+                                                </h4>
+                                                <p class="text-xs text-gray-500 mb-1">
+                                                    Booked: {{ $booking->created_at->format('M d, Y') }} | Duration: {{ $booking->month_duration }} {{ Str::plural('month', $booking->month_duration) }}
+                                                </p>
+                                                <a href="{{ route('reviews.create', $booking) }}" class="mt-2 inline-block w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-md text-sm transition duration-300">
+                                                    Write Review
+                                                </a>
+                                            @else
+                                                <p class="text-red-500 text-sm">House details unavailable.</p>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-sm text-gray-500">You have no completed stays that are pending a review.</p>
+                            @endif
+                        </section>
+
+                        <!-- Section for Submitted Reviews -->
+                        <section>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">My Submitted Reviews</h3>
+                            @if($userSubmittedReviews->isNotEmpty())
+                                <div class="space-y-4">
+                                    @foreach ($userSubmittedReviews as $review)
+                                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    @if($review->house)
+                                                        <h4 class="text-md font-bold text-gray-800">{{ $review->house->title }}</h4>
+                                                    @else
+                                                        <h4 class="text-md font-bold text-red-600">Property Unavailable</h4>
+                                                    @endif
+                                                    <p class="text-xs text-gray-500">Reviewed: {{ $review->created_at->format('M d, Y') }}</p>
+                                                </div>
+                                                <div class="flex items-center text-sm">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <i class="fas fa-star {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                            @if($review->comment)
+                                                <p class="text-sm text-gray-600 mt-2">{{ Str::limit($review->comment, 150) }}</p>
+                                            @endif
+                                            <div class="mt-2">
+                                                @if($review->is_approved)
+                                                    <span class="px-2 py-0.5 text-xs font-semibold text-green-700 bg-green-100 rounded-full">Approved</span>
+                                                @else
+                                                    <span class="px-2 py-0.5 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full">Pending</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="mt-4">
+                                    {{ $userSubmittedReviews->links('pagination::tailwind') }}
+                                </div>
+                            @else
+                                <p class="text-sm text-gray-500">You haven't submitted any reviews yet.</p>
+                            @endif
+                        </section>
                     </div>
                 </div>
             @endif

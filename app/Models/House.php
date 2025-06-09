@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\Review; // Added for Review relationship
+use App\Models\Booking; // Added for Booking relationship
 
 class House extends Model
 {
@@ -102,5 +104,65 @@ class House extends Model
     public function favoritedBy(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorites', 'house_id', 'user_id')->withTimestamps();
+    }
+
+    /**
+     * Get the reviews for the house.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the bookings for the house.
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Accessor for the average rating of the house.
+     *
+     * @return float
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        return round($this->reviews()->where('is_approved', true)->avg('rating'), 1) ?? 0.0;
+    }
+
+    /**
+     * Accessor for the total number of approved reviews for the house.
+     *
+     * @return int
+     */
+    public function getTotalApprovedReviewsAttribute(): int
+    {
+        return $this->reviews()->where('is_approved', true)->count();
+    }
+
+    /**
+     * Check if a user can review this house for a specific completed booking.
+     * This is a basic check; more robust logic might involve checking booking status and dates.
+     *
+     * @param User $user
+     * @param Booking $booking
+     * @return bool
+     */
+    public function canBeReviewedBy(User $user, Booking $booking): bool
+    {
+        // Ensure the booking belongs to the user and this house
+        if ($booking->user_id !== $user->id || $booking->house_id !== $this->id) {
+            return false;
+        }
+
+        // Use the Booking model's method to check if it's completed and past its end date
+        if (!$booking->isCompletedAndPast()) {
+            return false;
+        }
+
+        // Check if the user has already reviewed this specific booking
+        return !$this->reviews()->where('user_id', $user->id)->where('booking_id', $booking->id)->exists();
     }
 }

@@ -10,7 +10,9 @@ use App\Http\Controllers\CurrencyController; // Add this line for currency switc
 
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AuthAdminController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController; // Corrected Namespace for Admin Reviews
 use App\Http\Controllers\FavoriteController; // Added FavoriteController
+use App\Http\Controllers\UserReviewController; // Added for User Reviews
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MessageController; // Added MessageController
 use App\Http\Controllers\NotificationController;
@@ -81,6 +83,11 @@ Route::middleware('lang')->group(function () {
         // Example (adjust middleware as needed)
 Route::post('/maintenance', [MaintenanceController::class, 'InsertMaintenance'])->name('maintenance.insert');
 
+        // User Review Routes
+        Route::get('/dashboard/my-reviews', [UserReviewController::class, 'index'])->name('reviews.my');
+        Route::get('/dashboard/bookings/{booking}/review/create', [UserReviewController::class, 'create'])->name('reviews.create');
+        Route::post('/dashboard/bookings/{booking}/review', [UserReviewController::class, 'store'])->name('reviews.store');
+
     });
 
     // Currency Switcher Route - accessible by guests and authenticated users
@@ -137,6 +144,11 @@ Route::middleware('admin.auth')->group(function () {
     // Admin routes for managing reports
     Route::get('/admin/reports/{report}', [AdminController::class, 'showReportDetails'])->name('admin.reports.show');
     Route::post('/admin/reports/{report}/status', [AdminController::class, 'updateReportStatus'])->name('admin.reports.updateStatus');
+
+    // Admin Review Management Routes
+    Route::get('/admin/reviews', [AdminReviewController::class, 'index'])->name('admin.reviews.index');
+    Route::patch('/admin/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('admin.reviews.approve');
+    Route::delete('/admin/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('admin.reviews.destroy');
    });
 
 //Stable
