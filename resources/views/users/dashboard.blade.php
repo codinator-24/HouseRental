@@ -245,8 +245,8 @@
 
                     {{-- tenant Maintenance section --}}
                     @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
-                        <h2 class="text-2xl font-bold text-gray-800">Sent Maintenance Requests</h2>
                         <div class="flex justify-between items-center mb-6">
+                             <h2 class="text-2xl font-bold text-gray-800">Sent Maintenance Requests</h2>
                             <button type="button" id="openNewMaintenanceModalBtn"
                                 class="text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2"
                                 style="background: linear-gradient(135deg, #1b61c2, #3b82f6);">
@@ -266,11 +266,6 @@
                                                     title="{{ $request->area_of_house }} - {{ Str::limit($request->description, 70) }}">
                                                     {{ Str::limit($request->area_of_house ?? 'Maintenance Request', 25) }}
                                                 </h3>
-                                                {{-- Priority not in model, removed for now
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold ...">
-                                                {{ ucfirst($request->priority ?? 'Normal') }}
-                                            </span>
-                                            --}}
                                             </div>
 
                                             @if ($request->house)
@@ -289,8 +284,6 @@
                                                     <i class="fas fa-user w-4 mr-2" style="color: #1b61c2;"></i>
                                                     <span>{{ $request->tenant->full_name ?? ($request->tenant->user_name ?? 'Tenant N/A') }}</span>
                                                 </div>
-                                                {{-- Display landlord if current user is tenant and vice-versa, or if admin --}}
-                                                {{-- For now, just showing requester (tenant) --}}
                                                 <div class="flex items-center">
                                                     <i class="fas fa-info-circle w-4 mr-2"
                                                         style="color: #1b61c2;"></i>
@@ -307,17 +300,6 @@
                                             </div>
 
                                             <div class="border-t border-gray-100 mt-4 pt-4">
-                                                {{--
-                                            Route 'maintenance.show' is not defined.
-                                            You'll need to create this route and a controller method if you want a details page.
-                                            <a href="{{-- route('maintenance.show', $request->id)"
-                                            class="w-full text-center py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2"
-                                            style="color: #1b61c2;"
-                                            onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
-                                            onmouseout="this.style.backgroundColor='transparent'">
-                                            <i class="fas fa-eye"></i>View Details
-                                            </a>
-                                            --}}
                                                 <p class="text-sm text-gray-500">Details view not yet implemented.</p>
                                             </div>
                                         </div>
@@ -327,9 +309,6 @@
                                 @if ($hasMoreMaintenance)
                                     <div
                                         class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 card-hover flex flex-col items-center justify-center p-6 min-h-[280px] sm:min-h-[400px]">
-                                        {{-- Route 'maintenance.index' is not defined. Create if needed.
-                                    <a href="{{-- route('maintenance.index')" class="text-center">
-                                    --}}
                                         <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
                                             style="background-color: rgba(27, 97, 194, 0.1);">
                                             <i class="fas fa-ellipsis-h text-xl" style="color: #1b61c2;"></i>
@@ -346,8 +325,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
                                 </svg>
-                                <p class="mt-4 text-lg font-medium text-gray-700">No Maintenance Requests</p>
-                                <p class="text-sm text-gray-500 mt-1">When maintenance requests are submitted, they
+                                <p class="mt-4 text-lg font-medium text-gray-700">No Sent Maintenance Requests</p>
+                                <p class="text-sm text-gray-500 mt-1">When you submit maintenance requests, they
                                     will appear here.</p>
                             </div>
                         @endif
@@ -361,69 +340,68 @@
                         @if ($receivedMaintenanceRequests->isNotEmpty())
                             <div
                                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                                @foreach ($receivedMaintenanceRequests as $request)
-                                    <div
-                                        class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden">
+                                @foreach ($receivedMaintenanceRequests as $receivedRequest)
+                                    <button type="button"
+                                        data-request-id="{{ $receivedRequest->id }}"
+                                        data-tenant-name="{{ $receivedRequest->tenant->full_name ?? $receivedRequest->tenant->user_name ?? 'N/A' }}"
+                                        data-picture-url="{{ $receivedRequest->picture ? asset('storage/' . $receivedRequest->picture) : '' }}"
+                                        data-area-of-house="{{ $receivedRequest->area_of_house }}"
+                                        data-description="{{ $receivedRequest->description }}"
+                                        data-refund-amount="{{ $receivedRequest->refund_amount ?? '0.00' }}"
+                                        data-current-status="{{ $receivedRequest->status }}"
+                                        data-landlord-response="{{ $receivedRequest->landlord_response ?? '' }}"
+                                        {{-- data-form-action="{{ route('maintenance.landlord.reply', $receivedRequest->id) }}" --}}
+                                        class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden text-left received-maintenance-card">
                                         <div class="p-5">
                                             <div class="mb-3">
                                                 <h3 class="text-lg font-bold text-gray-800 truncate"
-                                                    title="{{ $request->area_of_house }} - {{ Str::limit($request->description, 70) }}">
-                                                    {{ Str::limit($request->area_of_house ?? 'Maintenance Request', 25) }}
+                                                    title="{{ $receivedRequest->area_of_house }} - {{ Str::limit($receivedRequest->description, 70) }}">
+                                                    {{ Str::limit($receivedRequest->area_of_house ?? 'Maintenance Request', 25) }}
                                                 </h3>
                                             </div>
 
-                                            @if ($request->house)
+                                            @if ($receivedRequest->house)
                                                 <p class="text-sm text-gray-500 mb-3 flex items-center">
                                                     <i class="fas fa-home mr-2" style="color: #1b61c2;"></i>
-                                                    For: {{ Str::limit($request->house->title ?? 'Property N/A', 30) }}
+                                                    For: {{ Str::limit($receivedRequest->house->title ?? 'Property N/A', 30) }}
                                                 </p>
                                             @endif
 
                                             <div class="space-y-2 mb-4">
                                                 <div class="flex items-center text-sm text-gray-600">
                                                     <i class="fas fa-calendar w-4 mr-2" style="color: #1b61c2;"></i>
-                                                    <span>{{ $request->created_at->format('M d, Y') }}</span>
+                                                    <span>{{ $receivedRequest->created_at->format('M d, Y') }}</span>
                                                 </div>
                                                 <div class="flex items-center text-sm text-gray-600">
                                                     <i class="fas fa-user w-4 mr-2" style="color: #1b61c2;"></i>
-                                                    <span>By: {{ $request->tenant->full_name ?? ($request->tenant->user_name ?? 'Tenant N/A') }}</span>
+                                                    <span>By: {{ $receivedRequest->tenant->full_name ?? ($receivedRequest->tenant->user_name ?? 'Tenant N/A') }}</span>
                                                 </div>
                                                 <div class="flex items-center">
                                                     <i class="fas fa-info-circle w-4 mr-2"
                                                         style="color: #1b61c2;"></i>
                                                     <span
                                                         class="px-2 py-1 rounded-full text-xs font-semibold border
-                                                        {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : '' }}
-                                                        {{ $request->status === 'in_progress' ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
-                                                        {{ $request->status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
-                                                        {{ $request->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
-                                                        {{ !in_array($request->status, ['pending', 'in_progress', 'completed', 'cancelled']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}">
-                                                        {{ ucfirst(str_replace('_', ' ', $request->status ?? 'Pending')) }}
+                                                        {{ $receivedRequest->status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : '' }}
+                                                        {{ $receivedRequest->status === 'in_progress' ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
+                                                        {{ $receivedRequest->status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
+                                                        {{ $receivedRequest->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
+                                                        {{ !in_array($receivedRequest->status, ['pending', 'in_progress', 'completed', 'cancelled', 'awaiting_parts', 'needs_tenant_input']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
+                                                        {{ $receivedRequest->status === 'awaiting_parts' ? 'bg-orange-100 text-orange-800 border-orange-200' : '' }}
+                                                        {{ $receivedRequest->status === 'needs_tenant_input' ? 'bg-purple-100 text-purple-800 border-purple-200' : '' }}">
+                                                        {{ ucfirst(str_replace('_', ' ', $receivedRequest->status ?? 'Pending')) }}
                                                     </span>
                                                 </div>
                                             </div>
-
-                                            <div class="border-t border-gray-100 mt-4 pt-4">
-                                                {{--
-                                                Route 'maintenance.show_received' or similar would be needed for a details page.
-                                                <a href="{{-- route('maintenance.show_received', $request->id)"
-                                                class="w-full text-center py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2"
-                                                style="color: #1b61c2;"
-                                                onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
-                                                onmouseout="this.style.backgroundColor='transparent'">
-                                                <i class="fas fa-eye"></i>View Details
-                                                </a>
-                                                --}}
-                                                <p class="text-sm text-gray-500">Details view not yet implemented.</p>
+                                            <div class="border-t border-gray-100 mt-4 pt-4 text-center">
+                                                <span class="text-sm font-semibold" style="color: #1b61c2;">View Details & Reply</span>
                                             </div>
                                         </div>
-                                    </div>
+                                    </button>
                                 @endforeach
 
                                 @if ($hasMoreReceivedMaintenance)
                                     <div
                                         class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 card-hover flex flex-col items-center justify-center p-6 min-h-[280px]">
-                                        {{-- Route 'maintenance.received_index' is not defined. Create if needed. --}}
                                         <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
                                             style="background-color: rgba(27, 97, 194, 0.1);">
                                             <i class="fas fa-ellipsis-h text-xl" style="color: #1b61c2;"></i>
@@ -833,9 +811,6 @@
                             (Optional)</label>
                         <input type="file" name="picture" id="maintenance_picture" accept="image/*"
                             class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('picture', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                        @error('picture', 'newMaintenanceRequestErrors')
-                            {{-- <p class="mt-1 text-xs text-red-500">{{ $message }}</p> --}}
-                        @enderror
                     </div>
 
                     {{-- Area of House --}}
@@ -845,9 +820,6 @@
                         <input type="text" name="area_of_house" id="area_of_house"
                             value="{{ old('area_of_house') }}" required
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('area_of_house', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                        @error('area_of_house', 'newMaintenanceRequestErrors')
-                            {{-- <p class="mt-1 text-xs text-red-500">{{ $message }}</p> --}}
-                        @enderror
                     </div>
 
                     {{-- Description --}}
@@ -856,9 +828,6 @@
                             class="block text-sm font-medium text-gray-700">Description of Issue</label>
                         <textarea name="description" id="maintenance_description" rows="4" required
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'newMaintenanceRequestErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
-                        @error('description', 'newMaintenanceRequestErrors')
-                            {{-- <p class="mt-1 text-xs text-red-500">{{ $message }}</p> --}}
-                        @enderror
                     </div>
 
                     {{-- Refund Amount --}}
@@ -868,9 +837,6 @@
                         <input type="number" name="refund_amount" id="refund_amount"
                             value="{{ old('refund_amount') }}" step="0.01" min="0"
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('refund_amount', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                        @error('refund_amount', 'newMaintenanceRequestErrors')
-                            {{-- <p class="mt-1 text-xs text-red-500">{{ $message }}</p> --}}
-                        @enderror
                     </div>
 
                     <div class="flex justify-end">
@@ -880,6 +846,98 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    @endif
+
+    {{-- Received Maintenance Request Detail Modal --}}
+    @if (auth()->user()->role === 'landlord' || auth()->user()->role === 'both')
+        <div id="receivedMaintenanceDetailModal"
+            class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
+            style="display: none;" role="dialog" aria-modal="true"
+            aria-labelledby="receivedMaintenanceDetailModalTitle">
+            <div class="w-full max-w-2xl mx-4 bg-white rounded-lg shadow-xl overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+                    <h1 id="receivedMaintenanceDetailModalTitle" class="text-xl font-semibold text-gray-700">
+                        Maintenance Request Details</h1>
+                    <button id="closeReceivedMaintenanceDetailModalBtn"
+                        aria-label="Close received maintenance detail modal"
+                        class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+
+                <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                    <div id="landlordResponseErrorContainer" class="hidden">
+                        {{-- Errors will be injected here by JS if needed --}}
+                    </div>
+
+                    <div>
+                        <strong class="text-gray-700">Tenant Name:</strong>
+                        <p id="modal_tenant_name" class="text-gray-600"></p>
+                    </div>
+
+                    <div id="modal_picture_container">
+                        <strong class="text-gray-700">Picture:</strong>
+                        <img id="modal_picture" src="" alt="Maintenance Picture"
+                            class="mt-1 max-w-xs max-h-64 rounded border object-contain">
+                        <p id="modal_no_picture_text" class="text-gray-500 italic mt-1" style="display:none;">No picture
+                            provided.</p>
+                    </div>
+
+                    <div>
+                        <strong class="text-gray-700">Area Of House:</strong>
+                        <p id="modal_area_of_house" class="text-gray-600"></p>
+                    </div>
+
+                    <div>
+                        <strong class="text-gray-700">Description:</strong>
+                        <p id="modal_description" class="text-gray-600 whitespace-pre-wrap"></p>
+                    </div>
+
+                    <div>
+                        <strong class="text-gray-700">Requested Refund Amount:</strong>
+                        <p id="modal_refund_amount" class="text-gray-600"></p>
+                    </div>
+
+                    <div>
+                        <strong class="text-gray-700">Current Status:</strong>
+                        <p id="modal_current_status_display" class="text-gray-600"></p>
+                    </div>
+
+                    <form id="landlordResponseForm" method="POST" action="">
+                        @csrf
+                        {{-- @method('POST') is not strictly needed for POST, but good for clarity or if you change to PUT/PATCH later --}}
+
+                        <div class="mt-4">
+                            <label for="modal_landlord_response"
+                                class="block text-sm font-medium text-gray-700">Your Reply:</label>
+                            <textarea name="landlord_response" id="modal_landlord_response" rows="4"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                            <div id="modal_landlord_response_error" class="mt-1 text-xs text-red-500"></div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="modal_status_update"
+                                class="block text-sm font-medium text-gray-700">Update Status:</label>
+                            <select name="status" id="modal_status_update"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="awaiting_parts">Awaiting Parts</option>
+                                <option value="needs_tenant_input">Needs Tenant Input</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <div id="modal_status_update_error" class="mt-1 text-xs text-red-500"></div>
+                        </div>
+
+                        <div class="mt-6 flex justify-end">
+                            <button type="submit"
+                                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Submit Response & Update Status
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     @endif
@@ -970,6 +1028,7 @@
 
         // Initialize first available tab as active
         document.addEventListener('DOMContentLoaded', function() {
+            // --- New Maintenance Request Modal Script ---
             const openNewMaintenanceBtn = document.getElementById('openNewMaintenanceModalBtn');
             const closeNewMaintenanceBtn = document.getElementById('closeNewMaintenanceModalBtn');
             const newMaintenanceModal = document.getElementById('newMaintenanceRequestModal');
@@ -996,6 +1055,12 @@
                 });
             }
 
+            // --- Received Maintenance Detail Modal Script ---
+            const receivedMaintenanceCards = document.querySelectorAll('.received-maintenance-card');
+            const receivedMaintenanceDetailModal = document.getElementById('receivedMaintenanceDetailModal');
+            const closeReceivedMaintenanceDetailModalBtn = document.getElementById('closeReceivedMaintenanceDetailModalBtn');
+            const landlordResponseForm = document.getElementById('landlordResponseForm');
+
             // Determine initial active tab
             let initialTab = null;
             @if (session('active_tab'))
@@ -1003,7 +1068,9 @@
             @elseif (session('error_modal_open') === 'newMaintenanceRequestModal' &&
                     $errors->hasBag('newMaintenanceRequestErrors') &&
                     $errors->newMaintenanceRequestErrors->any())
-                initialTab = 'maintenance'; // If modal error, open maintenance tab
+                initialTab = 'maintenance'; // If new maintenance modal error, open maintenance tab
+            @elseif (session('error_modal_open') === 'receivedMaintenanceDetailModal' && session('open_modal_request_id'))
+                initialTab = 'maintenance'; // If landlord response modal error, open maintenance tab
             @elseif (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
                 initialTab = 'sent-bookings';
             @elseif (auth()->user()->role === 'landlord')
@@ -1019,7 +1086,7 @@
                 switchTab(initialTab);
             }
 
-            // Keep new maintenance modal open if there are validation errors for it (and it was the source of error)
+            // Keep new maintenance modal open if there are validation errors for it
             @if (session('error_modal_open') === 'newMaintenanceRequestModal' &&
                     $errors->hasBag('newMaintenanceRequestErrors') &&
                     $errors->newMaintenanceRequestErrors->any())
@@ -1027,6 +1094,110 @@
                     newMaintenanceModal.style.display = 'flex';
                 }
             @endif
+
+            // --- Received Maintenance Detail Modal Logic ---
+            if (receivedMaintenanceDetailModal && closeReceivedMaintenanceDetailModalBtn && landlordResponseForm) {
+                receivedMaintenanceCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        const data = this.dataset;
+                        document.getElementById('modal_tenant_name').textContent = data.tenantName;
+                        const pictureElement = document.getElementById('modal_picture');
+                        const noPictureText = document.getElementById('modal_no_picture_text');
+                        if (data.pictureUrl) {
+                            pictureElement.src = data.pictureUrl;
+                            pictureElement.style.display = 'block';
+                            noPictureText.style.display = 'none';
+                        } else {
+                            pictureElement.style.display = 'none';
+                            noPictureText.style.display = 'block';
+                        }
+                        document.getElementById('modal_area_of_house').textContent = data.areaOfHouse;
+                        document.getElementById('modal_description').textContent = data.description;
+                        document.getElementById('modal_refund_amount').textContent = '$' + parseFloat(data.refundAmount).toFixed(2);
+                        document.getElementById('modal_current_status_display').textContent = data.currentStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        
+                        const landlordResponseTextarea = document.getElementById('modal_landlord_response');
+                        landlordResponseTextarea.value = data.landlordResponse || '';
+
+                        const statusUpdateSelect = document.getElementById('modal_status_update');
+                        statusUpdateSelect.value = data.currentStatus || 'pending';
+
+                        landlordResponseForm.action = data.formAction;
+
+                        // Clear previous errors for this specific modal instance
+                        document.getElementById('modal_landlord_response_error').textContent = '';
+                        document.getElementById('modal_status_update_error').textContent = '';
+                        // Hide general error container if it was shown
+                        const landlordResponseErrorContainer = document.getElementById('landlordResponseErrorContainer');
+                        landlordResponseErrorContainer.classList.add('hidden');
+                        landlordResponseErrorContainer.innerHTML = '';
+
+
+                        receivedMaintenanceDetailModal.style.display = 'flex';
+                    });
+                });
+
+                closeReceivedMaintenanceDetailModalBtn.addEventListener('click', function() {
+                    receivedMaintenanceDetailModal.style.display = 'none';
+                });
+
+                receivedMaintenanceDetailModal.addEventListener('click', function(event) {
+                    if (event.target === receivedMaintenanceDetailModal) {
+                        receivedMaintenanceDetailModal.style.display = 'none';
+                    }
+                });
+
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && receivedMaintenanceDetailModal.style.display === 'flex') {
+                        receivedMaintenanceDetailModal.style.display = 'none';
+                    }
+                });
+
+                // Re-open modal if there were validation errors for landlord response
+                @if (session('error_modal_open') === 'receivedMaintenanceDetailModal' && session('open_modal_request_id'))
+                    const errorRequestId = {{ session('open_modal_request_id') }};
+                    const cardToReopen = document.querySelector(`.received-maintenance-card[data-request-id="${errorRequestId}"]`);
+                    if (cardToReopen) {
+                        // Simulate click to reopen and populate
+                        // Need to ensure the modal is displayed first before trying to access its elements for error messages
+                        receivedMaintenanceDetailModal.style.display = 'flex'; // Show modal first
+                        
+                        // Populate data (same as card click logic)
+                        const data = cardToReopen.dataset;
+                        document.getElementById('modal_tenant_name').textContent = data.tenantName;
+                        const pictureElement = document.getElementById('modal_picture');
+                        const noPictureText = document.getElementById('modal_no_picture_text');
+                        if (data.pictureUrl) {
+                            pictureElement.src = data.pictureUrl;
+                            pictureElement.style.display = 'block';
+                            noPictureText.style.display = 'none';
+                        } else {
+                            pictureElement.style.display = 'none';
+                            noPictureText.style.display = 'block';
+                        }
+                        document.getElementById('modal_area_of_house').textContent = data.areaOfHouse;
+                        document.getElementById('modal_description').textContent = data.description;
+                        document.getElementById('modal_refund_amount').textContent = '$' + parseFloat(data.refundAmount).toFixed(2);
+                        document.getElementById('modal_current_status_display').textContent = data.currentStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        document.getElementById('modal_landlord_response').value = data.landlordResponse || ''; // Keep old input for response
+                        document.getElementById('modal_status_update').value = data.currentStatus || 'pending'; // Keep old input for status
+                        landlordResponseForm.action = data.formAction;
+
+                        // Now display errors
+                        @if ($errors->hasBag('landlordResponseErrors_' . session('open_modal_request_id')))
+                            const landlordResponseError = "{{ $errors->{'landlordResponseErrors_' . session('open_modal_request_id')}->first('landlord_response') }}";
+                            const statusUpdateError = "{{ $errors->{'landlordResponseErrors_' . session('open_modal_request_id')}->first('status') }}";
+                            
+                            if(landlordResponseError) {
+                                document.getElementById('modal_landlord_response_error').textContent = landlordResponseError;
+                            }
+                            if(statusUpdateError) {
+                                document.getElementById('modal_status_update_error').textContent = statusUpdateError;
+                            }
+                        @endif
+                    }
+                @endif
+            }
         });
     </script>
 </x-layout>
