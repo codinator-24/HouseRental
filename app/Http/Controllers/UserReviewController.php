@@ -16,15 +16,15 @@ class UserReviewController extends Controller
     public function index()
     {
         $user = Auth::user();
-        // Eager load house and its review by the current user for the specific booking
         $bookings = Booking::where('tenant_id', $user->id)
             ->where('status', 'completed')
-            ->with(['house', 'review']) // Eager load review related to this booking
+            ->whereDoesntHave('review') // Check for absence of review at DB level
+            ->with('house') // Eager load house
             ->get()
             ->filter(function ($booking) {
-                // Check if booking is completed and past its end date
-                // And if there isn't already a review for this specific booking
-                return $booking->isCompletedAndPast() && is_null($booking->review);
+                // Still need to check if the booking is past its end date in PHP
+                // as isCompletedAndPast() involves date logic
+                return $booking->isCompletedAndPast();
             });
 
         // Separate list for already submitted reviews by the user

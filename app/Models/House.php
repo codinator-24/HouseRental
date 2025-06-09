@@ -153,7 +153,7 @@ class House extends Model
     public function canBeReviewedBy(User $user, Booking $booking): bool
     {
         // Ensure the booking belongs to the user and this house
-        if ($booking->user_id !== $user->id || $booking->house_id !== $this->id) {
+        if ($booking->tenant_id !== $user->id || $booking->house_id !== $this->id) {
             return false;
         }
 
