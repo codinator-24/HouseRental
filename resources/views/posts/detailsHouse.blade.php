@@ -704,25 +704,24 @@
     @endpush
 
     @if ($house->latitude !== null && $house->longitude !== null)
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA550b4oUwPM5RoQAmGX3LIH_BkmJoPeFM&callback=initMap" async
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy09TICTEciWuJe8Xq_fhNDcFAvBBL4IQ&callback=initDetailsHouseMap" async
             defer></script>
         <script>
-            let map;
+            let detailsHouseMapInstance;
 
-            function initMap() {
-                const houseLocation = {
-                    lat: parseFloat({{ $house->latitude }}),
-                    lng: parseFloat({{ $house->longitude }})
-                };
+            function initDetailsHouseMap() {
+                const lat = parseFloat('{{ $house->latitude }}') || 35.555744; // Default to Sulaymaniyah center
+                const lng = parseFloat('{{ $house->longitude }}') || 45.435123; // Default to Sulaymaniyah center
+                const houseLocation = { lat: lat, lng: lng };
 
-                map = new google.maps.Map(document.getElementById('map'), {
+                detailsHouseMapInstance = new google.maps.Map(document.getElementById('map'), {
                     center: houseLocation,
                     zoom: 15, // Adjust zoom level as needed
                 });
 
                 new google.maps.Marker({
                     position: houseLocation,
-                    map: map,
+                    map: detailsHouseMapInstance,
                     title: 'Property Location',
                 });
             }
