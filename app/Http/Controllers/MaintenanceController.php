@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Maintenance;
+use App\Models\MaintenancePayment; // Added
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session; // Added
+use Illuminate\Support\Facades\Log; // Added for finalizePaidMaintenanceAcceptance
 
 
 class MaintenanceController extends Controller
@@ -165,34 +168,95 @@ class MaintenanceController extends Controller
                          ->with('active_tab', 'maintenance');
     }
 
-    public function acceptMaintenanceRequest(Request $request, Maintenance $maintenance)
+    public function initiateAcceptancePayment(Request $request, Maintenance $maintenance)
     {
-        // Authorization
+        // Authorization: Ensure the authenticated user is the landlord of the house
         if (Auth::id() !== $maintenance->house->landlord_id) {
             return redirect()->route('dashboard')
                              ->with('error', 'You are not authorized to perform this action.')
                              ->with('active_tab', 'maintenance');
         }
 
+        // Validate landlord_response
         $validator = Validator::make($request->all(), [
             'landlord_response' => 'required|string|max:5000',
         ]);
 
+        // Use a unique error bag name that includes the maintenance ID
+        $errorBagName = 'landlordResponseErrors_' . $maintenance->id;
+
         if ($validator->fails()) {
             return redirect()->back()
-                        ->withErrors($validator, 'acceptMaintenanceErrors_' . $maintenance->id)
+                        ->withErrors($validator, $errorBagName)
                         ->withInput()
-                        ->with('error_modal_open', 'receivedMaintenanceRequestDetailModal_' . $maintenance->id)
+                        ->with('error_modal_open', 'receivedMaintenanceRequestDetailModal_' . $maintenance->id) // To reopen the modal
+                        ->with('open_modal_request_id', $maintenance->id) // Pass ID to help JS identify which modal
                         ->with('active_tab', 'maintenance');
+        }
+        $landlordResponse = $request->input('landlord_response');
+
+        // Check refund_amount to determine if payment is needed
+        $paymentAmount = $maintenance->refund_amount ?? 0;
+
+        if ($paymentAmount > 0) {
+            // Payment is needed
+            Session::put('pending_maintenance_payment_data', [
+                'maintenance_id' => $maintenance->id, // Store id for verification in StripeController
+                'response' => $landlordResponse,
+                'amount' => $paymentAmount,
+            ]);
+            return redirect()->route('maintenance.checkout.stripe', ['maintenance' => $maintenance->id]);
+        } else {
+            // No payment needed, proceed to accept directly
+            return $this->executeDirectAcceptance($maintenance, $landlordResponse);
+        }
+    }
+
+    protected function executeDirectAcceptance(Maintenance $maintenance, string $landlordResponse)
+    {
+        // Authorization check (already done in initiateAcceptancePayment, but good for a protected method)
+        if (Auth::id() !== $maintenance->house->landlord_id) {
+             return redirect()->route('dashboard')->with('error', 'Unauthorized action.')->with('active_tab', 'maintenance');
         }
 
         $maintenance->status = 'accepted';
-        $maintenance->landlord_response = $request->input('landlord_response');
+        $maintenance->landlord_response = $landlordResponse;
         $maintenance->save();
 
         return redirect()->route('dashboard')
-                         ->with('success', 'Maintenance request accepted successfully!')
+                         ->with('success', 'Maintenance request accepted successfully (no payment required).')
                          ->with('active_tab', 'maintenance');
+    }
+
+    public function finalizePaidMaintenanceAcceptance(Maintenance $maintenance, string $landlordResponse, array $paymentDetails)
+    {
+        // Authorization check (already done in initiateAcceptancePayment, but good for a public method called by another controller)
+         if (Auth::id() !== $maintenance->house->landlord_id) {
+            Log::error("Unauthorized attempt to finalize paid maintenance acceptance for maintenance ID: {$maintenance->id} by user ID: " . Auth::id());
+            return redirect()->route('dashboard')
+                             ->with('error', 'Authorization failed after payment. Please contact support.')
+                             ->with('active_tab', 'maintenance');
+        }
+
+        $maintenance->status = 'accepted';
+        $maintenance->landlord_response = $landlordResponse;
+        $maintenance->save();
+
+        MaintenancePayment::create([
+            'maintenance_id' => $maintenance->id,
+            'user_id' => Auth::id(), // Landlord who paid
+            'stripe_session_id' => $paymentDetails['stripe_session_id'],
+            'amount' => $paymentDetails['amount'],
+            'currency' => $paymentDetails['currency'] ?? 'usd',
+            'status' => 'succeeded', // Assuming this is only called on success
+            'paid_at' => now(),
+        ]);
+        
+        Session::forget('pending_maintenance_payment_data');
+
+        // This method returns true to indicate success to the calling StripeController.
+        // The StripeController's success handler will manage the final user redirect.
+        return true; 
     }
 
     public function rejectMaintenanceRequest(Request $request, Maintenance $maintenance)

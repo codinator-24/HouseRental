@@ -87,8 +87,14 @@ Route::middleware('lang')->group(function () {
         Route::post('/maintenance/tenant-cancel/{maintenance}', [MaintenanceController::class, 'tenantCancel'])->name('maintenance.tenant.cancel');
         // The following route can be kept if there's other general processing, or removed if accept/reject cover all landlord responses.
         // Route::post('/maintenance/landlord-process-response/{maintenance}', [MaintenanceController::class, 'processLandlordResponse'])->name('maintenance.landlord.process_response');
-        // New routes for specific accept/reject actions by landlord
-        Route::post('/maintenance/{maintenance}/accept', [MaintenanceController::class, 'acceptMaintenanceRequest'])->name('maintenance.accept');
+        
+        // New routes for maintenance acceptance payment flow
+        Route::post('/maintenance/{maintenance}/initiate-payment', [MaintenanceController::class, 'initiateAcceptancePayment'])->name('maintenance.initiate_payment');
+        Route::get('/maintenance/{maintenance}/checkout-stripe', [StripeController::class, 'checkoutForMaintenance'])->name('maintenance.checkout.stripe');
+        Route::get('/maintenance/payment/success', [StripeController::class, 'maintenancePaymentSuccess'])->name('maintenance.payment.success');
+        Route::get('/maintenance/payment/cancel', [StripeController::class, 'maintenancePaymentCancel'])->name('maintenance.payment.cancel');
+
+        // Route for rejecting a maintenance request (no payment involved)
         Route::post('/maintenance/{maintenance}/reject', [MaintenanceController::class, 'rejectMaintenanceRequest'])->name('maintenance.reject');
 
         // User Review Routes
@@ -156,9 +162,6 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/admin/reviews', [AdminReviewController::class, 'index'])->name('admin.reviews.index');
     Route::patch('/admin/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('admin.reviews.approve');
     Route::delete('/admin/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('admin.reviews.destroy');
-<<<<<<< HEAD
-});
-=======
 
     // Admin Configuration / Developer Tools (Local Environment Only)
     if (app()->environment('local')) {
@@ -166,7 +169,6 @@ Route::middleware('admin.auth')->group(function () {
         Route::patch('/admin/configuration/bookings/{booking}/age', [AdminConfigurationController::class, 'ageBooking'])->name('admin.configuration.bookings.age');
     }
    });
->>>>>>> 16e46c73eaf437656bfc5f05fae74859d0bf0fac
 
 //Stable
 

@@ -367,7 +367,7 @@
                                         data-refund-amount="{{ $receivedRequest->refund_amount ?? '0.00' }}"
                                         data-current-status="{{ $receivedRequest->status }}"
                                         data-landlord-response="{{ $receivedRequest->landlord_response ?? '' }}"
-                                        data-accept-url="{{ route('maintenance.accept', $receivedRequest->id) }}"
+                                        data-accept-url="{{ route('maintenance.initiate_payment', $receivedRequest->id) }}"
                                         data-reject-url="{{ route('maintenance.reject', $receivedRequest->id) }}"
                                         class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden text-left received-maintenance-card">
                                         <div class="p-5">

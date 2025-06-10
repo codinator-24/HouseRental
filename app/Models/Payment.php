@@ -24,10 +24,13 @@ class Payment extends Model
      */
     protected $fillable = [
         'agreement_id',
+        'maintenance_id', // Added
+        'user_id',        // Added (for the user making/receiving payment)
         'amount',
         'payment_method',
         'status',
         'paid_at',
+        'transaction_id', // Added
         'notes',
     ];
 
@@ -46,6 +49,22 @@ class Payment extends Model
      */
     public function agreement(): BelongsTo
     {
-        return $this->belongsTo(Agreement::class); // Assumes an Agreement model exists
+        return $this->belongsTo(Agreement::class);
+    }
+
+    /**
+     * Get the maintenance request that owns the payment (if applicable).
+     */
+    public function maintenance(): BelongsTo
+    {
+        return $this->belongsTo(Maintenance::class);
+    }
+
+    /**
+     * Get the user associated with the payment (e.g., payer or payee).
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
