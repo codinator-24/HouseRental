@@ -300,15 +300,17 @@
             </ul>
 
              {{-- 2. Settings button at the bottom of the sidebar --}}
+            @if(app()->environment('local'))
             <ul class="nav nav-pills flex-column w-100 mt-auto" style="padding-bottom: 1rem;">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.settings') ? 'activee' : '' }}"
-                        href="#"> {{-- Replace # with actual route e.g., {{ route('admin.settings') }} --}}
-                        <i class="bi bi-gear"></i> {{-- Settings icon --}}
-                       
+                    <a class="nav-link {{ request()->routeIs('admin.configuration.index') ? 'activee' : '' }}"
+                        href="{{ route('admin.configuration.index') }}">
+                        <i class="bi bi-gear"></i>
+                        <span>Configuration</span>
                     </a>
                 </li>
             </ul>
+            @endif
         </nav>
 
         <main class="main-content" id="mainContent"> {{-- Apply class and ID here --}}

@@ -11,6 +11,7 @@ use App\Http\Controllers\CurrencyController; // Add this line for currency switc
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AuthAdminController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController; // Corrected Namespace for Admin Reviews
+use App\Http\Controllers\Admin\ConfigurationController as AdminConfigurationController; // Added for Admin Configuration
 use App\Http\Controllers\FavoriteController; // Added FavoriteController
 use App\Http\Controllers\UserReviewController; // Added for User Reviews
 use App\Http\Controllers\MaintenanceController;
@@ -155,7 +156,17 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/admin/reviews', [AdminReviewController::class, 'index'])->name('admin.reviews.index');
     Route::patch('/admin/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('admin.reviews.approve');
     Route::delete('/admin/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('admin.reviews.destroy');
+<<<<<<< HEAD
 });
+=======
+
+    // Admin Configuration / Developer Tools (Local Environment Only)
+    if (app()->environment('local')) {
+        Route::get('/admin/configuration', [AdminConfigurationController::class, 'index'])->name('admin.configuration.index');
+        Route::patch('/admin/configuration/bookings/{booking}/age', [AdminConfigurationController::class, 'ageBooking'])->name('admin.configuration.bookings.age');
+    }
+   });
+>>>>>>> 16e46c73eaf437656bfc5f05fae74859d0bf0fac
 
 //Stable
 
