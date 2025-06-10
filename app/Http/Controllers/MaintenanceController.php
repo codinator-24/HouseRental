@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Maintenance;
-use App\Models\MaintenancePayment; // Added
+use App\Models\MaintenancePayment;
+use App\Notifications\NewMaintenanceRequestForLandlord; // Added
+use App\Notifications\MaintenanceRequestResponseForTenant; // Added
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -41,7 +43,12 @@ class MaintenanceController extends Controller
             $data['picture'] = $path;
         }
 
-        Maintenance::create($data);
+        $maintenance = Maintenance::create($data);
+
+        // Notify Landlord
+        if ($maintenance->house && $maintenance->house->landlord) {
+            $maintenance->house->landlord->notify(new NewMaintenanceRequestForLandlord($maintenance));
+        }
 
         return redirect()->route('dashboard')
                          ->with('success', 'Maintenance request submitted successfully!')
@@ -223,6 +230,11 @@ class MaintenanceController extends Controller
         $maintenance->landlord_response = $landlordResponse;
         $maintenance->save();
 
+        // Notify Tenant
+        if ($maintenance->tenant) {
+            $maintenance->tenant->notify(new MaintenanceRequestResponseForTenant($maintenance, 'accepted'));
+        }
+
         return redirect()->route('dashboard')
                          ->with('success', 'Maintenance request accepted successfully (no payment required).')
                          ->with('active_tab', 'maintenance');
@@ -254,6 +266,11 @@ class MaintenanceController extends Controller
         
         Session::forget('pending_maintenance_payment_data');
 
+        // Notify Tenant
+        if ($maintenance->tenant) {
+            $maintenance->tenant->notify(new MaintenanceRequestResponseForTenant($maintenance, 'accepted'));
+        }
+
         // This method returns true to indicate success to the calling StripeController.
         // The StripeController's success handler will manage the final user redirect.
         return true; 
@@ -283,6 +300,11 @@ class MaintenanceController extends Controller
         $maintenance->status = 'rejected';
         $maintenance->landlord_response = $request->input('landlord_response');
         $maintenance->save();
+
+        // Notify Tenant
+        if ($maintenance->tenant) {
+            $maintenance->tenant->notify(new MaintenanceRequestResponseForTenant($maintenance, 'rejected'));
+        }
 
         return redirect()->route('dashboard')
                          ->with('success', 'Maintenance request rejected successfully!')
