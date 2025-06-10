@@ -300,7 +300,24 @@
                                             </div>
 
                                             <div class="border-t border-gray-100 mt-4 pt-4">
-                                                <p class="text-sm text-gray-500">Details view not yet implemented.</p>
+                                                <button type="button"
+                                                    class="open-update-sent-maintenance-modal-btn w-full text-center py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2"
+                                                    style="color: #1b61c2;"
+                                                    onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
+                                                    onmouseout="this.style.backgroundColor='transparent'"
+                                                    data-request-id="{{ $request->id }}"
+                                                    data-house-title="{{ $request->house->title ?? 'Property N/A' }}"
+                                                    data-area-of-house="{{ $request->area_of_house }}"
+                                                    data-description="{{ $request->description }}"
+                                                    data-current-picture-url="{{ $request->picture ? asset('storage/' . $request->picture) : '' }}"
+                                                    data-status="{{ $request->status }}"
+                                                    data-landlord-response="{{ $request->landlord_response ?? '' }}"
+                                                    data-created-at="{{ $request->created_at->format('M d, Y H:i') }}"
+                                                    data-update-action-template="{{ route('maintenance.tenant.update', ['maintenance' => 'REQUEST_ID_PLACEHOLDER']) }}"
+                                                    data-cancel-action-template="{{ route('maintenance.tenant.cancel', ['maintenance' => 'REQUEST_ID_PLACEHOLDER']) }}"
+                                                    >
+                                                    <i class="fas fa-edit"></i> View / Update
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -350,7 +367,8 @@
                                         data-refund-amount="{{ $receivedRequest->refund_amount ?? '0.00' }}"
                                         data-current-status="{{ $receivedRequest->status }}"
                                         data-landlord-response="{{ $receivedRequest->landlord_response ?? '' }}"
-                                        {{-- data-form-action="{{ route('maintenance.landlord.reply', $receivedRequest->id) }}" --}}
+                                        data-accept-url="{{ route('maintenance.accept', $receivedRequest->id) }}"
+                                        data-reject-url="{{ route('maintenance.reject', $receivedRequest->id) }}"
                                         class="bg-white rounded-xl shadow-sm border border-gray-100 card-hover overflow-hidden text-left received-maintenance-card">
                                         <div class="p-5">
                                             <div class="mb-3">
@@ -383,9 +401,11 @@
                                                         class="px-2 py-1 rounded-full text-xs font-semibold border
                                                         {{ $receivedRequest->status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : '' }}
                                                         {{ $receivedRequest->status === 'in_progress' ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
+                                                        {{ $receivedRequest->status === 'accepted' ? 'bg-green-100 text-green-800 border-green-200' : '' }} {{-- Added accepted status style --}}
                                                         {{ $receivedRequest->status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
+                                                        {{ $receivedRequest->status === 'rejected' ? 'bg-red-100 text-red-800 border-red-200' : '' }} {{-- Added rejected status style --}}
                                                         {{ $receivedRequest->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
-                                                        {{ !in_array($receivedRequest->status, ['pending', 'in_progress', 'completed', 'cancelled', 'awaiting_parts', 'needs_tenant_input']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
+                                                        {{ !in_array($receivedRequest->status, ['pending', 'in_progress', 'completed', 'cancelled', 'awaiting_parts', 'needs_tenant_input', 'accepted', 'rejected']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
                                                         {{ $receivedRequest->status === 'awaiting_parts' ? 'bg-orange-100 text-orange-800 border-orange-200' : '' }}
                                                         {{ $receivedRequest->status === 'needs_tenant_input' ? 'bg-purple-100 text-purple-800 border-purple-200' : '' }}">
                                                         {{ ucfirst(str_replace('_', ' ', $receivedRequest->status ?? 'Pending')) }}
@@ -618,7 +638,7 @@
 
                             @if ($houses->isEmpty() && !$hasMoreProperties)
                                 <div
-                                    class="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
+                                    class="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 xl:grid-cols-5 bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
                                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -865,81 +885,161 @@
                         class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
                 </div>
 
-                <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <div class="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
                     <div id="landlordResponseErrorContainer" class="hidden">
                         {{-- Errors will be injected here by JS if needed --}}
                     </div>
 
-                    <div>
-                        <strong class="text-gray-700">Tenant Name:</strong>
-                        <p id="modal_tenant_name" class="text-gray-600"></p>
+                    <!-- Request Info Section -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">Tenant Name</h3>
+                            <p id="modal_tenant_name" class="text-lg text-gray-800 font-semibold"></p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">Area Of House</h3>
+                            <p id="modal_area_of_house" class="text-lg text-gray-800"></p>
+                        </div>
                     </div>
 
-                    <div id="modal_picture_container">
-                        <strong class="text-gray-700">Picture:</strong>
-                        <img id="modal_picture" src="" alt="Maintenance Picture"
-                            class="mt-1 max-w-xs max-h-64 rounded border object-contain">
-                        <p id="modal_no_picture_text" class="text-gray-500 italic mt-1" style="display:none;">No picture
-                            provided.</p>
+                    <div class="border-t border-gray-200 pt-4">
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Description of Issue</h3>
+                        <p id="modal_description" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded-md"></p>
                     </div>
 
-                    <div>
-                        <strong class="text-gray-700">Area Of House:</strong>
-                        <p id="modal_area_of_house" class="text-gray-600"></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                        <div id="modal_picture_container">
+                            <h3 class="text-sm font-medium text-gray-500 mb-2">Attached Picture</h3>
+                            <img id="modal_picture" src="" alt="Maintenance Picture"
+                                class="mt-1 w-full max-w-sm rounded-lg border shadow-sm object-contain">
+                            <p id="modal_no_picture_text" class="text-gray-500 italic mt-1 p-3 bg-gray-50 rounded-md" style="display:none;">No picture
+                                provided.</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">Requested Refund Amount</h3>
+                                <p id="modal_refund_amount" class="text-lg text-gray-800 font-semibold"></p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">Current Status</h3>
+                                <p id="modal_current_status_display" class="text-lg text-gray-800 capitalize-first"></p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <strong class="text-gray-700">Description:</strong>
-                        <p id="modal_description" class="text-gray-600 whitespace-pre-wrap"></p>
-                    </div>
-
-                    <div>
-                        <strong class="text-gray-700">Requested Refund Amount:</strong>
-                        <p id="modal_refund_amount" class="text-gray-600"></p>
-                    </div>
-
-                    <div>
-                        <strong class="text-gray-700">Current Status:</strong>
-                        <p id="modal_current_status_display" class="text-gray-600"></p>
-                    </div>
-
-                    <form id="landlordResponseForm" method="POST" action="">
+                    <!-- Landlord Response and Actions Section -->
+                    <form id="landlordProcessResponseForm" method="POST" action="" class="border-t border-gray-200 pt-6 mt-6">
                         @csrf
-                        {{-- @method('POST') is not strictly needed for POST, but good for clarity or if you change to PUT/PATCH later --}}
+                        {{-- The hidden input for new_status is no longer strictly needed if using separate routes for accept/reject,
+                             but kept for potential compatibility or if the old processLandlordResponse route is still used by something.
+                             The new controller actions acceptMaintenanceRequest and rejectMaintenanceRequest do not use it. --}}
+                        <input type="hidden" name="action_type_for_old_route" id="modal_new_status"> {{-- Renamed to avoid confusion --}}
 
-                        <div class="mt-4">
+                        <div>
                             <label for="modal_landlord_response"
-                                class="block text-sm font-medium text-gray-700">Your Reply:</label>
+                                class="block text-md font-semibold text-gray-700">Your Reply:</label>
                             <textarea name="landlord_response" id="modal_landlord_response" rows="4"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                                class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                placeholder="Enter your response to the tenant..."></textarea>
                             <div id="modal_landlord_response_error" class="mt-1 text-xs text-red-500"></div>
                         </div>
-
-                        <div class="mt-4">
-                            <label for="modal_status_update"
-                                class="block text-sm font-medium text-gray-700">Update Status:</label>
-                            <select name="status" id="modal_status_update"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="pending">Pending</option>
-                                <option value="in_progress">In Progress</option>
-                                <option value="awaiting_parts">Awaiting Parts</option>
-                                <option value="needs_tenant_input">Needs Tenant Input</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
-                            <div id="modal_status_update_error" class="mt-1 text-xs text-red-500"></div>
-                        </div>
-
-                        <div class="mt-6 flex justify-end">
-                            <button type="submit"
-                                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Submit Response & Update Status
+                        
+                        <div id="modal_accept_reject_actions_container" class="mt-6 flex flex-col sm:flex-row justify-end gap-3" style="display: none;">
+                            <button type="button" id="modalAcceptBtn"
+                                class="w-full sm:w-auto inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                                <i class="fas fa-check-circle mr-2"></i>Accept & Send Reply
+                            </button>
+                            <button type="button" id="modalRejectBtn"
+                                class="w-full sm:w-auto inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                <i class="fas fa-times-circle mr-2"></i>Reject & Send Reply
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    @endif
+
+    {{-- Update Sent Maintenance Request Modal (for Tenant) --}}
+    @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
+    <div id="updateSentMaintenanceRequestModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="updateSentMaintenanceModalTitle">
+        <div class="w-full max-w-2xl mx-4 bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+                <h1 id="updateSentMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">Update Sent Maintenance Request</h1>
+                <button id="closeUpdateSentMaintenanceModalBtn" aria-label="Close update sent maintenance modal" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+
+            <form id="updateSentMaintenanceForm" method="POST" action="" enctype="multipart/form-data" class="px-6 py-6 max-h-[80vh] overflow-y-auto">
+                @csrf
+                @method('PUT') {{-- Or PATCH --}}
+
+                {{-- Display Validation Errors (Example, adjust error bag name) --}}
+                <div id="updateSentMaintenanceErrorContainer" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+                    <p class="font-bold">Please correct the following errors:</p>
+                    <ul id="updateSentMaintenanceErrorList" class="list-disc list-inside text-sm"></ul>
+                </div>
+                
+                <input type="hidden" name="maintenance_request_id" id="update_maintenance_request_id">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Property</h3>
+                        <p id="modal_update_house_title" class="text-lg text-gray-800 font-semibold"></p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Area of House</h3>
+                        <p id="modal_update_area_of_house" class="text-lg text-gray-800"></p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Request Date</h3>
+                        <p id="modal_update_created_at" class="text-gray-700"></p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Current Status</h3>
+                        <p id="modal_update_status" class="text-lg text-gray-800 capitalize-first"></p>
+                    </div>
+                </div>
+
+                <div class="mb-6 border-t border-gray-200 pt-4">
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Landlord's Response</h3>
+                    <p id="modal_update_landlord_response" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded-md min-h-[50px]"></p>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="modal_update_description" class="block text-sm font-medium text-gray-700">Update Description</label>
+                    <textarea name="description" id="modal_update_description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700">Current Picture</label>
+                    <div id="modal_update_current_picture_container" class="mt-1">
+                        <img id="modal_update_current_picture" src="" alt="Current Maintenance Picture" class="max-w-xs max-h-48 rounded border object-contain shadow-sm">
+                        <p id="modal_update_no_current_picture_text" class="text-gray-500 italic" style="display:none;">No picture was originally provided.</p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="modal_update_new_picture" class="block text-sm font-medium text-gray-700">Upload New Picture (Optional - will replace current)</label>
+                    <input type="file" name="picture" id="modal_update_new_picture" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
+                    <button type="button" id="cancelSentMaintenanceRequestBtn" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" style="display: none;">
+                        <i class="fas fa-times-circle mr-2"></i>Cancel This Request
+                    </button>
+                    <button type="submit" id="updateSentMaintenanceSaveChangesBtn" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-save mr-2"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+            {{-- Separate form for cancellation to avoid issues with file uploads on cancel --}}
+            <form id="cancelSentMaintenanceForm" method="POST" action="" style="display: none;">
+                @csrf
+                @method('POST') {{-- Or DELETE, depending on how you want to handle it semantically --}}
+            </form>
+        </div>
+    </div>
     @endif
 
     <style>
@@ -996,6 +1096,10 @@
 
         .gradient-bg {
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .capitalize-first::first-letter {
+            text-transform: uppercase;
         }
     </style>
 
@@ -1059,7 +1163,13 @@
             const receivedMaintenanceCards = document.querySelectorAll('.received-maintenance-card');
             const receivedMaintenanceDetailModal = document.getElementById('receivedMaintenanceDetailModal');
             const closeReceivedMaintenanceDetailModalBtn = document.getElementById('closeReceivedMaintenanceDetailModalBtn');
-            const landlordResponseForm = document.getElementById('landlordResponseForm');
+            const landlordProcessResponseForm = document.getElementById('landlordProcessResponseForm');
+            const modalLandlordResponseTextarea = document.getElementById('modal_landlord_response');
+            const modalNewStatusInput = document.getElementById('modal_new_status');
+            const modalAcceptRejectActionsContainer = document.getElementById('modal_accept_reject_actions_container');
+            const modalAcceptBtn = document.getElementById('modalAcceptBtn');
+            const modalRejectBtn = document.getElementById('modalRejectBtn');
+
 
             // Determine initial active tab
             let initialTab = null;
@@ -1096,10 +1206,12 @@
             @endif
 
             // --- Received Maintenance Detail Modal Logic ---
-            if (receivedMaintenanceDetailModal && closeReceivedMaintenanceDetailModalBtn && landlordResponseForm) {
+            if (receivedMaintenanceDetailModal && closeReceivedMaintenanceDetailModalBtn && landlordProcessResponseForm && modalAcceptBtn && modalRejectBtn) {
                 receivedMaintenanceCards.forEach(card => {
                     card.addEventListener('click', function() {
                         const data = this.dataset;
+                        const requestId = data.requestId;
+
                         document.getElementById('modal_tenant_name').textContent = data.tenantName;
                         const pictureElement = document.getElementById('modal_picture');
                         const noPictureText = document.getElementById('modal_no_picture_text');
@@ -1116,26 +1228,52 @@
                         document.getElementById('modal_refund_amount').textContent = '$' + parseFloat(data.refundAmount).toFixed(2);
                         document.getElementById('modal_current_status_display').textContent = data.currentStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                         
-                        const landlordResponseTextarea = document.getElementById('modal_landlord_response');
-                        landlordResponseTextarea.value = data.landlordResponse || '';
+                        if(modalLandlordResponseTextarea) modalLandlordResponseTextarea.value = data.landlordResponse || '';
+                        
+                        // Store accept/reject URLs from card data
+                        landlordProcessResponseForm.dataset.acceptUrl = data.acceptUrl;
+                        landlordProcessResponseForm.dataset.rejectUrl = data.rejectUrl;
 
-                        const statusUpdateSelect = document.getElementById('modal_status_update');
-                        statusUpdateSelect.value = data.currentStatus || 'pending';
+                        // Show/hide Accept/Reject buttons based on status
+                        if (data.currentStatus === 'pending' && modalAcceptRejectActionsContainer) {
+                            modalAcceptRejectActionsContainer.style.display = 'flex';
+                        } else if (modalAcceptRejectActionsContainer) {
+                            modalAcceptRejectActionsContainer.style.display = 'none';
+                        }
 
-                        landlordResponseForm.action = data.formAction;
-
-                        // Clear previous errors for this specific modal instance
-                        document.getElementById('modal_landlord_response_error').textContent = '';
-                        document.getElementById('modal_status_update_error').textContent = '';
-                        // Hide general error container if it was shown
+                        // Clear previous errors
                         const landlordResponseErrorContainer = document.getElementById('landlordResponseErrorContainer');
-                        landlordResponseErrorContainer.classList.add('hidden');
-                        landlordResponseErrorContainer.innerHTML = '';
+                        if(landlordResponseErrorContainer) {
+                            landlordResponseErrorContainer.classList.add('hidden');
+                            landlordResponseErrorContainer.innerHTML = '';
+                        }
+                        const landlordResponseErrorEl = document.getElementById('modal_landlord_response_error');
+                        if(landlordResponseErrorEl) landlordResponseErrorEl.textContent = '';
 
 
                         receivedMaintenanceDetailModal.style.display = 'flex';
                     });
                 });
+
+                if(modalAcceptBtn) {
+                    modalAcceptBtn.addEventListener('click', function() {
+                        if (landlordProcessResponseForm && landlordProcessResponseForm.dataset.acceptUrl) {
+                            landlordProcessResponseForm.action = landlordProcessResponseForm.dataset.acceptUrl;
+                            // modalNewStatusInput.value = 'accepted'; // Not strictly needed for new routes
+                            landlordProcessResponseForm.submit();
+                        }
+                    });
+                }
+
+                if(modalRejectBtn) {
+                    modalRejectBtn.addEventListener('click', function() {
+                        if (landlordProcessResponseForm && landlordProcessResponseForm.dataset.rejectUrl) {
+                            landlordProcessResponseForm.action = landlordProcessResponseForm.dataset.rejectUrl;
+                            // modalNewStatusInput.value = 'rejected'; // Not strictly needed for new routes
+                            landlordProcessResponseForm.submit();
+                        }
+                    });
+                }
 
                 closeReceivedMaintenanceDetailModalBtn.addEventListener('click', function() {
                     receivedMaintenanceDetailModal.style.display = 'none';
@@ -1153,47 +1291,227 @@
                     }
                 });
 
-                // Re-open modal if there were validation errors for landlord response
+                // Re-open modal if there were validation errors
                 @if (session('error_modal_open') === 'receivedMaintenanceDetailModal' && session('open_modal_request_id'))
-                    const errorRequestId = {{ session('open_modal_request_id') }};
+                    const errorRequestId = "{{ session('open_modal_request_id') }}"; 
                     const cardToReopen = document.querySelector(`.received-maintenance-card[data-request-id="${errorRequestId}"]`);
+                    
                     if (cardToReopen) {
-                        // Simulate click to reopen and populate
-                        // Need to ensure the modal is displayed first before trying to access its elements for error messages
-                        receivedMaintenanceDetailModal.style.display = 'flex'; // Show modal first
-                        
-                        // Populate data (same as card click logic)
+                        receivedMaintenanceDetailModal.style.display = 'flex'; 
                         const data = cardToReopen.dataset;
+                        const requestId = data.requestId; // Use requestId from the card data for consistency
+
                         document.getElementById('modal_tenant_name').textContent = data.tenantName;
                         const pictureElement = document.getElementById('modal_picture');
                         const noPictureText = document.getElementById('modal_no_picture_text');
-                        if (data.pictureUrl) {
-                            pictureElement.src = data.pictureUrl;
-                            pictureElement.style.display = 'block';
-                            noPictureText.style.display = 'none';
-                        } else {
-                            pictureElement.style.display = 'none';
-                            noPictureText.style.display = 'block';
-                        }
+                        if (data.pictureUrl) { pictureElement.src = data.pictureUrl; pictureElement.style.display = 'block'; noPictureText.style.display = 'none'; } 
+                        else { pictureElement.style.display = 'none'; noPictureText.style.display = 'block'; }
                         document.getElementById('modal_area_of_house').textContent = data.areaOfHouse;
                         document.getElementById('modal_description').textContent = data.description;
                         document.getElementById('modal_refund_amount').textContent = '$' + parseFloat(data.refundAmount).toFixed(2);
                         document.getElementById('modal_current_status_display').textContent = data.currentStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        document.getElementById('modal_landlord_response').value = data.landlordResponse || ''; // Keep old input for response
-                        document.getElementById('modal_status_update').value = data.currentStatus || 'pending'; // Keep old input for status
-                        landlordResponseForm.action = data.formAction;
+                        
+                        if(modalLandlordResponseTextarea) modalLandlordResponseTextarea.value = "{{ old('landlord_response', '') }}";
+                        
+                        // Store accept/reject URLs from card data when reopening on error
+                        if (landlordProcessResponseForm && data.acceptUrl && data.rejectUrl) {
+                            landlordProcessResponseForm.dataset.acceptUrl = data.acceptUrl;
+                            landlordProcessResponseForm.dataset.rejectUrl = data.rejectUrl;
+                        }
+                        // Note: The form action for re-submission on error might still point to the old generic route
+                        // if `data.formAction` was used. This part of error handling might need refinement
+                        // if we want errors from new routes to also re-populate correctly.
+                        // For now, the primary submission paths are updated.
 
-                        // Now display errors
+                        if (data.currentStatus === 'pending' && modalAcceptRejectActionsContainer) {
+                            modalAcceptRejectActionsContainer.style.display = 'flex';
+                        } else if (modalAcceptRejectActionsContainer) {
+                            modalAcceptRejectActionsContainer.style.display = 'none';
+                        }
+
+                        // Display validation errors
+                        const landlordResponseErrorContainer = document.getElementById('landlordResponseErrorContainer');
+                        // const modalLandlordResponseError = document.getElementById('modal_landlord_response_error'); // This is for a single field, the container is better for multiple errors
+                        
                         @if ($errors->hasBag('landlordResponseErrors_' . session('open_modal_request_id')))
-                            const landlordResponseError = "{{ $errors->{'landlordResponseErrors_' . session('open_modal_request_id')}->first('landlord_response') }}";
-                            const statusUpdateError = "{{ $errors->{'landlordResponseErrors_' . session('open_modal_request_id')}->first('status') }}";
-                            
-                            if(landlordResponseError) {
-                                document.getElementById('modal_landlord_response_error').textContent = landlordResponseError;
+                            const errorsForThisModal = @json($errors->{'landlordResponseErrors_' . session('open_modal_request_id')}->all());
+                            if (errorsForThisModal.length > 0 && landlordResponseErrorContainer) {
+                                landlordResponseErrorContainer.classList.remove('hidden');
+                                landlordResponseErrorContainer.innerHTML = '<p class="font-bold">Please correct the following errors:</p><ul class="list-disc list-inside text-sm"></ul>';
+                                const errorList = landlordResponseErrorContainer.querySelector('ul');
+                                errorsForThisModal.forEach(error => {
+                                    const li = document.createElement('li');
+                                    li.textContent = error;
+                                    errorList.appendChild(li);
+                                });
                             }
-                            if(statusUpdateError) {
-                                document.getElementById('modal_status_update_error').textContent = statusUpdateError;
-                            }
+                        @endif
+                    }
+                @endif
+            }
+
+            // --- Update Sent Maintenance Request Modal Script ---
+            const openUpdateSentMaintenanceModalBtns = document.querySelectorAll('.open-update-sent-maintenance-modal-btn');
+            const updateSentMaintenanceModal = document.getElementById('updateSentMaintenanceRequestModal');
+            const closeUpdateSentMaintenanceModalBtn = document.getElementById('closeUpdateSentMaintenanceModalBtn');
+            const updateSentMaintenanceForm = document.getElementById('updateSentMaintenanceForm');
+            const cancelSentMaintenanceRequestBtn = document.getElementById('cancelSentMaintenanceRequestBtn');
+            const cancelSentMaintenanceForm = document.getElementById('cancelSentMaintenanceForm');
+            const updateSentMaintenanceSaveChangesBtn = document.getElementById('updateSentMaintenanceSaveChangesBtn');
+
+            if (updateSentMaintenanceModal && closeUpdateSentMaintenanceModalBtn && updateSentMaintenanceForm && updateSentMaintenanceSaveChangesBtn) {
+                openUpdateSentMaintenanceModalBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const data = this.dataset;
+                        const requestId = data.requestId;
+
+                        // Populate display fields
+                        document.getElementById('modal_update_house_title').textContent = data.houseTitle;
+                        document.getElementById('modal_update_area_of_house').textContent = data.areaOfHouse;
+                        document.getElementById('modal_update_created_at').textContent = data.createdAt;
+                        document.getElementById('modal_update_status').textContent = data.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        
+                        const landlordResponseEl = document.getElementById('modal_update_landlord_response');
+                        if (data.landlordResponse) {
+                            landlordResponseEl.textContent = data.landlordResponse;
+                            landlordResponseEl.classList.remove('italic', 'text-gray-500');
+                        } else {
+                            landlordResponseEl.textContent = 'No response from landlord yet.';
+                            landlordResponseEl.classList.add('italic', 'text-gray-500');
+                        }
+
+                        // Populate editable fields
+                        document.getElementById('modal_update_description').value = data.description;
+                        
+                        // Populate current picture
+                        const currentPicImg = document.getElementById('modal_update_current_picture');
+                        const noCurrentPicText = document.getElementById('modal_update_no_current_picture_text');
+                        if (data.currentPictureUrl) {
+                            currentPicImg.src = data.currentPictureUrl;
+                            currentPicImg.style.display = 'block';
+                            noCurrentPicText.style.display = 'none';
+                        } else {
+                            currentPicImg.style.display = 'none';
+                            noCurrentPicText.style.display = 'block';
+                        }
+                        // Clear the file input for new picture
+                        document.getElementById('modal_update_new_picture').value = '';
+
+
+                        // Set form action
+                        updateSentMaintenanceForm.action = data.updateActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
+                        document.getElementById('update_maintenance_request_id').value = requestId;
+
+                        const updatableStatuses = ['pending', 'in_progress', 'needs_tenant_input'];
+                        const canUpdate = updatableStatuses.includes(data.status) && !data.landlordResponse;
+
+                        if (canUpdate) {
+                            updateSentMaintenanceSaveChangesBtn.style.display = 'inline-flex';
+                        } else {
+                            updateSentMaintenanceSaveChangesBtn.style.display = 'none';
+                        }
+
+                        // Handle "Cancel Request" button
+                        if (data.status === 'pending') { // Only show cancel if status is pending
+                            cancelSentMaintenanceRequestBtn.style.display = 'inline-flex';
+                            cancelSentMaintenanceForm.action = data.cancelActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
+                        } else {
+                            cancelSentMaintenanceRequestBtn.style.display = 'none';
+                        }
+                        
+                        // Clear previous errors
+                        const errorContainer = document.getElementById('updateSentMaintenanceErrorContainer');
+                        const errorList = document.getElementById('updateSentMaintenanceErrorList');
+                        errorContainer.classList.add('hidden');
+                        errorList.innerHTML = '';
+
+                        updateSentMaintenanceModal.style.display = 'flex';
+                    });
+                });
+
+                closeUpdateSentMaintenanceModalBtn.addEventListener('click', function() {
+                    updateSentMaintenanceModal.style.display = 'none';
+                });
+
+                updateSentMaintenanceModal.addEventListener('click', function(event) {
+                    if (event.target === updateSentMaintenanceModal) {
+                        updateSentMaintenanceModal.style.display = 'none';
+                    }
+                });
+
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && updateSentMaintenanceModal.style.display === 'flex') {
+                        updateSentMaintenanceModal.style.display = 'none';
+                    }
+                });
+
+                if (cancelSentMaintenanceRequestBtn) {
+                    cancelSentMaintenanceRequestBtn.addEventListener('click', function() {
+                        if (confirm('Are you sure you want to cancel this maintenance request? This action cannot be undone.')) {
+                            cancelSentMaintenanceForm.submit();
+                        }
+                    });
+                }
+                
+                // Handle re-opening modal if there were validation errors (example)
+                // This requires session flashing of error bag name and request ID
+                @if (session('error_modal_open') === 'updateSentMaintenanceRequestModal' && session('open_modal_request_id_tenant_update'))
+                    const errorRequestIdTenantUpdate = "{{ session('open_modal_request_id_tenant_update') }}";
+                    const cardToReopenTenantUpdate = document.querySelector(`.open-update-sent-maintenance-modal-btn[data-request-id="${errorRequestIdTenantUpdate}"]`);
+                    if (cardToReopenTenantUpdate) {
+                        // Simulate click to reopen and populate
+                        updateSentMaintenanceModal.style.display = 'flex'; // Show modal first
+                        
+                        const data = cardToReopenTenantUpdate.dataset;
+                        const requestId = data.requestId;
+
+                        document.getElementById('modal_update_house_title').textContent = data.houseTitle;
+                        document.getElementById('modal_update_area_of_house').textContent = data.areaOfHouse;
+                        document.getElementById('modal_update_created_at').textContent = data.createdAt;
+                        document.getElementById('modal_update_status').textContent = data.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        const landlordResponseEl = document.getElementById('modal_update_landlord_response');
+                        if (data.landlordResponse) { landlordResponseEl.textContent = data.landlordResponse; landlordResponseEl.classList.remove('italic', 'text-gray-500'); } 
+                        else { landlordResponseEl.textContent = 'No response from landlord yet.'; landlordResponseEl.classList.add('italic', 'text-gray-500'); }
+                        
+                        // Keep old input for description if validation failed
+                        // document.getElementById('modal_update_description').value = "{{ old('description') }}"; // This would be for Laravel old() helper
+                        
+                        const currentPicImg = document.getElementById('modal_update_current_picture');
+                        const noCurrentPicText = document.getElementById('modal_update_no_current_picture_text');
+                        if (data.currentPictureUrl) { currentPicImg.src = data.currentPictureUrl; currentPicImg.style.display = 'block'; noCurrentPicText.style.display = 'none';} 
+                        else { currentPicImg.style.display = 'none'; noCurrentPicText.style.display = 'block'; }
+                        
+                        updateSentMaintenanceForm.action = data.updateActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
+                        document.getElementById('update_maintenance_request_id').value = requestId;
+
+                        const updatableStatusesReopen = ['pending', 'in_progress', 'needs_tenant_input'];
+                        const canUpdateReopen = updatableStatusesReopen.includes(data.status) && !data.landlordResponse;
+
+                        if (canUpdateReopen) {
+                            updateSentMaintenanceSaveChangesBtn.style.display = 'inline-flex';
+                        } else {
+                            updateSentMaintenanceSaveChangesBtn.style.display = 'none';
+                        }
+
+                        if (data.status === 'pending') {
+                            cancelSentMaintenanceRequestBtn.style.display = 'inline-flex';
+                            cancelSentMaintenanceForm.action = data.cancelActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
+                        } else {
+                            cancelSentMaintenanceRequestBtn.style.display = 'none';
+                        }
+
+                        // Display validation errors
+                        const errorContainer = document.getElementById('updateSentMaintenanceErrorContainer');
+                        const errorList = document.getElementById('updateSentMaintenanceErrorList');
+                        errorContainer.classList.remove('hidden');
+                        errorList.innerHTML = ''; // Clear previous errors
+                        
+                        @if ($errors->hasBag('updateSentMaintenanceRequestErrors_' . session('open_modal_request_id_tenant_update')))
+                            @foreach ($errors->{'updateSentMaintenanceRequestErrors_' . session('open_modal_request_id_tenant_update')}->all() as $error)
+                                const li = document.createElement('li');
+                                li.textContent = "{{ $error }}";
+                                errorList.appendChild(li);
+                            @endforeach
                         @endif
                     }
                 @endif

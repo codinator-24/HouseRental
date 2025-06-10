@@ -81,13 +81,19 @@ Route::middleware('lang')->group(function () {
         Route::post('/agreements/{agreement}/messages', [MessageController::class, 'store'])->name('agreements.messages.store');
 
         // Example (adjust middleware as needed)
-Route::post('/maintenance', [MaintenanceController::class, 'InsertMaintenance'])->name('maintenance.insert');
+        Route::post('/maintenance', [MaintenanceController::class, 'InsertMaintenance'])->name('maintenance.insert');
+        Route::put('/maintenance/tenant-update/{maintenance}', [MaintenanceController::class, 'tenantUpdate'])->name('maintenance.tenant.update');
+        Route::post('/maintenance/tenant-cancel/{maintenance}', [MaintenanceController::class, 'tenantCancel'])->name('maintenance.tenant.cancel');
+        // The following route can be kept if there's other general processing, or removed if accept/reject cover all landlord responses.
+        // Route::post('/maintenance/landlord-process-response/{maintenance}', [MaintenanceController::class, 'processLandlordResponse'])->name('maintenance.landlord.process_response');
+        // New routes for specific accept/reject actions by landlord
+        Route::post('/maintenance/{maintenance}/accept', [MaintenanceController::class, 'acceptMaintenanceRequest'])->name('maintenance.accept');
+        Route::post('/maintenance/{maintenance}/reject', [MaintenanceController::class, 'rejectMaintenanceRequest'])->name('maintenance.reject');
 
         // User Review Routes
         Route::get('/dashboard/my-reviews', [UserReviewController::class, 'index'])->name('reviews.my');
         Route::get('/dashboard/bookings/{booking}/review/create', [UserReviewController::class, 'create'])->name('reviews.create');
         Route::post('/dashboard/bookings/{booking}/review', [UserReviewController::class, 'store'])->name('reviews.store');
-
     });
 
     // Currency Switcher Route - accessible by guests and authenticated users
@@ -149,11 +155,12 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/admin/reviews', [AdminReviewController::class, 'index'])->name('admin.reviews.index');
     Route::patch('/admin/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('admin.reviews.approve');
     Route::delete('/admin/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('admin.reviews.destroy');
-   });
+});
 
 //Stable
 
 // Lerawa Route dika zia bkan
-Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
+Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
+Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
 Route::get('/contactUs', [DashboardController::class, 'show_contact'])->name('contact');
 Route::post('/add_contact', [DashboardController::class, 'insert_contact'])->name('submit.contact');
