@@ -14,24 +14,23 @@
                                     d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM9 5v6h2V5H9zm0 8v2h2v-2H9z" />
                             </svg></div>
                         <div>
-                            <p class="font-bold text-xl">Account Verification Pending</p>
-                            <p class="text-md">Wait until your account is verified. You cannot add new properties at this
-                                time.</p>
+                            <p class="font-bold text-xl">@lang('words.add_house_verification_pending_title')</p>
+                            <p class="text-md">@lang('words.add_house_verification_pending_text')</p>
                         </div>
                     </div>
                 </div>
             </div>
         @else
             <div class="container mx-auto px-4 py-8"> {{-- Basic container and padding --}}
-                <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">Add New Property Listing</h1>
+                <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">@lang('words.add_house_page_title')</h1>
                 {{-- Styled heading, centered --}}
 
                 {{-- Display validation errors if any --}}
                 @if ($errors->any())
                     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6"
                         role="alert">
-                        <strong class="font-bold">Oops!</strong>
-                        <span class="block sm:inline">Please fix the following errors:</span>
+                        <strong class="font-bold">@lang('words.error_oops')</strong>
+                        <span class="block sm:inline">@lang('words.error_fix_following')</span>
                         <ul class="mt-3 list-disc list-inside text-sm">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -47,11 +46,11 @@
 
                     {{-- Section 1: Basic Property Information --}}
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Basic Property Information</h2>
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">@lang('words.add_house_section_basic_info')</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Title --}}
                             <div class="mb-4">
-                                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_title')</label>
                                 <input type="text" id="title" name="title" value="{{ old('title') }}"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('title') border-red-500 @enderror">
                                 @error('title')
@@ -61,17 +60,15 @@
 
                             {{-- Property Type --}}
                             <div class="mb-4">
-                                <label for="property_type" class="block text-sm font-medium text-gray-700 mb-2">Property
-                                    Type:</label>
+                                <label for="property_type" class="block text-sm font-medium text-gray-700 mb-2">@lang('words.add_house_label_property_type')</label>
                                 <select id="property_type" name="property_type"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white shadow appearance-none @error('property_type') border-red-500 @enderror">
-                                    <option value="" {{ old('property_type') == '' ? 'selected' : '' }}>Select
-                                        Property Type</option>
+                                    <option value="" {{ old('property_type') == '' ? 'selected' : '' }}>@lang('words.add_house_select_property_type')</option>
                                     <option value="apartment" {{ old('property_type') == 'apartment' ? 'selected' : '' }}>
-                                        Apartment</option>
-                                    <option value="house" {{ old('property_type') == 'house' ? 'selected' : '' }}>House
+                                        @lang('words.property_type_apartment')</option>
+                                    <option value="house" {{ old('property_type') == 'house' ? 'selected' : '' }}>@lang('words.property_type_house')
                                     </option>
-                                    <option value="commercial" {{ old('property_type') == 'commercial' ? 'selected' : '' }}>Commercial
+                                    <option value="commercial" {{ old('property_type') == 'commercial' ? 'selected' : '' }}>@lang('words.property_type_commercial')
                                     </option>
                                 </select>
                                 @error('property_type')
@@ -83,20 +80,20 @@
 
                     {{-- Section 2: Location Details --}}
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Location Details</h2>
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">@lang('words.add_house_section_location_details')</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                             {{-- City --}}
                             <div class="mb-4">
-                                <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
+                                <label for="city" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_city_colon')</label>
                                 <select id="city" name="city"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('city') border-red-500 @enderror">
-                                    <option value="" {{ old('city') == '' ? 'selected' : '' }}>Select City</option>
+                                    <option value="" {{ old('city') == '' ? 'selected' : '' }}>@lang('words.add_house_select_city')</option>
                                     <option value="Sulaymaniyah" {{ old('city') == 'Sulaymaniyah' ? 'selected' : '' }}>
-                                        Sulaymaniyah</option>
-                                    <option value="Hawler" {{ old('city') == 'Hawler' ? 'selected' : '' }}>Hawler</option>
-                                    <option value="Karkuk" {{ old('city') == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
-                                    <option value="Dhok" {{ old('city') == 'Dhok' ? 'selected' : '' }}>Dhok</option>
-                                    <option value="Halabja" {{ old('city') == 'Halabja' ? 'selected' : '' }}>Halabja
+                                        @lang('words.Sulaymaniyah')</option>
+                                    <option value="Hawler" {{ old('city') == 'Hawler' ? 'selected' : '' }}>@lang('words.Hawler')</option>
+                                    <option value="Karkuk" {{ old('city') == 'Karkuk' ? 'selected' : '' }}>@lang('words.Karkuk')</option>
+                                    <option value="Dhok" {{ old('city') == 'Dhok' ? 'selected' : '' }}>@lang('words.Dhok')</option>
+                                    <option value="Halabja" {{ old('city') == 'Halabja' ? 'selected' : '' }}>@lang('words.Halabja')
                                     </option>
                                 </select>
                                 @error('city')
@@ -107,10 +104,10 @@
                             {{-- Neighborhood --}}
                             <div class="mb-4">
                                 <label for="neighborhood"
-                                    class="block text-gray-700 text-sm font-bold mb-2">Neighborhood:</label>
+                                    class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_neighborhood_colon')</label>
                                 <select id="neighborhood" name="neighborhood"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('neighborhood') border-red-500 @enderror">
-                                    <option value="">Select Neighborhood</option> {{-- Default placeholder --}}
+                                    <option value="">@lang('words.add_house_select_neighborhood')</option> {{-- Default placeholder --}}
                                     {{-- Options will be populated by JavaScript --}}
                                 </select>
                                 @error('neighborhood')
@@ -120,8 +117,7 @@
                         </div>
                         {{-- Second Address --}}
                         <div class="mb-6"> {{-- Increased bottom margin --}}
-                            <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">Second Address
-                                Line <span class="text-gray-500 text-xs">(Optional)</span>:</label>
+                            <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_second_address')</label>
                             <input type="text" id="second_address" name="second_address"
                                 value="{{ old('second_address') }}"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('second_address') border-red-500 @enderror">
@@ -133,12 +129,11 @@
 
                     {{-- Section 3: Property Specifications --}}
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Property Specifications</h2>
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">@lang('words.add_house_section_specifications')</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Square Footage --}}
                             <div class="mb-4">
-                                <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">Square Meter
-                                    (m<sup>2</sup>):</label>
+                                <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_square_meter')</label>
                                 <input type="number" id="square_footage" name="square_footage"
                                     value="{{ old('square_footage') }}" min="0"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('square_footage') border-red-500 @enderror">
@@ -149,8 +144,7 @@
 
                             {{-- Rent Amount --}}
                             <div class="mb-4">
-                                <label for="rent_amount" class="block text-gray-700 text-sm font-bold mb-2">Rent Amount
-                                    (per month):</label>
+                                <label for="rent_amount" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_rent_amount')</label>
                                 <input type="number" id="rent_amount" name="rent_amount"
                                     value="{{ old('rent_amount') }}" min="0" step="0.01"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('rent_amount') border-red-500 @enderror">
@@ -163,7 +157,7 @@
 
                     {{-- Section 4: Floor Details --}}
                     <div class="mb-8"> {{-- Replaced md:col-span-2 and mb-2 with mb-8 for consistency --}}
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Floor Details</h2>
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">@lang('words.add_house_section_floor_details')</h2>
                         {{-- Consistent heading style --}}
                         <div id="floors_container" class="space-y-6">
                             @php
@@ -182,13 +176,12 @@
                             @foreach ($floorEntries as $index => $floorData)
                                 <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50"
                                     data-index="{{ $index }}">
-                                    <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor {{ $index + 1 }}
+                                    <h3 class="text-xl font-semibold mb-3 text-gray-600">@lang('words.add_house_floor_title_prefix') {{ $index + 1 }}
                                     </h3>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label for="floor_{{ $index }}_number_of_rooms"
-                                                class="block text-gray-700 text-sm font-bold mb-1">Number of
-                                                Rooms:</label>
+                                                class="block text-gray-700 text-sm font-bold mb-1">@lang('words.add_house_label_number_of_rooms')</label>
                                             <input type="number" id="floor_{{ $index }}_number_of_rooms"
                                                 name="floors[{{ $index }}][number_of_rooms]"
                                                 value="{{ $floorData['number_of_rooms'] ?? '' }}" min="0"
@@ -199,16 +192,16 @@
                                         </div>
                                         <div>
                                             <label for="floor_{{ $index }}_bathrooms"
-                                                class="block text-gray-700 text-sm font-bold mb-1">Bathrooms:</label>
+                                                class="block text-gray-700 text-sm font-bold mb-1">@lang('words.add_house_label_bathrooms')</label>
                                             <select id="floor_{{ $index }}_bathrooms"
                                                 name="floors[{{ $index }}][bathrooms]"
                                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('floors.' . $index . '.bathrooms') border-red-500 @enderror">
                                                 <option value="0"
                                                     {{ isset($floorData['bathrooms']) && $floorData['bathrooms'] == '0' ? 'selected' : '' }}>
-                                                    Not Exists</option>
+                                                    @lang('words.add_house_bathroom_not_exists')</option>
                                                 <option value="1"
                                                     {{ isset($floorData['bathrooms']) && $floorData['bathrooms'] == '1' ? 'selected' : '' }}>
-                                                    Exists</option>
+                                                    @lang('words.add_house_bathroom_exists')</option>
                                             </select>
                                             @error('floors.' . $index . '.bathrooms')
                                                 <p class="text-red-500 text-xs italic">{{ $message }}</p>
@@ -219,8 +212,7 @@
                                         {{-- Allow removing floors, but not the very first one if it's the only one, or always allow removal --}}
                                         <div class="mt-3 text-right">
                                             <button type="button"
-                                                class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove
-                                                Floor</button>
+                                                class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">@lang('words.add_house_remove_floor_button')</button>
                                         </div>
                                     @endif
                                 </div>
@@ -230,16 +222,16 @@
                         <div class="mt-6">
                             <button type="button" id="addFloorButton"
                                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                                Add Floor
+                                @lang('words.add_house_add_floor_button')
                             </button>
                         </div>
                     </div>
 
                     {{-- Section 5: Description --}}
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Description</h2>
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">@lang('words.add_house_section_description')</h2>
                         <label for="description"
-                            class="block text-gray-700 text-sm font-bold mb-2 sr-only">Description:</label>
+                            class="block text-gray-700 text-sm font-bold mb-2 sr-only">@lang('words.add_house_label_description_sr')</label>
                         {{-- Label is visually hidden but available for screen readers --}}
                         <textarea id="description" name="description" rows="4"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
@@ -250,7 +242,7 @@
 
                     {{-- Section 6: Property Location (Map) --}}
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Property Location</h2>
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">@lang('words.add_house_section_property_location')</h2>
                         <div id="map" style="height: 400px; width: 100%;" class="rounded-md border"></div>
                         <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude') }}">
                         <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude') }}">
@@ -264,13 +256,11 @@
 
                     {{-- Section 7: House Pictures --}}
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">House Pictures</h2>
-                        <label for="pictures" class="block text-gray-700 text-sm font-bold mb-2 sr-only">House
-                            Pictures:</label> {{-- Label is visually hidden --}}
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">@lang('words.add_house_section_house_pictures')</h2>
+                        <label for="pictures" class="block text-gray-700 text-sm font-bold mb-2 sr-only">@lang('words.add_house_label_house_pictures_sr')</label> {{-- Label is visually hidden --}}
                         <input type="file" id="pictures" name="pictures[]" multiple accept="image/*"
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none @error('pictures.*') border-red-500 @enderror @error('pictures') border-red-500 @enderror">
-                        <p class="mt-1 text-sm text-gray-500" id="file_input_help">PNG, JPG, GIF, WEBP. You can select
-                            multiple images.</p>
+                        <p class="mt-1 text-sm text-gray-500" id="file_input_help">@lang('words.add_house_pictures_help_text')</p>
                         @error('pictures')
                             <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                         @enderror
@@ -283,7 +273,7 @@
                     <div class="flex items-center justify-end mt-8 pt-6 border-t"> {{-- Increased top margin --}}
                         <button type="submit"
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Add House
+                            @lang('words.Add House')
                         </button>
                     </div>
 
@@ -294,8 +284,7 @@
         {{-- Optional: Message for guests trying to access this page directly,
              though ideally, route middleware should redirect them to login. --}}
         <div class="container mx-auto px-4 py-8 text-center">
-            <p class="text-xl text-gray-700">Please <a href="{{ route('login') }}"
-                    class="text-blue-600 hover:underline">login</a> to add a property.</p>
+            <p class="text-xl text-gray-700">@lang('words.add_house_guest_login_prompt', ['Login' => '<a href="'.route('login').'" class="text-blue-600 hover:underline">'.__('words.Login').'</a>'])</p>
         </div>
     @endauth
 
@@ -312,25 +301,25 @@
                     const newIndex = floorCounter;
                     const floorSectionHtml = `
                     <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50" data-index="${newIndex}">
-                        <h3 class="text-xl font-semibold mb-3 text-gray-600">Floor ${newIndex + 1}</h3>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-600">@lang('words.add_house_floor_title_prefix') ${newIndex + 1}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="floor_${newIndex}_number_of_rooms" class="block text-gray-700 text-sm font-bold mb-1">Number of Rooms:</label>
+                                <label for="floor_${newIndex}_number_of_rooms" class="block text-gray-700 text-sm font-bold mb-1">@lang('words.add_house_label_number_of_rooms')</label>
                                 <input type="number" id="floor_${newIndex}_number_of_rooms" name="floors[${newIndex}][number_of_rooms]"
                                        value="" min="0" 
                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                             </div>
                             <div>
-                                <label for="floor_${newIndex}_bathrooms" class="block text-gray-700 text-sm font-bold mb-1">Bathrooms:</label>
+                                <label for="floor_${newIndex}_bathrooms" class="block text-gray-700 text-sm font-bold mb-1">@lang('words.add_house_label_bathrooms')</label>
                                 <select id="floor_${newIndex}_bathrooms" name="floors[${newIndex}][bathrooms]"
                                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white" >
-                                    <option value="0" selected>Not Exists</option>
-                                    <option value="1">Exists</option>
+                                    <option value="0" selected>@lang('words.add_house_bathroom_not_exists')</option>
+                                    <option value="1">@lang('words.add_house_bathroom_exists')</option>
                                 </select>
                             </div>
                         </div>
                         <div class="mt-3 text-right">
-                            <button type="button" class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove Floor</button>
+                            <button type="button" class="remove-floor-btn text-red-500 hover:text-red-700 text-sm font-medium">@lang('words.add_house_remove_floor_button')</button>
                         </div>
                     </div>
                 `;
@@ -353,7 +342,7 @@
                     allFloorSections.forEach((section, idx) => {
                         const titleElement = section.querySelector('h3');
                         if (titleElement) {
-                            titleElement.textContent = `Floor ${idx + 1}`;
+                            titleElement.textContent = `@lang('words.add_house_floor_title_prefix') ${idx + 1}`;
                         }
                     });
                     floorCounter = allFloorSections.length;
@@ -460,7 +449,7 @@
                     const selectedCity = cityDropdown.value;
 
                     // Clear previous neighborhood options and add the default placeholder
-                    neighborhoodDropdown.innerHTML = '<option value="">Select Neighborhood</option>';
+                    neighborhoodDropdown.innerHTML = '<option value="">' + "{{ __('words.add_house_select_neighborhood') }}" + '</option>';
 
                     if (selectedCity && neighborhoodsByCity[selectedCity] && neighborhoodsByCity[selectedCity]
                         .length > 0) {

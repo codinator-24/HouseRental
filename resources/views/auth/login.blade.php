@@ -65,14 +65,14 @@
                 <div>
                     <button type="submit"
                             class="w-full px-4 py-2 font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        @lang('words.Submit')
+                        @lang('words.login_submit_button')
                     </button>
                 </div>
             </form>
 
             {{-- Link to Register Page --}}
             <p class="mt-6 text-sm text-center text-gray-600">
-                @lang('words.Don\'t have an account?')
+                @lang('words.login_prompt_register')
                 <a href="{{ route('register') }}" class="font-medium text-blue-600 hover:underline">
                     @lang('words.Register')
                 </a>

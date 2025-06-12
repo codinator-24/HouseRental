@@ -75,7 +75,7 @@
     <div class="contact-page-main"> {{-- This div will be styled by main.contact-page-main --}}
         <div class="feedback-container">
             <h2 class="form-title flex items-center justify-center">
-                <span>Feedback</span>
+                <span>@lang('words.Feedback')</span>
                 <i class="fas fa-comment-dots ml-2"></i>
             </h2>
 
@@ -91,7 +91,7 @@
             @endif
             @if ($errors->any() && !session('success') && !session('error'))
                 <div class="mb-4 p-3 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
-                    <p class="font-bold">Please correct the following errors:</p>
+                    <p class="font-bold">@lang('words.error_fix_following')</p>
                     <ul class="mt-1 list-disc list-inside">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -105,7 +105,7 @@
                 <form method="POST" action="{{ route('submit.contact') }}">
                     @csrf
                     <div>
-                        <label for="title" class="form-label">Title</label>
+                        <label for="title" class="form-label">@lang('words.contact_label_title')</label>
                         <input type="text" class="form-control @error('title') border-red-500 @enderror" id="title" name="title" value="{{ old('title') }}" required>
                         @error('title')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -113,7 +113,7 @@
                     </div>
 
                     <div>
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">@lang('words.contact_label_description')</label>
                         <textarea class="form-textarea @error('description') border-red-500 @enderror" id="description" name="description" rows="5" required>{{ old('description') }}</textarea>
                         @error('description')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -121,12 +121,12 @@
                     </div>
 
                     <div class="mt-6 text-center">
-                        <button type="submit" class="custom-btn">Submit Feedback</button>
+                        <button type="submit" class="custom-btn">@lang('words.contact_submit_feedback_button')</button>
                     </div>
                 </form>
             @else
                 <div class="guest-message">
-                    <p>Please <a href="{{ route('login') }}">login</a> or <a href="{{ route('register') }}">register</a> to submit feedback.</p>
+                    <p>@lang('words.contact_guest_login_prompt', ['Login' => '<a href="'.route('login').'" class="text-blue-600 hover:underline">'.__('words.Login').'</a>', 'Register' => '<a href="'.route('register').'" class="text-blue-600 hover:underline">'.__('words.Register').'</a>'])</p>
                 </div>
             @endauth
         </div>

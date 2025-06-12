@@ -22,7 +22,7 @@
 </style>
 <x-layout>
     <div class="container px-6 py-12 mx-auto">
-        <h1 class="mb-10 text-4xl font-bold text-center text-gray-800 md:text-left">My Favorite Properties</h1>
+        <h1 class="mb-10 text-4xl font-bold text-center text-gray-800 md:text-left">@lang('words.favorites_page_title')</h1>
 
         @if ($favoriteHouses->isEmpty())
             <div class="p-8 text-center bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -32,12 +32,11 @@
                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
                     </path>
                 </svg>
-                <p class="mb-4 text-2xl font-semibold text-gray-700">No Favorites Yet</p>
-                <p class="mb-8 text-gray-600">You haven't added any properties to your favorites. Start exploring and
-                    find your dream home!</p>
+                <p class="mb-4 text-2xl font-semibold text-gray-700">@lang('words.favorites_none_title')</p>
+                <p class="mb-8 text-gray-600">@lang('words.favorites_none_text')</p>
                 <a href="{{ route('home') }}"
                     class="inline-block px-8 py-3 text-lg font-semibold text-white transition duration-300 bg-blue-600 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                    Explore Properties
+                    @lang('words.sent_bookings_explore_properties_button')
                 </a>
             </div>
         @else
@@ -50,7 +49,7 @@
                         {{-- On favorites page, it's always favorited, so shows filled heart and acts as "remove" --}}
                         <button
                             class="absolute top-3 right-3 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
-                            data-house-id="{{ $house->id }}" title="Remove from Favorites">
+                            data-house-id="{{ $house->id }}" title="@lang('words.favorites_remove_button_title')">
                             <i class="text-lg text-red-500 fas fa-heart"></i>
                             {{-- Click bubble effect --}}
                             <span
@@ -76,18 +75,18 @@
                                     data-base-price-usd="{{ $house->rent_amount }}">
                                     ${{ number_format($house->rent_amount, 2) }}
                                 </span>
-                                <span class="ml-1 text-xs text-gray-500">/month</span>
+                                <span class="ml-1 text-xs text-gray-500">@lang('words.property_card_per_month')</span>
                             </div>
                             <div class="grid grid-cols-3 gap-x-4 py-3 my-3 border-t border-b">
                                 <div class="flex flex-col items-center text-center">
                                     <i class="mb-1 fas fa-bed text-gray-500"></i>
                                     <span class="block text-lg font-semibold text-gray-900">{{ $house->num_room ?? 0 }}</span>
-                                    <span class="block text-xs text-gray-500">{{ Str::plural('Room', $house->num_room ?? 0) }}</span>
+                                    <span class="block text-xs text-gray-500">{{ ($house->num_room ?? 0) == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }}</span>
                                 </div>
                                 <div class="flex flex-col items-center text-center">
                                     <i class="mb-1 fas fa-layer-group text-gray-500"></i>
                                     <span class="block text-lg font-semibold text-gray-900">{{ $house->num_floor ?? 0 }}</span>
-                                    <span class="block text-xs text-gray-500">{{ Str::plural('Floor', $house->num_floor ?? 0) }}</span>
+                                    <span class="block text-xs text-gray-500">{{ ($house->num_floor ?? 0) == 1 ? __('words.property_card_floor_singular') : __('words.property_card_floor_plural') }}</span>
                                 </div>
                                 <div class="flex flex-col items-center text-center">
                                     <i class="mb-1 fas fa-ruler-combined text-gray-500"></i>
@@ -98,7 +97,7 @@
                             <div class="mt-auto">
                                 <a href="{{ route('house.details', $house) }}"
                                     class="block w-full px-5 py-3 text-base font-semibold text-center text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
-                                    View Details
+                                    @lang('words.property_card_view_details')
                                 </a>
                             </div>
                         </div>

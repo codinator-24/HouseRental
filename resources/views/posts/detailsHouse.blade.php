@@ -34,7 +34,7 @@
                                 d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
                                 clip-rule="evenodd" />
                         </svg>
-                        Back to Listings
+                        @lang('words.details_house_back_to_listings')
                     </a>
                 </div>
 
@@ -44,7 +44,7 @@
                         @auth
                             <button
                                 class="p-2 bg-white rounded-full shadow-md favorite-btn hover:bg-gray-100 focus:outline-none"
-                                data-house-id="{{ $house->id }}" title="Favorite">
+                                data-house-id="{{ $house->id }}" title="@lang('words.favorite_button_title')">
                                 @if (auth()->user()->hasFavorited($house))
                                     <i class="text-2xl text-red-500 fas fa-heart"></i> {{-- Filled heart --}}
                                 @else
@@ -54,7 +54,7 @@
                         @else
                             <button
                                 class="p-2 bg-white rounded-full shadow-md favorite-btn-guest hover:bg-gray-100 focus:outline-none"
-                                title="Favorite">
+                                title="@lang('words.favorite_button_title')">
                                 <i class="text-2xl text-gray-600 far fa-heart"></i> {{-- Empty heart for guests, standardized to gray-600 --}}
                             </button>
                         @endguest
@@ -112,7 +112,7 @@
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                                 stroke-width="2" d="M5 1 1 5l4 4" />
                                         </svg>
-                                        <span class="sr-only">Previous</span>
+                                        <span class="sr-only">@lang('words.carousel_previous')</span>
                                     </span>
                                 </button>
                                 <button type="button"
@@ -125,7 +125,7 @@
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                                 stroke-width="2" d="m1 9 4-4-4-4" />
                                         </svg>
-                                        <span class="sr-only">Next</span>
+                                        <span class="sr-only">@lang('words.carousel_next')</span>
                                     </span>
                                 </button>
                             @endif
@@ -133,7 +133,7 @@
                     @else
                         <div class="flex items-center justify-center bg-gray-200 rounded-lg aspect-w-16 aspect-h-9">
                             <img src="https://via.placeholder.com/800x450.png?text=No+Image+Available"
-                                alt="No Image Available" class="object-cover w-full h-full rounded-lg">
+                                alt="@lang('words.details_house_no_image_available')" class="object-cover w-full h-full rounded-lg">
                         </div>
                     @endif
 
@@ -149,7 +149,7 @@
                                 {{-- Initial display, will be updated by JS --}}
                                 ${{ number_format($house->rent_amount, 2) }}
                             </span>
-                            <span class="ml-1 text-xl text-gray-600 md:text-2xl">/ month</span> {{-- Adjusted styling for "/ month" --}}
+                            <span class="ml-1 text-xl text-gray-600 md:text-2xl">@lang('words.property_card_per_month')</span> {{-- Adjusted styling for "/ month" --}}
                         </div>
 
                         {{-- Address --}}
@@ -170,12 +170,12 @@
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-door-open"></i>
                                 <p class="text-sm text-gray-600">{{ $totalRooms }}
-                                    {{ Str::plural('Room', $totalRooms) }} (Total)</p>
+                                    {{ $totalRooms == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }} (Total)</p>
                             </div>
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-layer-group"></i>
                                 <p class="text-sm text-gray-600">{{ $totalFloors }}
-                                    {{ Str::plural('Floor', $totalFloors) }}</p>
+                                    {{ $totalFloors == 1 ? __('words.property_card_floor_singular') : __('words.property_card_floor_plural') }}</p>
                             </div>
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-ruler-combined"></i>
@@ -196,22 +196,22 @@
 
                         {{-- Description --}}
                         <div class="mb-6">
-                            <h2 class="mb-3 text-2xl font-semibold text-gray-800">Description</h2>
+                            <h2 class="mb-3 text-2xl font-semibold text-gray-800">@lang('words.add_house_section_description')</h2>
                             <p class="leading-relaxed text-gray-700 whitespace-pre-line">{{ $house->description }}</p>
                         </div>
 
                         {{-- Floor by Floor Details --}}
                         @if ($house->floors->isNotEmpty())
                             <div class="mb-6">
-                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Floor Details</h2>
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">@lang('words.add_house_section_floor_details')</h2>
                                 <div class="space-y-4">
                                     @foreach ($house->floors as $index => $floor)
                                         <div class="p-4 border rounded-md bg-gray-50">
-                                            <h3 class="text-lg font-semibold text-gray-700">Floor {{ $index + 1 }}:
+                                            <h3 class="text-lg font-semibold text-gray-700">@lang('words.add_house_floor_title_prefix') {{ $index + 1 }}:
                                             </h3>
                                             <p class="text-sm text-gray-600">
-                                                {{ $floor->num_room }} {{ Str::plural('Room', $floor->num_room) }}.
-                                                Bathroom: {{ $floor->bathroom ? 'Yes' : 'No' }}.
+                                                {{ $floor->num_room }} {{ $floor->num_room == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }}.
+                                                @lang('words.details_house_bathroom_prefix') {{ $floor->bathroom ? __('words.details_house_bathroom_yes') : __('words.details_house_bathroom_no') }}.
                                             </p>
                                         </div>
                                     @endforeach
@@ -222,17 +222,17 @@
                         {{-- Landlord Information --}}
                         @if ($house->landlord)
                             <div class="pt-6 mb-6 border-t">
-                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Contact Landlord</h2>
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">@lang('words.details_house_contact_landlord_title')</h2>
                                 <div class="space-y-2 text-gray-700">
                                     <p>
                                         <i class="mr-2 fas fa-user text-slate-500"></i>
-                                        <strong>Name:</strong> {{ $house->landlord->full_name ?? 'N/A' }}
+                                        <strong>@lang('words.booking_label_name_colon')</strong> {{ $house->landlord->full_name ?? __('words.booking_landlord_na') }}
                                     </p>
 
                                     <p>
                                         <i class="mr-2 fas fa-phone text-slate-500"></i>
-                                        <strong>Phone Numbers:</strong>
-                                        {{ $house->landlord->masked_first_phone ?? 'N/A' }}
+                                        <strong>@lang('words.details_house_label_phone_numbers')</strong>
+                                        {{ $house->landlord->masked_first_phone ?? __('words.booking_phone_not_provided') }}
                                         @if ($house->landlord->masked_second_phone)
                                             / {{ $house->landlord->masked_second_phone }}
                                         @endif
@@ -243,7 +243,7 @@
                                             <div class="mt-4">
                                                 <button type="button" id="openReportModalBtn"
                                                     class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                                    <i class="mr-2 fas fa-flag"></i> Report Property
+                                                    <i class="mr-2 fas fa-flag"></i> @lang('words.details_house_report_property_button')
                                                 </button>
                                             </div>
                                         @endif
@@ -254,7 +254,7 @@
 
                         {{-- Reviews Section --}}
                         <div class="pt-6 mt-6 border-t">
-                            <h2 class="mb-4 text-2xl font-semibold text-gray-800">Ratings & Reviews</h2>
+                            <h2 class="mb-4 text-2xl font-semibold text-gray-800">@lang('words.details_house_ratings_reviews_title')</h2>
                             @if ($house->total_approved_reviews > 0)
                                 <div class="flex items-center mb-6">
                                     <span class="text-3xl font-bold text-yellow-500">{{ $house->average_rating }}</span>
@@ -263,7 +263,7 @@
                                         @for ($i = 1; $i <= 5; $i++)
                                             <i class="fas fa-star text-xl {{ $i <= floor($house->average_rating) ? 'text-yellow-400' : ($i - 0.5 <= $house->average_rating ? 'text-yellow-400 fas fa-star-half-alt' : 'text-gray-300') }}"></i>
                                         @endfor
-                                        <p class="text-sm text-gray-500">Based on {{ $house->total_approved_reviews }} {{ Str::plural('review', $house->total_approved_reviews) }}</p>
+                                        <p class="text-sm text-gray-500">@lang('words.details_house_based_on_reviews_prefix') {{ $house->total_approved_reviews }} {{ $house->total_approved_reviews == 1 ? __('words.property_card_review_singular') : __('words.property_card_review_plural') }}</p>
                                     </div>
                                 </div>
 
@@ -293,7 +293,7 @@
                                     @endif
                                 </div>
                             @else
-                                <p class="text-gray-600">No reviews yet for this property.</p>
+                                <p class="text-gray-600">@lang('words.details_house_no_reviews_yet')</p>
                             @endif
                              {{-- Link to write a review if user is eligible --}}
                             @auth
@@ -312,7 +312,7 @@
                                 @if ($userEligibleBooking)
                                     <div class="mt-6">
                                         <a href="{{ route('reviews.create', $userEligibleBooking) }}" class="inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
-                                            Write a Review for Your Stay
+                                            @lang('words.details_house_write_review_button')
                                         </a>
                                     </div>
                                 @endif
@@ -322,7 +322,7 @@
                         {{-- Location URL / Map Placeholder --}}
                         @if ($house->location_url)
                             <div class="mb-6">
-                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Location</h2>
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">@lang('words.add_house_section_property_location')</h2>
                                 <div
                                     class="overflow-hidden border border-gray-300 rounded-md shadow-sm aspect-w-16 aspect-h-9">
                                     <iframe src="{{ $house->location_url }}" width="100%" height="100%"
@@ -332,7 +332,7 @@
                                 </div>
                                 <a href="{{ $house->location_url }}" target="_blank" rel="noopener noreferrer"
                                     class="inline-flex items-center mt-2 text-sm text-blue-600 hover:underline">
-                                    View Full Map <i class="ml-1 text-xs fas fa-external-link-alt"></i>
+                                    @lang('words.details_house_view_full_map_link') <i class="ml-1 text-xs fas fa-external-link-alt"></i>
                                 </a>
                             </div>
                         @endif
@@ -340,14 +340,14 @@
                         {{-- Location Map Section (Display if latitude and longitude exist) --}}
                         @if ($house->latitude !== null && $house->longitude !== null)
                             <div class="mb-6">
-                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Location</h2>
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">@lang('words.add_house_section_property_location')</h2>
                                 <div id="map" style="height: 400px; width: 100%;" class="rounded-md shadow-sm">
                                 </div>
                             </div>
                         @elseif ($house->location_url)
                             {{-- Fallback to existing iframe if lat/lng are not available but a URL is --}}
                             <div class="mb-6">
-                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">Location</h2>
+                                <h2 class="mb-3 text-2xl font-semibold text-gray-800">@lang('words.add_house_section_property_location')</h2>
                                 <div
                                     class="overflow-hidden border border-gray-300 rounded-md shadow-sm aspect-w-16 aspect-h-9">
                                     <iframe src="{{ $house->location_url }}" width="100%" height="100%"
@@ -357,7 +357,7 @@
                                 </div>
                                 <a href="{{ $house->location_url }}" target="_blank" rel="noopener noreferrer"
                                     class="inline-flex items-center mt-2 text-sm text-blue-600 hover:underline">
-                                    View Full Map <i class="ml-1 text-xs fas fa-external-link-alt"></i>
+                                    @lang('words.details_house_view_full_map_link') <i class="ml-1 text-xs fas fa-external-link-alt"></i>
                                 </a>
                             </div>
                         @endif
@@ -367,22 +367,21 @@
                         @auth
                             @if (auth()->user()->status === 'Not Verified')
                                 <div class="pt-6 mt-6 mb-8 border-t">
-                                    <p class="text-lg text-orange-600">Wait until your account is verified.</p>
+                                    <p class="text-lg text-orange-600">@lang('words.hero_account_not_verified')</p>
                                 </div>
                             @elseif (auth()->user()->role === 'landlord')
                                 <div class="pt-6 mt-6 mb-8 border-t">
-                                    <p class="text-lg text-gray-700">As a landlord, you cannot book properties.</p>
+                                    <p class="text-lg text-gray-700">@lang('words.details_house_landlord_cannot_book')</p>
                                 </div>
                             @else
                                 @if ($house->landlord)
                                     @if (isset($userBookingForThisHouse) && $userBookingForThisHouse)
                                         {{-- User has already booked this house --}}
                                         <div class="pt-6 mt-6 mb-8 border-t">
-                                            <p class="mb-3 text-lg text-gray-700">You have already sent a booking
-                                                request for this property.</p>
+                                            <p class="mb-3 text-lg text-gray-700">@lang('words.details_house_already_booked')</p>
                                             <a href="{{ route('bookings.details.show', $userBookingForThisHouse->id) }}"
                                                 class="inline-block px-6 py-3 text-lg font-bold text-white transition duration-300 ease-in-out bg-indigo-600 rounded-md hover:bg-indigo-700">
-                                                View Your Booking Details
+                                                @lang('words.details_house_view_your_booking_button')
                                             </a>
                                         </div>
                                     @else
@@ -390,25 +389,20 @@
                                         <div class="pt-6 mt-6 mb-8 border-t">
                                             <button type="button" id="openBookingMessageModalBtn"
                                                 class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-green-600 rounded-md hover:bg-green-700">
-                                                Book This Property Now
+                                                @lang('words.details_house_book_now_button')
                                             </button>
                                         </div>
                                     @endif
                                 @else
                                     <div class="pt-6 mt-6 mb-8 border-t">
-                                        <p class="text-lg text-gray-700">This property is currently not available for
-                                            booking (no landlord assigned).</p>
+                                        <p class="text-lg text-gray-700">@lang('words.details_house_not_available_no_landlord')</p>
                                     </div>
                                 @endif
                             @endif
                         @else
                             {{-- User is not authenticated (guest) --}}
                             <div class="pt-6 mt-6 mb-8 border-t">
-                                <p class="text-lg text-gray-700">Please <a href="{{ route('login') }}"
-                                        class="font-semibold text-indigo-600 hover:underline">log in</a> or <a
-                                        href="{{ route('register') }}"
-                                        class="font-semibold text-indigo-600 hover:underline">register</a> to book a
-                                    property.</p>
+                                <p class="text-lg text-gray-700">@lang('words.details_house_guest_login_register_prompt', ['Login' => '<a href="'.route('login').'" class="font-semibold text-indigo-600 hover:underline">'.__('words.Login').'</a>', 'Register' => '<a href="'.route('register').'" class="font-semibold text-indigo-600 hover:underline">'.__('words.Register').'</a>'])</p>
                             </div>
                         @endauth
 
@@ -417,7 +411,7 @@
                             <div class="pt-6 mt-6 mb-8 border-t">
                                 <a href="{{ route('login') }}"
                                     class="inline-block px-8 py-3 text-lg font-bold text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
-                                    Login Now To Book
+                                    @lang('words.details_house_guest_login_now_button')
                                 </a>
                             </div>
                         @endguest
@@ -436,7 +430,7 @@
                 style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
                 <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
                     <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-                        <h1 id="reportModalTitle" class="text-xl font-semibold text-gray-700">Report This Property</h1>
+                        <h1 id="reportModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.report_modal_title')</h1>
                         <button id="closeReportModalBtn" aria-label="Close report modal"
                             class="text-2xl text-gray-500 hover:text-gray-700">×</button>
                     </div>
@@ -445,26 +439,24 @@
                         class="px-6 py-6">
                         @csrf
                         <div class="mb-4">
-                            <label for="reason_category" class="block mb-1 text-sm font-medium text-gray-700">Reason for
-                                Reporting</label>
+                            <label for="reason_category" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.report_modal_label_reason')</label>
                             <select name="reason_category" id="reason_category"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('reason_category', 'reportFormErrors') border-red-500 @enderror">
-                                <option value="">Select a reason...</option>
+                                <option value="">@lang('words.report_modal_select_reason_placeholder')</option>
                                 <option value="Misleading Information"
-                                    {{ old('reason_category') == 'Misleading Information' ? 'selected' : '' }}>Misleading
-                                    Information</option>
+                                    {{ old('reason_category') == 'Misleading Information' ? 'selected' : '' }}>@lang('words.report_reason_misleading_info')</option>
                                 <option value="Safety Concern"
-                                    {{ old('reason_category') == 'Safety Concern' ? 'selected' : '' }}>Safety Concern
+                                    {{ old('reason_category') == 'Safety Concern' ? 'selected' : '' }}>@lang('words.report_reason_safety_concern')
                                 </option>
                                 <option value="Landlord Behavior"
-                                    {{ old('reason_category') == 'Landlord Behavior' ? 'selected' : '' }}>Landlord Behavior
+                                    {{ old('reason_category') == 'Landlord Behavior' ? 'selected' : '' }}>@lang('words.report_reason_landlord_behavior')
                                 </option>
                                 <option value="Scam/Fraud" {{ old('reason_category') == 'Scam/Fraud' ? 'selected' : '' }}>
-                                    Scam/Fraud</option>
+                                    @lang('words.report_reason_scam_fraud')</option>
                                 <option value="Technical Issue with Listing"
                                     {{ old('reason_category') == 'Technical Issue with Listing' ? 'selected' : '' }}>
-                                    Technical Issue with Listing</option>
-                                <option value="Other" {{ old('reason_category') == 'Other' ? 'selected' : '' }}>Other
+                                    @lang('words.report_reason_technical_issue')</option>
+                                <option value="Other" {{ old('reason_category') == 'Other' ? 'selected' : '' }}>@lang('words.report_reason_other')
                                 </option>
                             </select>
                             @error('reason_category', 'reportFormErrors')
@@ -474,9 +466,9 @@
 
                         <div class="mb-4">
                             <label for="report_description"
-                                class="block mb-1 text-sm font-medium text-gray-700">Description</label>
+                                class="block mb-1 text-sm font-medium text-gray-700">@lang('words.add_house_section_description')</label>
                             <textarea name="description" id="report_description" rows="5"
-                                placeholder="Please provide details about the issue."
+                                placeholder="@lang('words.report_modal_placeholder_description')"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'reportFormErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
                             @error('description', 'reportFormErrors')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -488,7 +480,7 @@
                                 !$errors->reportFormErrors->has('reason_category') &&
                                 !$errors->reportFormErrors->has('description'))
                             <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
-                                <p class="font-bold">Please correct the following error(s):</p>
+                                <p class="font-bold">@lang('words.error_fix_following')</p>
                                 <ul class="list-disc list-inside">
                                     @foreach ($errors->reportFormErrors->all() as $error)
                                         <li>{{ $error }}</li>
@@ -500,7 +492,7 @@
                         <div class="flex justify-end">
                             <button type="submit"
                                 class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                Submit Report
+                                @lang('words.report_modal_submit_button')
                             </button>
                         </div>
                     </form>
@@ -518,7 +510,7 @@
                 style="display: none;" role="dialog" aria-modal="true" aria-labelledby="bookingMessageModalTitle">
                 <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
                     <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-                        <h1 id="bookingMessageModalTitle" class="text-xl font-semibold text-gray-700">Send Booking Request
+                        <h1 id="bookingMessageModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.booking_modal_send_request_title')
                         </h1>
                         <button id="closeBookingMessageModalBtn" aria-label="Close booking modal"
                             class="text-2xl text-gray-500 hover:text-gray-700">×</button>
@@ -528,23 +520,21 @@
                         class="px-6 py-6">
                         @csrf
                         <div class="mb-4">
-                            <label for="month_duration" class="block mb-1 text-sm font-medium text-gray-700">Your Required
-                                Duration</label>
+                            <label for="month_duration" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.booking_modal_label_duration')</label>
                             <input type="number" name="month_duration" id="month_duration"
-                                placeholder="Enter Your Month Duration"
+                                placeholder="@lang('words.booking_modal_placeholder_duration')"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('month_duration', 'sendBookingFormErrors') border-red-500 @enderror"{{ old('month_duration') }}>
                         </div>
                         <div class="mb-4">
-                            <label for="booking_message" class="block mb-1 text-sm font-medium text-gray-700">Your Message
-                                (Optional)</label>
+                            <label for="booking_message" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.booking_modal_label_message_optional')</label>
                             <textarea name="booking_message" id="booking_message" rows="5"
-                                placeholder="E.g., I'm interested in viewing this property. What are the next steps?"
+                                placeholder="@lang('words.booking_modal_placeholder_message')"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('booking_message', 'sendBookingFormErrors') border-red-500 @enderror">{{ old('booking_message') }}</textarea>
                         </div>
 
                         @if ($errors->sendBookingFormErrors->any())
                             <div class="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
-                                <p class="font-bold">Please correct the following error(s):</p>
+                                <p class="font-bold">@lang('words.error_fix_following')</p>
                                 <ul class="list-disc list-inside">
                                     @foreach ($errors->sendBookingFormErrors->all() as $error)
                                         <li>{{ $error }}</li>
@@ -557,7 +547,7 @@
                         <div class="flex justify-end">
                             <button type="submit"
                                 class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                Send Booking Request
+                                @lang('words.booking_modal_submit_button')
                             </button>
                         </div>
                     </form>
@@ -572,16 +562,16 @@
 <div id="guestFavoriteLoginModal" class="fixed inset-0 z-[80] flex items-center justify-center bg-opacity-60 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-labelledby="guestFavoriteLoginModalTitle">
     <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
         <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-            <h1 id="guestFavoriteLoginModalTitle" class="text-xl font-semibold text-gray-700">Login Required</h1>
+            <h1 id="guestFavoriteLoginModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.modal_login_required_title')</h1>
             <button id="closeGuestFavoriteLoginModalBtnTop" aria-label="Close login required modal" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
         </div>
         <div class="px-6 py-6">
             <p class="text-gray-700">
-                Please <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:underline">Login</a> or <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:underline">Register</a> to add properties to your favorites.
+                @lang('words.modal_login_required_text', ['Login' => "<a href='".route('login')."' class='font-semibold text-blue-600 hover:underline'>".__('words.Login')."</a>", 'Register' => "<a href='".route('register')."' class='font-semibold text-blue-600 hover:underline'>".__('words.Register')."</a>"])
             </p>
             <div class="flex justify-end mt-6">
                 <button id="closeGuestFavoriteLoginModalBtnBottom" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Close
+                    @lang('words.modal_close_button')
                 </button>
             </div>
         </div>

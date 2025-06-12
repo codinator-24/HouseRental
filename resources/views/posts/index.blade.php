@@ -42,11 +42,11 @@
             <div class="absolute inset-0 bg-black opacity-50"></div>
             {{-- Content --}}
             <div class="relative z-10 px-4 text-center">
-                <h1 class="mb-4 text-4xl font-bold md:text-5xl">Find Your Dream Home</h1>
-                <p class="mb-8 text-lg md:text-xl">Discover the perfect property for your needs</p>
+                <h1 class="mb-4 text-4xl font-bold md:text-5xl">@lang('words.hero_title')</h1>
+                <p class="mb-8 text-lg md:text-xl">@lang('words.hero_subtitle')</p>
                 <a href="{{ route('login') }}"
                     class="px-6 py-3 text-lg font-bold text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
-                    Please login to rent a house
+                    @lang('words.hero_login_prompt')
                 </a>
             </div>
         </section>
@@ -60,16 +60,16 @@
             <div class="absolute inset-0 bg-black opacity-50"></div>
             {{-- Content --}}
             <div class="relative z-10 px-4 text-center">
-                <h1 class="mb-4 text-4xl font-bold md:text-5xl">Find Your Dream Home</h1>
-                <p class="mb-8 text-lg md:text-xl">Discover the perfect property for your needs</p>
+                <h1 class="mb-4 text-4xl font-bold md:text-5xl">@lang('words.hero_title')</h1>
+                <p class="mb-8 text-lg md:text-xl">@lang('words.hero_subtitle')</p>
                 @if (auth()->user()->status === 'Not Verified')
                     <p class="px-6 py-3 text-lg font-bold text-white bg-orange-500 rounded-md">
-                        Wait until your account is verified.
+                        @lang('words.hero_account_not_verified')
                     </p>
                 @else
                     <a href="{{ route('Show.house.add') }}"
                         class="px-6 py-3 text-lg font-bold text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
-                        Click here to place your property
+                        @lang('words.hero_place_property_action')
                     </a>
                 @endif
             </div>
@@ -85,35 +85,35 @@
         <form action="{{ route('home') }}" method="GET" class="grid items-end grid-cols-1 gap-4 md:grid-cols-11">
             {{-- City Dropdown --}}
             <div class="md:col-span-2">
-                <label for="city" class="block mb-1 text-sm font-medium text-gray-700">City</label>
+                <label for="city" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.search_label_city')</label>
                 <select id="city" name="city"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="" {{ request('city') == '' ? 'selected' : '' }}>All Cities</option>
-                    <option value="Sulaymaniyah" {{ request('city') == 'Sulaymaniyah' ? 'selected' : '' }}>Sulaymaniyah
+                    <option value="" {{ request('city') == '' ? 'selected' : '' }}>@lang('words.search_option_all_cities')</option>
+                    <option value="Sulaymaniyah" {{ request('city') == 'Sulaymaniyah' ? 'selected' : '' }}>@lang('words.Sulaymaniyah')
                     </option>
-                    <option value="Hawler" {{ request('city') == 'Hawler' ? 'selected' : '' }}>Hawler</option>
-                    <option value="Karkuk" {{ request('city') == 'Karkuk' ? 'selected' : '' }}>Karkuk</option>
-                    <option value="Dhok" {{ request('city') == 'Dhok' ? 'selected' : '' }}>Dhok</option>
-                    <option value="Halabja" {{ request('city') == 'Halabja' ? 'selected' : '' }}>Halabja</option>
+                    <option value="Hawler" {{ request('city') == 'Hawler' ? 'selected' : '' }}>@lang('words.Hawler')</option>
+                    <option value="Karkuk" {{ request('city') == 'Karkuk' ? 'selected' : '' }}>@lang('words.Karkuk')</option>
+                    <option value="Dhok" {{ request('city') == 'Dhok' ? 'selected' : '' }}>@lang('words.Dhok')</option>
+                    <option value="Halabja" {{ request('city') == 'Halabja' ? 'selected' : '' }}>@lang('words.Halabja')</option>
                 </select>
             </div>
 
             {{-- Neighborhood Dropdown --}}
             <div class="md:col-span-3">
-                <label for="neighborhood" class="block mb-1 text-sm font-medium text-gray-700">Neighborhood</label>
+                <label for="neighborhood" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.search_label_neighborhood')</label>
                 <select id="neighborhood" name="neighborhood"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">All Neighborhoods</option>
+                    <option value="">@lang('words.search_option_all_neighborhoods')</option>
                     {{-- Options will be populated by JavaScript --}}
                 </select>
             </div>
 
             {{-- Price --}}
             <div class="md:col-span-2">
-                <label for="price" class="block mb-1 text-sm font-medium text-gray-700">Price</label>
+                <label for="price" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.search_label_price')</label>
                 <select id="price" name="price"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="" {{ request('price') == '' ? 'selected' : '' }}>Price Range</option>
+                    <option value="" {{ request('price') == '' ? 'selected' : '' }}>@lang('words.search_option_price_range')</option>
                     <option value="0-1000" {{ request('price') == '0-1000' ? 'selected' : '' }}>$0 - $1000</option>
                     <option value="1000-2000" {{ request('price') == '1000-2000' ? 'selected' : '' }}>$1000 - $2000
                     </option>
@@ -125,23 +125,23 @@
 
             {{-- Property Type --}}
             <div class="md:col-span-2">
-                <label for="property_type" class="block mb-1 text-sm font-medium text-gray-700">Property Type</label>
+                <label for="property_type" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.search_label_property_type')</label>
                 <select id="property_type" name="property_type"
                     class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option value="" {{ request('property_type') == '' ? 'selected' : '' }}>Property Type
+                    <option value="" {{ request('property_type') == '' ? 'selected' : '' }}>@lang('words.search_option_property_type_default')
                     </option>
-                    <option value="apartment" {{ request('property_type') == 'apartment' ? 'selected' : '' }}>Apartment
+                    <option value="apartment" {{ request('property_type') == 'apartment' ? 'selected' : '' }}>@lang('words.property_type_apartment')
                     </option>
-                    <option value="house" {{ request('property_type') == 'house' ? 'selected' : '' }}>House</option>
-                    <option value="condo" {{ request('property_type') == 'condo' ? 'selected' : '' }}>Condo</option>
-                    <option value="studio" {{ request('property_type') == 'studio' ? 'selected' : '' }}>Studio</option>
+                    <option value="house" {{ request('property_type') == 'house' ? 'selected' : '' }}>@lang('words.property_type_house')</option>
+                    <option value="condo" {{ request('property_type') == 'condo' ? 'selected' : '' }}>@lang('words.property_type_condo')</option>
+                    <option value="studio" {{ request('property_type') == 'studio' ? 'selected' : '' }}>@lang('words.property_type_studio')</option>
                 </select>
             </div>
 
             {{-- Search Button --}}
             <button type="submit"
                 class="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md w-full h-[42px] flex items-center justify-center">
-                Search
+                @lang('words.search_button_text')
                 <i class="fas fa-search fa-flip-horizontal ml-2"></i>
             </button>
         </form>
@@ -154,9 +154,8 @@
         <section class="py-5">
             <div class="container px-6 mx-auto">
                 <div class="flex items-center justify-between mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800">Featured Properties</h2>
-                    <a href="{{ route('home') }}" class="font-medium text-blue-600 hover:text-blue-800">View All
-                        Properties</a>
+                    <h2 class="text-3xl font-bold text-gray-800">@lang('words.featured_properties_title')</h2>
+                    <a href="{{ route('home') }}" class="font-medium text-blue-600 hover:text-blue-800">@lang('words.view_all_properties_link')</a>
                 </div>
 
                 {{-- Property Grid --}}
@@ -169,7 +168,7 @@
                             @auth
                                 <button
                                     class="absolute top-3 right-3 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
-                                    data-house-id="{{ $house->id }}" title="Favorite">
+                                    data-house-id="{{ $house->id }}" title="@lang('words.favorite_button_title')">
                                     @if (auth()->user()->hasFavorited($house))
                                         <i class="text-lg text-red-500 fas fa-heart"></i>
                                     @else
@@ -182,7 +181,7 @@
                             @else
                                 <button
                                     class="absolute top-3 right-3 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md favorite-btn-guest hover:bg-white focus:outline-none flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-110 active:bg-red-100"
-                                    title="Favorite">
+                                    title="@lang('words.favorite_button_title')">
                                     <i class="text-lg text-gray-600 far fa-heart"></i>
                                     {{-- Click bubble effect --}}
                                     <span
@@ -214,10 +213,10 @@
                                             <i class="fas fa-star {{ $i <= $house->average_rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
                                         @endfor
                                         <span class="ml-2 text-xs text-gray-600">
-                                            {{ $house->average_rating }} ({{ $house->total_approved_reviews }} {{ Str::plural('review', $house->total_approved_reviews) }})
+                                            {{ $house->average_rating }} ({{ $house->total_approved_reviews }} {{ $house->total_approved_reviews == 1 ? __('words.property_card_review_singular') : __('words.property_card_review_plural') }})
                                         </span>
                                     @else
-                                        <span class="text-xs text-gray-500">No reviews yet</span>
+                                        <span class="text-xs text-gray-500">@lang('words.property_card_no_reviews')</span>
                                     @endif
                                 </div>
                                 <div class="flex items-baseline mb-4 text-center justify-center">
@@ -226,18 +225,18 @@
                                         {{-- Initial display, will be updated by JS --}}
                                         ${{ number_format($house->rent_amount, 2) }}
                                     </span>
-                                    <span class="ml-1 text-xs text-gray-500">/month</span>
+                                    <span class="ml-1 text-xs text-gray-500">@lang('words.property_card_per_month')</span>
                                 </div>
                                 <div class="grid grid-cols-3 gap-x-4 py-3 my-3 border-t border-b">
                                     <div class="flex flex-col items-center text-center">
                                         <i class="mb-1 fas fa-bed text-gray-500"></i>
                                         <span class="block text-lg font-semibold text-gray-900">{{ $house->num_room ?? 0 }}</span>
-                                        <span class="block text-xs text-gray-500">{{ Str::plural('Room', $house->num_room ?? 0) }}</span>
+                                        <span class="block text-xs text-gray-500">{{ ($house->num_room ?? 0) == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }}</span>
                                     </div>
                                     <div class="flex flex-col items-center text-center">
                                         <i class="mb-1 fas fa-layer-group text-gray-500"></i>
                                         <span class="block text-lg font-semibold text-gray-900">{{ $house->num_floor ?? 0 }}</span>
-                                        <span class="block text-xs text-gray-500">{{ Str::plural('Floor', $house->num_floor ?? 0) }}</span>
+                                        <span class="block text-xs text-gray-500">{{ ($house->num_floor ?? 0) == 1 ? __('words.property_card_floor_singular') : __('words.property_card_floor_plural') }}</span>
                                     </div>
                                     <div class="flex flex-col items-center text-center">
                                         <i class="mb-1 fas fa-ruler-combined text-gray-500"></i>
@@ -248,14 +247,13 @@
                                 <div class="mt-auto">
                                     <a href="{{ route('house.details', $house) }}"
                                         class="block w-full px-5 py-3 text-base font-semibold text-center text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700">
-                                        View Details
+                                        @lang('words.property_card_view_details')
                                     </a>
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <p class="text-center text-gray-600 md:col-span-2 lg:col-span-3">No properties found at the
-                            moment.</p>
+                        <p class="text-center text-gray-600 md:col-span-2 lg:col-span-3">@lang('words.featured_properties_none_found')</p>
                     @endforelse
                 </div>
 
@@ -265,8 +263,8 @@
     {{-- Why Choose Us Section --}}
     <section class="py-16 bg-blue-50">
         <div class="container px-6 mx-auto text-center">
-            <h2 class="mb-4 text-3xl font-bold text-gray-800">Why Choose HouseRental?</h2>
-            <p class="max-w-2xl mx-auto mb-12 text-gray-600">We make finding your perfect home simple and stress-free.
+            <h2 class="mb-4 text-3xl font-bold text-gray-800">@lang('words.why_choose_title')</h2>
+            <p class="max-w-2xl mx-auto mb-12 text-gray-600">@lang('words.why_choose_subtitle')
             </p>
 
             <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -284,8 +282,8 @@
                             </svg>
                         </div>
                     </div>
-                    <h3 class="mb-2 text-xl font-semibold">Ideal Locations</h3>
-                    <p class="text-sm text-gray-600">Explore properties in prime locations across the city.</p>
+                    <h3 class="mb-2 text-xl font-semibold">@lang('words.why_choose_feature1_title')</h3>
+                    <p class="text-sm text-gray-600">@lang('words.why_choose_feature1_desc')</p>
                 </div>
 
                 {{-- Feature 2: Transparent Pricing --}}
@@ -300,8 +298,8 @@
                             </svg>
                         </div>
                     </div>
-                    <h3 class="mb-2 text-xl font-semibold">Transparent Pricing</h3>
-                    <p class="text-sm text-gray-600">No hidden fees or surprise costs, ever.</p>
+                    <h3 class="mb-2 text-xl font-semibold">@lang('words.why_choose_feature2_title')</h3>
+                    <p class="text-sm text-gray-600">@lang('words.why_choose_feature2_desc')</p>
                 </div>
 
                 {{-- Feature 3: Quality Verified --}}
@@ -316,8 +314,8 @@
                             </svg>
                         </div>
                     </div>
-                    <h3 class="mb-2 text-xl font-semibold">Quality Verified</h3>
-                    <p class="text-sm text-gray-600">All our listings are verified for quality and accuracy.</p>
+                    <h3 class="mb-2 text-xl font-semibold">@lang('words.why_choose_feature3_title')</h3>
+                    <p class="text-sm text-gray-600">@lang('words.why_choose_feature3_desc')</p>
                 </div>
             </div>
         </div>
@@ -430,7 +428,7 @@
                     const selectedCity = cityDropdown.value;
 
                     // Clear previous neighborhood options and add the default
-                    neighborhoodDropdown.innerHTML = '<option value="">All Neighborhoods</option>';
+                    neighborhoodDropdown.innerHTML = '<option value="">' + "{{ __('words.search_option_all_neighborhoods') }}" + '</option>';
 
                     if (selectedCity && neighborhoodsByCity[selectedCity] && neighborhoodsByCity[selectedCity]
                         .length > 0) {
@@ -541,16 +539,16 @@
 <div id="guestFavoriteLoginModal" class="fixed inset-0 z-[80] flex items-center justify-center  bg-opacity-60 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-labelledby="guestFavoriteLoginModalTitle">
     <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
         <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-            <h1 id="guestFavoriteLoginModalTitle" class="text-xl font-semibold text-gray-700">Login Required</h1>
+            <h1 id="guestFavoriteLoginModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.modal_login_required_title')</h1>
             <button id="closeGuestFavoriteLoginModalBtnTop" aria-label="Close login required modal" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
         </div>
         <div class="px-6 py-6">
             <p class="text-gray-700">
-                Please <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:underline">Login</a> or <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:underline">Register</a> to add properties to your favorites.
+                @lang('words.modal_login_required_text', ['Login' => "<a href='".route('login')."' class='font-semibold text-blue-600 hover:underline'>".__('words.Login')."</a>", 'Register' => "<a href='".route('register')."' class='font-semibold text-blue-600 hover:underline'>".__('words.Register')."</a>"])
             </p>
             <div class="flex justify-end mt-6">
                 <button id="closeGuestFavoriteLoginModalBtnBottom" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Close
+                    @lang('words.modal_close_button')
                 </button>
             </div>
         </div>

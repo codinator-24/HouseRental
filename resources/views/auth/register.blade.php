@@ -1,7 +1,7 @@
 <x-layout>
     <div class="flex items-center justify-center min-h-screen py-12 bg-gray-100">
         <div class="w-full max-w-3xl p-12 space-y-8 bg-white rounded-lg shadow-md"> {{-- Card size and padding updated --}}
-            <h2 class="text-3xl font-bold text-center">Register</h2>
+            <h2 class="text-3xl font-bold text-center">@lang('words.Register_New')</h2>
             <form action="{{ route('register') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="grid md:grid-cols-2 gap-6">
@@ -177,7 +177,7 @@
                             </div>
                             <select name="role" id="role"
                                 class="block w-full pl-10 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm @error('role') border-red-500 @enderror">
-                                <option value="" {{ old('role') == '' ? 'selected' : '' }} disabled>--Select Your Role--</option>
+                                <option value="" {{ old('role') == '' ? 'selected' : '' }} disabled>@lang('words.register_select_role_placeholder')</option>
                                 <option value="tenant" {{ old('role') == 'tenant' ? 'selected' : '' }}>
                                     @lang('words.Tenant')</option>
                                 <option value="lordland" {{ old('role') == 'lordland' ? 'selected' : '' }}>
@@ -202,10 +202,10 @@
                             </div>
                             <label
                                 class="pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer w-auto">
-                                <span>Choose File</span>
+                                <span>@lang('words.register_choose_file_button')</span>
                                 <input type="file" name="picture" id="picture" class="sr-only" accept="image/*">
                             </label>
-                            <span id="picture-filename" class="ml-3 text-sm text-gray-500 self-center truncate">No file chosen</span>
+                            <span id="picture-filename" class="ml-3 text-sm text-gray-500 self-center truncate">@lang('words.register_no_file_chosen')</span>
                         </div>
                         <img id="picture-preview" src="#" alt="Profile picture preview" class="mt-2 h-24 w-24 object-cover rounded-md hidden border border-gray-300"/>
                         @error('picture')
@@ -215,7 +215,7 @@
 
                     {{-- ID Card --}}
                     <div>
-                        <label for="IdCard" class="block text-sm font-medium text-gray-700">idCard</label>
+                        <label for="IdCard" class="block text-sm font-medium text-gray-700">@lang('words.register_label_idcard')</label>
                         <div class="relative mt-1 flex items-center">
                              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -224,10 +224,10 @@
                             </div>
                             <label
                                 class="pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer w-auto">
-                                <span>Choose File</span>
+                                <span>@lang('words.register_choose_file_button')</span>
                                 <input type="file" name="IdCard" id="IdCard" class="sr-only" accept="image/*">
                             </label>
-                            <span id="idcard-filename" class="ml-3 text-sm text-gray-500 self-center truncate">No file chosen</span>
+                            <span id="idcard-filename" class="ml-3 text-sm text-gray-500 self-center truncate">@lang('words.register_no_file_chosen')</span>
                         </div>
                         <img id="idcard-preview" src="#" alt="ID Card preview" class="mt-2 h-24 w-auto object-contain rounded-md hidden border border-gray-300" style="max-width: 150px;"/>
                         @error('IdCard') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
@@ -238,16 +238,16 @@
                 <div class="pt-5">
                     <button type="submit"
                         class="w-full px-4 py-2 font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Submit
+                        @lang('words.register_submit_button')
                     </button>
                 </div>
             </form>
 
             {{-- Link to Login Page --}}
             <p class="mt-8 text-sm text-center text-gray-600">
-                Already have an account?
+                @lang('words.register_prompt_login')
                 <a href="{{ route('login') }}" class="font-medium text-blue-600 hover:underline">
-                    Login
+                    @lang('words.Login')
                 </a>
             </p>
         </div>
@@ -266,7 +266,7 @@
             function setupImagePreview(inputElement, filenameSpanElement, previewElement) {
                 if (inputElement && filenameSpanElement && previewElement) {
                     inputElement.addEventListener('change', function() {
-                        filenameSpanElement.textContent = this.files && this.files.length > 0 ? this.files[0].name : 'No file chosen';
+                        filenameSpanElement.textContent = this.files && this.files.length > 0 ? this.files[0].name : "@lang('words.register_no_file_chosen')";
                         if (this.files && this.files[0]) {
                             const reader = new FileReader();
                             reader.onload = function(e) {

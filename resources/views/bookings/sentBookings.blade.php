@@ -6,7 +6,7 @@
     @endif
 
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">My Sent Bookings</h1>
+        <h1 class="text-3xl font-bold mb-8 text-center text-gray-800">@lang('words.sent_bookings_title')</h1>
 
         @if ($sentBookings->isEmpty())
             <div class="text-center text-gray-500 py-10">
@@ -16,12 +16,12 @@
                         stroke-width="2"
                         d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                 </svg>
-                <p class="mt-3 text-xl font-semibold">You haven't sent any bookings yet.</p>
-                <p class="mt-2 text-sm">When you book a property, your sent bookings will appear here.</p>
+                <p class="mt-3 text-xl font-semibold">@lang('words.sent_bookings_none_sent_title')</p>
+                <p class="mt-2 text-sm">@lang('words.sent_bookings_none_sent_desc')</p>
                 <div class="mt-6">
                     <a href="{{ route('home') }}"
                         class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Explore Properties
+                        @lang('words.sent_bookings_explore_properties_button')
                     </a>
                 </div>
             </div>
@@ -36,38 +36,37 @@
                                     @if ($booking->house)
                                         <h2 class="text-xl sm:text-2xl font-semibold text-indigo-700 mb-1">
                                             <a href="{{ route('house.details', $booking->house->id) }}"
-                                                class="hover:underline">{{ $booking->house->title ?? 'Property Title N/A' }}</a>
+                                                class="hover:underline">{{ $booking->house->title ?? __('words.booking_property_title_na') }}</a>
                                         </h2>
                                         <p class="text-sm text-gray-500 mb-1">
-                                            {{ $booking->house->address ?? 'Address not available' }}</p>
+                                            {{ $booking->house->address ?? __('words.booking_address_na') }}</p>
                                         @if ($booking->house->landlord)
                                             <p class="text-sm text-gray-600">
-                                                <strong>landlord:</strong>
-                                                {{ $booking->house->landlord->full_name ?? ($booking->house->landlord->user_name ?? 'landlord N/A') }}
+                                                <strong>@lang('words.booking_label_landlord_lowercase')</strong>
+                                                {{ $booking->house->landlord->full_name ?? ($booking->house->landlord->user_name ?? __('words.booking_landlord_na')) }}
                                             </p>
 
                                             <p class="text-sm text-gray-600 mt-1">
-                                                <strong>Status:</strong>
+                                                <strong>@lang('words.booking_label_status')</strong>
                                                 @if ($booking->status === 'pending')
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                        Pending
+                                                        @lang('words.booking_status_pending')
                                                     </span>
                                                 @elseif ($booking->status === 'accepted')
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-green-800">
-                                                        Accepted
+                                                        @lang('words.booking_status_accepted')
                                                     </span>
                                                 @elseif ($booking->status === 'rejected')
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                        Rejected
+                                                        @lang('words.booking_status_rejected')
                                                     </span>
                                                 @endif
                                         @endif
                                     @else
-                                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-1">Booking for
-                                            Deleted/Unavailable Property</h2>
+                                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-1">@lang('words.booking_for_deleted_property')</h2>
                                     @endif
                                 </div>
                                 <div class="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center space-x-2">
@@ -75,20 +74,20 @@
                                     {{-- @if ($booking->status === 'accepted') --}}
                                         <a href="{{ route('agreement.create', $booking->id) }}"
                                             class="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
-                                            Create Agreement
+                                            @lang('words.booking_create_agreement_button')
                                         </a>
                                     {{-- @endif --}}
                                     
                                     <a href="{{ route('bookings.details.show', $booking->id) }}"
                                         class="bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
-                                        View/Update
+                                        @lang('words.booking_view_update_button')
                                     </a>
                                     <form method="POST" action="{{ route('bookings.sent.destroy', $booking->id) }}"
-                                        onsubmit="return confirm('Are you sure you want to delete this booking request? This action cannot be undone.');">
+                                        onsubmit="return confirm('@lang('words.booking_confirm_delete_request')');">
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                             class="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-150 ease-in-out whitespace-nowrap">
-                                            Delete
+                                            @lang('words.booking_delete_button')
                                         </button>
                                     </form>
                                 </div>
@@ -96,17 +95,17 @@
 
                             <hr class="my-4 border-gray-200">
                             <p class="text-sm text-gray-600">
-                                <strong>Your Duration Required:</strong>
+                                <strong>@lang('words.booking_label_your_duration_required')</strong>
                                 {{ (int) $booking->month_duration }}
-                                Month{{ (int) $booking->month_duration > 1 ? 's' : '' }}
+                                {{ (int)$booking->month_duration > 1 ? __('words.duration_month_plural') : __('words.duration_month_singular') }}
                             </p>
 
                             <div>
-                                <p class="text-sm font-medium text-gray-800 mb-1">Your Message:</p>
+                                <p class="text-sm font-medium text-gray-800 mb-1">@lang('words.booking_label_your_message')</p>
                                 <div
                                     class="bg-gray-50 p-3 rounded-md shadow-inner max-h-28 overflow-y-auto prose prose-sm">
                                     <p class="text-gray-700 whitespace-pre-line">
-                                        {{ $booking->message ?? 'No message provided.' }}</p>
+                                        {{ $booking->message ?? __('words.booking_no_message_provided') }}</p>
                                 </div>
                             </div>
                         </div>

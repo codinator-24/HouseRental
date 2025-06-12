@@ -2,8 +2,8 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Hello, {{ auth()->user()->user_name }}!</h1>
-            <p class="text-gray-600">Welcome back to your dashboard</p>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">@lang('words.dashboard_greeting') {{ auth()->user()->user_name }}!</h1>
+            <p class="text-gray-600">@lang('words.dashboard_welcome_back')</p>
         </div>
 
         <!-- Tab Navigation -->
@@ -13,14 +13,14 @@
                     <button onclick="switchTab('sent-bookings')" id="tab-sent-bookings"
                         class="tab-btn px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
                         <i class="fas fa-paper-plane text-sm"></i>
-                        <span>My Sent Bookings</span>
+                        <span>@lang('words.sent_bookings_title')</span>
                         <span
                             class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $sentBookings->count() }}</span>
                     </button>
                     <button onclick="switchTab('rented-houses')" id="tab-rented-houses"
                         class="tab-btn px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
                         <i class="fas fa-house-user text-sm"></i>
-                        <span>My Rented Houses</span>
+                        <span>@lang('words.dashboard_tab_rented_houses')</span>
                         <span
                             class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $rentedHouses->count() }}</span>
                     </button>
@@ -29,21 +29,21 @@
                     <button onclick="switchTab('received-bookings')" id="tab-received-bookings"
                         class="tab-btn px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
                         <i class="fas fa-inbox text-sm"></i>
-                        <span>Received Bookings</span>
+                        <span>@lang('words.dashboard_tab_received_bookings')</span>
                         <span
                             class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $receivedBookings->count() }}</span>
                     </button>
                     <button onclick="switchTab('properties')" id="tab-properties"
                         class="tab-btn px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
                         <i class="fas fa-home text-sm"></i>
-                        <span>My Properties</span>
+                        <span>@lang('words.dashboard_tab_my_properties')</span>
                         <span class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $houses->count() }}</span>
                     </button>
                 @endif
                 <button onclick="switchTab('maintenance')" id="tab-maintenance"
                     class="tab-btn px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
                     <i class="fas fa-wrench text-sm"></i>
-                    <span>Maintenance</span>
+                    <span>@lang('words.dashboard_tab_maintenance')</span>
                     <span
                         class="count-badge px-2 py-1 rounded-full text-xs font-bold">{{ $totalMaintenanceItemsForBadge ?? 0 }}</span>
                 </button>
@@ -51,7 +51,7 @@
                     <button onclick="switchTab('my-reviews')" id="tab-my-reviews"
                         class="tab-btn px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
                         <i class="fas fa-star text-sm"></i>
-                        <span>My Reviews</span>
+                        <span>@lang('words.dashboard_tab_my_reviews')</span>
                         {{-- You might want to add a count of pending reviews or total reviews here later --}}
                         {{-- <span class="count-badge px-2 py-1 rounded-full text-xs font-bold">0</span> --}}
                     </button>
@@ -66,7 +66,7 @@
                 <div id="content-sent-bookings" class="tab-panel">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">My Latest Sent Bookings</h2>
+                            <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_latest_sent_bookings_title')</h2>
                         </div>
 
                         @if ($sentBookings->isNotEmpty() || $hasMoreSentBookings)
@@ -81,17 +81,17 @@
                                                     title="{{ $booking->house->title }}">
                                                     <a href="{{ route('house.details', $booking->house->id) }}"
                                                         class="hover:underline">
-                                                        {{ Str::limit($booking->house->title, 35) ?? 'Property Title N/A' }}
+                                                        {{ Str::limit($booking->house->title, 35) ?? __('words.booking_property_title_na') }}
                                                     </a>
                                                 </h3>
                                                 <p class="text-sm text-gray-500 mb-3">
-                                                    To:
-                                                    {{ $booking->house->landlord->full_name ?? ($booking->house->landlord->user_name ?? 'Landlord N/A') }}
+                                                    @lang('words.dashboard_label_to_landlord')
+                                                    {{ $booking->house->landlord->full_name ?? ($booking->house->landlord->user_name ?? __('words.booking_landlord_na')) }}
                                                 </p>
                                             @else
-                                                <h3 class="text-lg font-bold text-red-600 mb-2">Property Unavailable
+                                                <h3 class="text-lg font-bold text-red-600 mb-2">@lang('words.dashboard_property_unavailable')
                                                 </h3>
-                                                <p class="text-sm text-gray-500 mb-3">To: Landlord N/A</p>
+                                                <p class="text-sm text-gray-500 mb-3">@lang('words.dashboard_label_to_landlord') @lang('words.booking_landlord_na')</p>
                                             @endif
 
                                             <div class="space-y-2 mb-4">
@@ -102,7 +102,7 @@
                                                 <div class="flex items-center text-sm text-gray-600">
                                                     <i class="fas fa-clock w-4 mr-2" style="color: #1b61c2;"></i>
                                                     <span>{{ $booking->month_duration }}
-                                                        {{ Str::plural('month', $booking->month_duration) }}</span>
+                                                        {{ $booking->month_duration == 1 ? __('words.duration_month_singular') : __('words.duration_month_plural') }}</span>
                                                 </div>
                                                 <div class="flex items-center">
                                                     <i class="fas fa-info-circle w-4 mr-2" style="color: #1b61c2;"></i>
@@ -113,7 +113,11 @@
                                                         {{ $booking->status === 'rejected' ? 'bg-red-100 text-red-800 border-red-200' : '' }}
                                                         {{ $booking->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
                                                         {{ !in_array($booking->status, ['pending', 'accepted', 'rejected', 'cancelled']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}">
-                                                        {{ ucfirst($booking->status ?? 'N/A') }}
+                                                        {{ $booking->status === 'pending' ? __('words.booking_status_pending') : '' }}
+                                                        {{ $booking->status === 'accepted' ? __('words.booking_status_accepted') : '' }}
+                                                        {{ $booking->status === 'rejected' ? __('words.booking_status_rejected') : '' }}
+                                                        {{ $booking->status === 'cancelled' ? __('words.booking_status_cancelled') : '' }}
+                                                        {{ !in_array($booking->status, ['pending', 'accepted', 'rejected', 'cancelled']) ? ucfirst($booking->status ?? 'N/A') : '' }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -123,7 +127,7 @@
                                                 style="color: #1b61c2;"
                                                 onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
                                                 onmouseout="this.style.backgroundColor='transparent'">
-                                                <i class="fas fa-eye"></i>View Details
+                                                <i class="fas fa-eye"></i>@lang('words.booking_view_details_button')
                                             </a>
                                         </div>
                                     </div>
@@ -137,8 +141,8 @@
                                                 style="background-color: rgba(27, 97, 194, 0.1);">
                                                 <i class="fas fa-arrow-right text-xl" style="color: #1b61c2;"></i>
                                             </div>
-                                            <p class="font-semibold mb-1" style="color: #1b61c2;">View All</p>
-                                            <p class="text-sm text-gray-500">Sent Bookings</p>
+                                            <p class="font-semibold mb-1" style="color: #1b61c2;">@lang('words.dashboard_view_all_link')</p>
+                                            <p class="text-sm text-gray-500">@lang('words.sent_bookings_title')</p>
                                         </a>
                                     </div>
                                 @endif
@@ -150,9 +154,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 8v4m0 4h.01M21.75 12a9.75 9.75 0 01-9.75 9.75A9.75 9.75 0 012.25 12a9.75 9.75 0 019.75-9.75A9.75 9.75 0 0121.75 12zM12 18.75a.75.75 0 000-1.5.75.75 0 000 1.5z" />
                                 </svg>
-                                <p class="mt-4 text-lg font-medium text-gray-700">No Sent Bookings Yet</p>
-                                <p class="text-sm text-gray-500 mt-1">When you send a booking request to a property, it
-                                    will appear here.</p>
+                                <p class="mt-4 text-lg font-medium text-gray-700">@lang('words.dashboard_no_sent_bookings_title')</p>
+                                <p class="text-sm text-gray-500 mt-1">@lang('words.dashboard_no_sent_bookings_text')</p>
                             </div>
                         @endif
                     </div>
@@ -164,7 +167,7 @@
                 <div id="content-rented-houses" class="tab-panel hidden">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">My Rented Houses</h2>
+                            <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_tab_rented_houses')</h2>
                             {{-- Optional: Add a "View All Rented Houses" button if you implement a separate page --}}
                         </div>
 
@@ -199,13 +202,13 @@
                                             @if ($house->landlord)
                                                 <p class="text-sm text-gray-500 mb-3 flex items-center">
                                                     <i class="fas fa-user-tie mr-2" style="color: #1b61c2;"></i>
-                                                    Landlord:
+                                                    @lang('words.dashboard_label_landlord_colon')
                                                     {{ $house->landlord->full_name ?? $house->landlord->user_name }}
                                                 </p>
                                             @endif
 
                                             <p class="text-lg font-semibold mb-4" style="color: #1b61c2;">
-                                                ${{ number_format($house->rent_amount, 2) }}/month
+                                                ${{ number_format($house->rent_amount, 2) }}@lang('words.property_card_per_month')
                                             </p>
 
                                             <div class="border-t border-gray-100 mt-4 pt-4">
@@ -214,7 +217,7 @@
                                                     style="color: #1b61c2;"
                                                     onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
                                                     onmouseout="this.style.backgroundColor='transparent'">
-                                                    <i class="fas fa-eye"></i>View Property Details
+                                                    <i class="fas fa-eye"></i>@lang('words.dashboard_view_property_details_button')
                                                 </a>
                                             </div>
                                         </div>
@@ -229,9 +232,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5M3.75 18.75V9.75m0 9V6.75m0 0H2.25m1.5 0H5.25m0 0H3.75m0 0h7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 6.75h.008v.008H12v-.008z" />
                                 </svg>
-                                <p class="mt-4 text-lg font-medium text-gray-700">No Rented Houses</p>
-                                <p class="text-sm text-gray-500 mt-1">You are not currently renting any properties with
-                                    an active agreement.</p>
+                                <p class="mt-4 text-lg font-medium text-gray-700">@lang('words.dashboard_no_rented_houses_title')</p>
+                                <p class="text-sm text-gray-500 mt-1">@lang('words.dashboard_no_rented_houses_text')</p>
                             </div>
                         @endif
                     </div>
@@ -246,11 +248,11 @@
                     {{-- tenant Maintenance section --}}
                     @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
                         <div class="flex justify-between items-center mb-6">
-                             <h2 class="text-2xl font-bold text-gray-800">Sent Maintenance Requests</h2>
+                             <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_sent_maintenance_requests_title')</h2>
                             <button type="button" id="openNewMaintenanceModalBtn"
                                 class="text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2"
                                 style="background: linear-gradient(135deg, #1b61c2, #3b82f6);">
-                                <i class="fas fa-plus"></i>New Request
+                                <i class="fas fa-plus"></i>@lang('words.dashboard_new_request_button')
                             </button>
                         </div>
 
@@ -264,14 +266,14 @@
                                             <div class="mb-3">
                                                 <h3 class="text-lg font-bold text-gray-800 truncate"
                                                     title="{{ $request->area_of_house }} - {{ Str::limit($request->description, 70) }}">
-                                                    {{ Str::limit($request->area_of_house ?? 'Maintenance Request', 25) }}
+                                                    {{ Str::limit($request->area_of_house ?? __('words.dashboard_maintenance_request_default_title'), 25) }}
                                                 </h3>
                                             </div>
 
                                             @if ($request->house)
                                                 <p class="text-sm text-gray-500 mb-3 flex items-center">
                                                     <i class="fas fa-home mr-2" style="color: #1b61c2;"></i>
-                                                    {{ Str::limit($request->house->title ?? 'Property N/A', 30) }}
+                                                    {{ Str::limit($request->house->title ?? __('words.booking_property_title_na'), 30) }}
                                                 </p>
                                             @endif
 
@@ -282,7 +284,7 @@
                                                 </div>
                                                 <div class="flex items-center text-sm text-gray-600">
                                                     <i class="fas fa-user w-4 mr-2" style="color: #1b61c2;"></i>
-                                                    <span>{{ $request->tenant->full_name ?? ($request->tenant->user_name ?? 'Tenant N/A') }}</span>
+                                                    <span>{{ $request->tenant->full_name ?? ($request->tenant->user_name ?? __('words.dashboard_tenant_na')) }}</span>
                                                 </div>
                                                 <div class="flex items-center">
                                                     <i class="fas fa-info-circle w-4 mr-2"
@@ -293,8 +295,20 @@
                                                         {{ $request->status === 'in_progress' ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
                                                         {{ $request->status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
                                                         {{ $request->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
-                                                        {{ !in_array($request->status, ['pending', 'in_progress', 'completed', 'cancelled']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}">
-                                                        {{ ucfirst(str_replace('_', ' ', $request->status ?? 'Pending')) }}
+                                                        {{ $request->status === 'awaiting_parts' ? 'bg-orange-100 text-orange-800 border-orange-200' : '' }}
+                                                        {{ $request->status === 'needs_tenant_input' ? 'bg-purple-100 text-purple-800 border-purple-200' : '' }}
+                                                        {{ $request->status === 'accepted' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
+                                                        {{ $request->status === 'rejected' ? 'bg-red-100 text-red-800 border-red-200' : '' }}
+                                                        {{ !in_array($request->status, ['pending', 'in_progress', 'completed', 'cancelled', 'awaiting_parts', 'needs_tenant_input', 'accepted', 'rejected']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}">
+                                                        {{ $request->status === 'pending' ? __('words.booking_status_pending') : '' }}
+                                                        {{ $request->status === 'in_progress' ? __('words.maintenance_status_in_progress') : '' }}
+                                                        {{ $request->status === 'completed' ? __('words.maintenance_status_completed') : '' }}
+                                                        {{ $request->status === 'cancelled' ? __('words.booking_status_cancelled') : '' }}
+                                                        {{ $request->status === 'awaiting_parts' ? __('words.maintenance_status_awaiting_parts') : '' }}
+                                                        {{ $request->status === 'needs_tenant_input' ? __('words.maintenance_status_needs_tenant_input') : '' }}
+                                                        {{ $request->status === 'accepted' ? __('words.booking_status_accepted') : '' }}
+                                                        {{ $request->status === 'rejected' ? __('words.booking_status_rejected') : '' }}
+                                                        {{ !in_array($request->status, ['pending', 'in_progress', 'completed', 'cancelled', 'awaiting_parts', 'needs_tenant_input', 'accepted', 'rejected']) ? ucfirst(str_replace('_', ' ', $request->status ?? 'Pending')) : '' }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -306,7 +320,7 @@
                                                     onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
                                                     onmouseout="this.style.backgroundColor='transparent'"
                                                     data-request-id="{{ $request->id }}"
-                                                    data-house-title="{{ $request->house->title ?? 'Property N/A' }}"
+                                                    data-house-title="{{ $request->house->title ?? __('words.booking_property_title_na') }}"
                                                     data-area-of-house="{{ $request->area_of_house }}"
                                                     data-description="{{ $request->description }}"
                                                     data-current-picture-url="{{ $request->picture ? asset('storage/' . $request->picture) : '' }}"
@@ -316,7 +330,7 @@
                                                     data-update-action-template="{{ route('maintenance.tenant.update', ['maintenance' => 'REQUEST_ID_PLACEHOLDER']) }}"
                                                     data-cancel-action-template="{{ route('maintenance.tenant.cancel', ['maintenance' => 'REQUEST_ID_PLACEHOLDER']) }}"
                                                     >
-                                                    <i class="fas fa-edit"></i> View / Update
+                                                    <i class="fas fa-edit"></i> @lang('words.dashboard_maintenance_view_update_button')
                                                 </button>
                                             </div>
                                         </div>
@@ -330,8 +344,8 @@
                                             style="background-color: rgba(27, 97, 194, 0.1);">
                                             <i class="fas fa-ellipsis-h text-xl" style="color: #1b61c2;"></i>
                                         </div>
-                                        <p class="font-semibold mb-1" style="color: #1b61c2;">More Requests</p>
-                                        <p class="text-sm text-gray-500">Full list view not yet implemented.</p>
+                                        <p class="font-semibold mb-1" style="color: #1b61c2;">@lang('words.dashboard_more_requests_link')</p>
+                                        <p class="text-sm text-gray-500">@lang('words.dashboard_full_list_not_implemented')</p>
                                     </div>
                                 @endif
                             </div>
@@ -342,9 +356,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
                                 </svg>
-                                <p class="mt-4 text-lg font-medium text-gray-700">No Sent Maintenance Requests</p>
-                                <p class="text-sm text-gray-500 mt-1">When you submit maintenance requests, they
-                                    will appear here.</p>
+                                <p class="mt-4 text-lg font-medium text-gray-700">@lang('words.dashboard_no_sent_maintenance_title')</p>
+                                <p class="text-sm text-gray-500 mt-1">@lang('words.dashboard_no_sent_maintenance_text')</p>
                             </div>
                         @endif
                     @endif
@@ -352,7 +365,7 @@
 
                     {{-- landlord maintenance section --}}
                     @if (auth()->user()->role === 'landlord' || auth()->user()->role === 'both')
-                        <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-6">Received Maintenance Requests</h2>
+                        <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-6">@lang('words.dashboard_received_maintenance_requests_title')</h2>
 
                         @if ($receivedMaintenanceRequests->isNotEmpty())
                             <div
@@ -360,7 +373,7 @@
                                 @foreach ($receivedMaintenanceRequests as $receivedRequest)
                                     <button type="button"
                                         data-request-id="{{ $receivedRequest->id }}"
-                                        data-tenant-name="{{ $receivedRequest->tenant->full_name ?? $receivedRequest->tenant->user_name ?? 'N/A' }}"
+                                        data-tenant-name="{{ $receivedRequest->tenant->full_name ?? $receivedRequest->tenant->user_name ?? __('words.dashboard_tenant_na') }}"
                                         data-picture-url="{{ $receivedRequest->picture ? asset('storage/' . $receivedRequest->picture) : '' }}"
                                         data-area-of-house="{{ $receivedRequest->area_of_house }}"
                                         data-description="{{ $receivedRequest->description }}"
@@ -374,14 +387,14 @@
                                             <div class="mb-3">
                                                 <h3 class="text-lg font-bold text-gray-800 truncate"
                                                     title="{{ $receivedRequest->area_of_house }} - {{ Str::limit($receivedRequest->description, 70) }}">
-                                                    {{ Str::limit($receivedRequest->area_of_house ?? 'Maintenance Request', 25) }}
+                                                    {{ Str::limit($receivedRequest->area_of_house ?? __('words.dashboard_maintenance_request_default_title'), 25) }}
                                                 </h3>
                                             </div>
 
                                             @if ($receivedRequest->house)
                                                 <p class="text-sm text-gray-500 mb-3 flex items-center">
                                                     <i class="fas fa-home mr-2" style="color: #1b61c2;"></i>
-                                                    For: {{ Str::limit($receivedRequest->house->title ?? 'Property N/A', 30) }}
+                                                    @lang('words.dashboard_label_for_property') {{ Str::limit($receivedRequest->house->title ?? __('words.booking_property_title_na'), 30) }}
                                                 </p>
                                             @endif
 
@@ -392,7 +405,7 @@
                                                 </div>
                                                 <div class="flex items-center text-sm text-gray-600">
                                                     <i class="fas fa-user w-4 mr-2" style="color: #1b61c2;"></i>
-                                                    <span>By: {{ $receivedRequest->tenant->full_name ?? ($receivedRequest->tenant->user_name ?? 'Tenant N/A') }}</span>
+                                                    <span>@lang('words.dashboard_label_by_tenant') {{ $receivedRequest->tenant->full_name ?? ($receivedRequest->tenant->user_name ?? __('words.dashboard_tenant_na')) }}</span>
                                                 </div>
                                                 <div class="flex items-center">
                                                     <i class="fas fa-info-circle w-4 mr-2"
@@ -405,15 +418,23 @@
                                                         {{ $receivedRequest->status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
                                                         {{ $receivedRequest->status === 'rejected' ? 'bg-red-100 text-red-800 border-red-200' : '' }} {{-- Added rejected status style --}}
                                                         {{ $receivedRequest->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
-                                                        {{ !in_array($receivedRequest->status, ['pending', 'in_progress', 'completed', 'cancelled', 'awaiting_parts', 'needs_tenant_input', 'accepted', 'rejected']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
                                                         {{ $receivedRequest->status === 'awaiting_parts' ? 'bg-orange-100 text-orange-800 border-orange-200' : '' }}
-                                                        {{ $receivedRequest->status === 'needs_tenant_input' ? 'bg-purple-100 text-purple-800 border-purple-200' : '' }}">
-                                                        {{ ucfirst(str_replace('_', ' ', $receivedRequest->status ?? 'Pending')) }}
+                                                        {{ $receivedRequest->status === 'needs_tenant_input' ? 'bg-purple-100 text-purple-800 border-purple-200' : '' }}
+                                                        {{ !in_array($receivedRequest->status, ['pending', 'in_progress', 'completed', 'cancelled', 'awaiting_parts', 'needs_tenant_input', 'accepted', 'rejected']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}">
+                                                        {{ $receivedRequest->status === 'pending' ? __('words.booking_status_pending') : '' }}
+                                                        {{ $receivedRequest->status === 'in_progress' ? __('words.maintenance_status_in_progress') : '' }}
+                                                        {{ $receivedRequest->status === 'completed' ? __('words.maintenance_status_completed') : '' }}
+                                                        {{ $receivedRequest->status === 'cancelled' ? __('words.booking_status_cancelled') : '' }}
+                                                        {{ $receivedRequest->status === 'awaiting_parts' ? __('words.maintenance_status_awaiting_parts') : '' }}
+                                                        {{ $receivedRequest->status === 'needs_tenant_input' ? __('words.maintenance_status_needs_tenant_input') : '' }}
+                                                        {{ $receivedRequest->status === 'accepted' ? __('words.booking_status_accepted') : '' }}
+                                                        {{ $receivedRequest->status === 'rejected' ? __('words.booking_status_rejected') : '' }}
+                                                        {{ !in_array($receivedRequest->status, ['pending', 'in_progress', 'completed', 'cancelled', 'awaiting_parts', 'needs_tenant_input', 'accepted', 'rejected']) ? ucfirst(str_replace('_', ' ', $receivedRequest->status ?? 'Pending')) : '' }}
                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="border-t border-gray-100 mt-4 pt-4 text-center">
-                                                <span class="text-sm font-semibold" style="color: #1b61c2;">View Details & Reply</span>
+                                                <span class="text-sm font-semibold" style="color: #1b61c2;">@lang('words.dashboard_maintenance_view_reply_button')</span>
                                             </div>
                                         </div>
                                     </button>
@@ -426,8 +447,8 @@
                                             style="background-color: rgba(27, 97, 194, 0.1);">
                                             <i class="fas fa-ellipsis-h text-xl" style="color: #1b61c2;"></i>
                                         </div>
-                                        <p class="font-semibold mb-1" style="color: #1b61c2;">More Requests</p>
-                                        <p class="text-sm text-gray-500">Full list view not yet implemented.</p>
+                                        <p class="font-semibold mb-1" style="color: #1b61c2;">@lang('words.dashboard_more_requests_link')</p>
+                                        <p class="text-sm text-gray-500">@lang('words.dashboard_full_list_not_implemented')</p>
                                     </div>
                                 @endif
                             </div>
@@ -438,9 +459,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M3 13.5V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25v8.25m-18 0A2.25 2.25 0 005.25 15h9.75A2.25 2.25 0 0017.25 13.5m-14.25 0H21m-3.75 3.75h.008v.008h-.008v-.008zm0 0H12m3.75 0a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" />
                                 </svg>
-                                <p class="mt-4 text-lg font-medium text-gray-700">No Received Maintenance Requests</p>
-                                <p class="text-sm text-gray-500 mt-1">When tenants submit maintenance requests for your
-                                    properties, they will appear here.</p>
+                                <p class="mt-4 text-lg font-medium text-gray-700">@lang('words.dashboard_no_received_maintenance_title')</p>
+                                <p class="text-sm text-gray-500 mt-1">@lang('words.dashboard_no_received_maintenance_text')</p>
                             </div>
                         @endif
                     @endif
@@ -455,7 +475,7 @@
                 <div id="content-received-bookings" class="tab-panel hidden">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">Latest Received Bookings</h2>
+                            <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_latest_received_bookings_title')</h2>
                         </div>
 
                         @if ($receivedBookings->isNotEmpty() || $hasMoreReceivedBookings)
@@ -470,16 +490,16 @@
                                                     title="{{ $booking->house->title }}">
                                                     <a href="{{ route('house.details', $booking->house->id) }}"
                                                         class="hover:underline">
-                                                        {{ Str::limit($booking->house->title, 35) ?? 'Property Title N/A' }}
+                                                        {{ Str::limit($booking->house->title, 35) ?? __('words.booking_property_title_na') }}
                                                     </a>
                                                 </h3>
                                             @else
-                                                <h3 class="text-lg font-bold text-red-600 mb-2">Property Unavailable
+                                                <h3 class="text-lg font-bold text-red-600 mb-2">@lang('words.dashboard_property_unavailable')
                                                 </h3>
                                             @endif
                                             <p class="text-sm text-gray-500 mb-3">
-                                                From:
-                                                {{ $booking->tenant->full_name ?? ($booking->tenant->user_name ?? 'Tenant N/A') }}
+                                                @lang('words.booking_label_from')
+                                                {{ $booking->tenant->full_name ?? ($booking->tenant->user_name ?? __('words.dashboard_tenant_na')) }}
                                             </p>
 
                                             <div class="space-y-2 mb-4">
@@ -490,7 +510,7 @@
                                                 <div class="flex items-center text-sm text-gray-600">
                                                     <i class="fas fa-clock w-4 mr-2" style="color: #1b61c2;"></i>
                                                     <span>{{ $booking->month_duration }}
-                                                        {{ Str::plural('month', $booking->month_duration) }}</span>
+                                                        {{ $booking->month_duration == 1 ? __('words.duration_month_singular') : __('words.duration_month_plural') }}</span>
                                                 </div>
                                                 <div class="flex items-center">
                                                     <i class="fas fa-info-circle w-4 mr-2"
@@ -502,7 +522,11 @@
                                                         {{ $booking->status === 'rejected' ? 'bg-red-100 text-red-800 border-red-200' : '' }}
                                                         {{ $booking->status === 'cancelled' ? 'bg-gray-100 text-gray-700 border-gray-200' : '' }}
                                                         {{ !in_array($booking->status, ['pending', 'accepted', 'rejected', 'cancelled']) ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}">
-                                                        {{ ucfirst($booking->status ?? 'N/A') }}
+                                                        {{ $booking->status === 'pending' ? __('words.booking_status_pending') : '' }}
+                                                        {{ $booking->status === 'accepted' ? __('words.booking_status_accepted') : '' }}
+                                                        {{ $booking->status === 'rejected' ? __('words.booking_status_rejected') : '' }}
+                                                        {{ $booking->status === 'cancelled' ? __('words.booking_status_cancelled') : '' }}
+                                                        {{ !in_array($booking->status, ['pending', 'accepted', 'rejected', 'cancelled']) ? ucfirst($booking->status ?? 'N/A') : '' }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -513,7 +537,7 @@
                                                     style="color: #1b61c2;"
                                                     onmouseover="this.style.backgroundColor='rgba(27, 97, 194, 0.1)'"
                                                     onmouseout="this.style.backgroundColor='transparent'">
-                                                    <i class="fas fa-eye"></i>View Details
+                                                    <i class="fas fa-eye"></i>@lang('words.booking_view_details_button')
                                                 </a>
                                             </div>
                                         </div>
@@ -524,27 +548,26 @@
                                     <div
                                         class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 card-hover flex flex-col items-center justify-center p-6 min-h-[280px]">
                                         <a href="{{ route('my.bookings') }}" class="text-center">
-                                            <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
-                                                style="background-color: rgba(27, 97, 194, 0.1);">
-                                                <i class="fas fa-arrow-right text-xl" style="color: #1b61c2;"></i>
-                                            </div>
-                                            <p class="font-semibold mb-1" style="color: #1b61c2;">View All</p>
-                                            <p class="text-sm text-gray-500">Received Bookings</p>
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        @else
-                            <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                </svg>
-                                <p class="mt-4 text-lg font-medium text-gray-700">No Received Bookings Yet</p>
-                                <p class="text-sm text-gray-500 mt-1">When a tenant sends a booking request for one of
-                                    your properties, it will appear here.</p>
-                            </div>
+                                        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
+                                            style="background-color: rgba(27, 97, 194, 0.1);">
+                                            <i class="fas fa-arrow-right text-xl" style="color: #1b61c2;"></i>
+                                        </div>
+                                        <p class="font-semibold mb-1" style="color: #1b61c2;">@lang('words.dashboard_view_all_link')</p>
+                                        <p class="text-sm text-gray-500">@lang('words.dashboard_tab_received_bookings')</p>
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @else
+                        <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
+                            <p class="mt-4 text-lg font-medium text-gray-700">@lang('words.dashboard_no_received_bookings_title')</p>
+                            <p class="text-sm text-gray-500 mt-1">@lang('words.dashboard_no_received_bookings_text')</p>
+                        </div>
                         @endif
                     </div>
                 </div>
@@ -553,11 +576,11 @@
                 <div id="content-properties" class="tab-panel hidden">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">My Properties</h2>
+                            <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_tab_my_properties')</h2>
                             <a href="{{ route('Show.house.add') }}"
                                 class="text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2"
                                 style="background: linear-gradient(135deg, #1b61c2, #3b82f6);">
-                                <i class="fas fa-plus"></i>Add New Property
+                                <i class="fas fa-plus"></i>@lang('words.Add House')
                             </a>
                         </div>
 
@@ -587,33 +610,33 @@
                                             <div class="flex items-center text-sm text-gray-600">
                                                 <i class="fas fa-door-open w-4 mr-2" style="color: #1b61c2;"></i>
                                                 <span>{{ $house->number_of_rooms }}
-                                                    {{ Str::plural('Room', $house->number_of_rooms) }}</span>
+                                                    {{ $house->number_of_rooms == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }}</span>
                                             </div>
                                             <div class="flex items-center text-sm text-gray-600">
                                                 <i class="fas fa-bath w-4 mr-2" style="color: #1b61c2;"></i>
                                                 <span>{{ $house->number_of_bathrooms }}
-                                                    {{ Str::plural('Bathroom', $house->number_of_bathrooms) }}</span>
+                                                    {{ $house->number_of_bathrooms == 1 ? __('words.dashboard_property_card_bathroom_singular') : __('words.dashboard_property_card_bathroom_plural') }}</span>
                                             </div>
                                         </div>
 
                                         <p class="text-xl font-bold mb-4" style="color: #1b61c2;">
-                                            ${{ number_format($house->rent_amount, 2) }}/month</p>
+                                            ${{ number_format($house->rent_amount, 2) }}@lang('words.property_card_per_month')</p>
 
                                         <div class="flex gap-2 border-t border-gray-100 pt-4">
                                             <a href="{{ route('Myhouse.edit', $house) }}"
                                                 class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all text-center">
                                                 <i class="fas fa-edit"></i>
-                                                <span class="ml-1 hidden sm:inline">Edit</span>
+                                                <span class="ml-1 hidden sm:inline">@lang('words.dashboard_edit_button')</span>
                                             </a>
                                             <form action="{{ route('Myhouse.delete', $house) }}" method="POST"
                                                 class="flex-1">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
-                                                    onclick="return confirm('Are you sure you want to delete this property? This action cannot be undone.');"
+                                                    onclick="return confirm('@lang('words.dashboard_confirm_delete_property')');"
                                                     class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all">
                                                     <i class="fas fa-trash"></i>
-                                                    <span class="ml-1 hidden sm:inline"></span>
+                                                    <span class="ml-1 hidden sm:inline">@lang('words.booking_delete_button')</span> {{-- Reusing delete button text --}}
                                                 </button>
                                             </form>
                                         </div>
@@ -630,8 +653,8 @@
                                             style="background-color: rgba(27, 97, 194, 0.1);">
                                             <i class="fas fa-arrow-right text-xl" style="color: #1b61c2;"></i>
                                         </div>
-                                        <p class="font-semibold mb-1" style="color: #1b61c2;">View All</p>
-                                        <p class="text-sm text-gray-500">My Properties</p>
+                                        <p class="font-semibold mb-1" style="color: #1b61c2;">@lang('words.dashboard_view_all_link')</p>
+                                        <p class="text-sm text-gray-500">@lang('words.dashboard_tab_my_properties')</p>
                                     </a>
                                 </div>
                             @endif
@@ -644,9 +667,8 @@
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 3.545A2.25 2.25 0 0115 5.795h4.5a2.25 2.25 0 012.25 2.25v9A2.25 2.25 0 0121.75 19.5h-4.5M8.25 21H3.75A2.25 2.25 0 011.5 18.75V5.795A2.25 2.25 0 013.75 3.545M8.25 21h4.5M16.5 3.545M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <p class="mt-4 text-lg font-medium text-gray-700">No Properties Found</p>
-                                    <p class="text-sm text-gray-500 mt-1">You haven't listed any properties yet. Add
-                                        your first property to see it here.</p>
+                                    <p class="mt-4 text-lg font-medium text-gray-700">@lang('words.dashboard_no_properties_found_title')</p>
+                                    <p class="text-sm text-gray-500 mt-1">@lang('words.dashboard_no_properties_found_text')</p>
                                 </div>
                             @endif
                         </div>
@@ -689,16 +711,16 @@
 
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">My Reviews & Ratings</h2>
+                            <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_my_reviews_ratings_title')</h2>
                             {{-- Link to the full page if desired, or manage all here --}}
                             <a href="{{ route('reviews.my') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700">
-                                View All My Reviews
+                                @lang('words.dashboard_view_all_my_reviews_link')
                             </a>
                         </div>
 
                         <!-- Section for Pending Reviews (Bookings to Review) -->
                         <section class="mb-10">
-                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Rate Your Past Stays</h3>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">@lang('words.dashboard_rate_past_stays_title')</h3>
                             @if($reviewableBookings->isNotEmpty())
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($reviewableBookings as $booking)
@@ -708,25 +730,25 @@
                                                     {{ Str::limit($booking->house->title, 30) }}
                                                 </h4>
                                                 <p class="text-xs text-gray-500 mb-1">
-                                                    Booked: {{ $booking->created_at->format('M d, Y') }} | Duration: {{ $booking->month_duration }} {{ Str::plural('month', $booking->month_duration) }}
+                                                    @lang('words.dashboard_label_booked_date') {{ $booking->created_at->format('M d, Y') }} | @lang('words.dashboard_label_duration') {{ $booking->month_duration }} {{ $booking->month_duration == 1 ? __('words.duration_month_singular') : __('words.duration_month_plural') }}
                                                 </p>
                                                 <a href="{{ route('reviews.create', $booking) }}" class="mt-2 inline-block w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-md text-sm transition duration-300">
-                                                    Write Review
+                                                    @lang('words.dashboard_write_review_button')
                                                 </a>
                                             @else
-                                                <p class="text-red-500 text-sm">House details unavailable.</p>
+                                                <p class="text-red-500 text-sm">@lang('words.dashboard_house_details_unavailable')</p>
                                             @endif
                                         </div>
                                     @endforeach
                                 </div>
                             @else
-                                <p class="text-sm text-gray-500">You have no completed stays that are pending a review.</p>
+                                <p class="text-sm text-gray-500">@lang('words.dashboard_no_pending_reviews_text')</p>
                             @endif
                         </section>
 
                         <!-- Section for Submitted Reviews -->
                         <section>
-                            <h3 class="text-xl font-semibold text-gray-700 mb-4">My Submitted Reviews</h3>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">@lang('words.dashboard_my_submitted_reviews_title')</h3>
                             @if($userSubmittedReviews->isNotEmpty())
                                 <div class="space-y-4">
                                     @foreach ($userSubmittedReviews as $review)
@@ -736,9 +758,9 @@
                                                     @if($review->house)
                                                         <h4 class="text-md font-bold text-gray-800">{{ $review->house->title }}</h4>
                                                     @else
-                                                        <h4 class="text-md font-bold text-red-600">Property Unavailable</h4>
+                                                        <h4 class="text-md font-bold text-red-600">@lang('words.dashboard_property_unavailable')</h4>
                                                     @endif
-                                                    <p class="text-xs text-gray-500">Reviewed: {{ $review->created_at->format('M d, Y') }}</p>
+                                                    <p class="text-xs text-gray-500">@lang('words.dashboard_label_reviewed_date') {{ $review->created_at->format('M d, Y') }}</p>
                                                 </div>
                                                 <div class="flex items-center text-sm">
                                                     @for ($i = 1; $i <= 5; $i++)
@@ -751,9 +773,9 @@
                                             @endif
                                             <div class="mt-2">
                                                 @if($review->is_approved)
-                                                    <span class="px-2 py-0.5 text-xs font-semibold text-green-700 bg-green-100 rounded-full">Approved</span>
+                                                    <span class="px-2 py-0.5 text-xs font-semibold text-green-700 bg-green-100 rounded-full">@lang('words.review_status_approved')</span>
                                                 @else
-                                                    <span class="px-2 py-0.5 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full">Pending</span>
+                                                    <span class="px-2 py-0.5 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full">@lang('words.booking_status_pending')</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -763,7 +785,7 @@
                                     {{ $userSubmittedReviews->links('pagination::tailwind') }}
                                 </div>
                             @else
-                                <p class="text-sm text-gray-500">You haven't submitted any reviews yet.</p>
+                                <p class="text-sm text-gray-500">@lang('words.dashboard_no_submitted_reviews_text')</p>
                             @endif
                         </section>
                     </div>
@@ -777,93 +799,88 @@
         <div id="newMaintenanceRequestModal"
             class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
             style="display: none;" role="dialog" aria-modal="true" aria-labelledby="newMaintenanceModalTitle">
-            <div class="w-full max-w-lg mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
-                <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-                    <h1 id="newMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">Create New
-                        Maintenance Request</h1>
-                    <button id="closeNewMaintenanceModalBtn" aria-label="Close new maintenance modal"
-                        class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
-                </div>
+                <div class="w-full max-w-lg mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
+                    <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+                        <h1 id="newMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.maintenance_modal_create_title')</h1>
+                        <button id="closeNewMaintenanceModalBtn" aria-label="Close new maintenance modal"
+                            class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+                    </div>
 
-                <form method="POST" action="{{ route('maintenance.insert') }}" enctype="multipart/form-data"
-                    class="px-6 py-6">
-                    @csrf
+                    <form method="POST" action="{{ route('maintenance.insert') }}" enctype="multipart/form-data"
+                        class="px-6 py-6">
+                        @csrf
 
-                    {{-- Display Validation Errors --}}
-                    @if ($errors->hasBag('newMaintenanceRequestErrors') && $errors->newMaintenanceRequestErrors->any())
-                        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded" role="alert">
-                            <p class="font-bold">Please correct the following errors:</p>
-                            <ul>
-                                @foreach ($errors->newMaintenanceRequestErrors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
+                        {{-- Display Validation Errors --}}
+                        @if ($errors->hasBag('newMaintenanceRequestErrors') && $errors->newMaintenanceRequestErrors->any())
+                            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded" role="alert">
+                                <p class="font-bold">@lang('words.error_fix_following')</p>
+                                <ul>
+                                    @foreach ($errors->newMaintenanceRequestErrors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        {{-- House Selection --}}
+                        <div class="mb-4">
+                            <label for="maintenance_house_id"
+                                class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_property')</label>
+                            <select name="house_id" id="maintenance_house_id" required
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('house_id', 'newMaintenanceRequestErrors') border-red-500 @enderror">
+                                <option value="">@lang('words.maintenance_modal_select_property_placeholder')</option>
+                                @if (isset($rentedHouses) && $rentedHouses->count() > 0)
+                                    @foreach ($rentedHouses as $house)
+                                        <option value="{{ $house->id }}"
+                                            {{ old('house_id') == $house->id ? 'selected' : '' }}>
+                                            {{ $house->title }}
+                                            @if (!empty($house->full_address))
+                                                ({{ Str::limit($house->full_address, 40) }})
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option value="" disabled>@lang('words.maintenance_modal_no_eligible_properties')</option>
+                                @endif
+                            </select>
                         </div>
-                    @endif
 
-                    {{-- House Selection --}}
-                    <div class="mb-4">
-                        <label for="maintenance_house_id"
-                            class="block text-sm font-medium text-gray-700">Property</label>
-                        <select name="house_id" id="maintenance_house_id" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('house_id', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                            <option value="">Select a property</option>
-                            @if (isset($rentedHouses) && $rentedHouses->count() > 0)
-                                @foreach ($rentedHouses as $house)
-                                    <option value="{{ $house->id }}"
-                                        {{ old('house_id') == $house->id ? 'selected' : '' }}>
-                                        {{ $house->title }}
-                                        @if (!empty($house->full_address))
-                                            ({{ Str::limit($house->full_address, 40) }})
-                                        @endif
-                                    </option>
-                                @endforeach
-                            @else
-                                <option value="" disabled>You have no properties eligible for maintenance
-                                    requests.</option>
-                            @endif
-                        </select>
-                    </div>
+                        {{-- Picture --}}
+                        <div class="mb-4">
+                            <label for="maintenance_picture" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_picture_optional')</label>
+                            <input type="file" name="picture" id="maintenance_picture" accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('picture', 'newMaintenanceRequestErrors') border-red-500 @enderror">
+                        </div>
 
-                    {{-- Picture --}}
-                    <div class="mb-4">
-                        <label for="maintenance_picture" class="block text-sm font-medium text-gray-700">Picture
-                            (Optional)</label>
-                        <input type="file" name="picture" id="maintenance_picture" accept="image/*"
-                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('picture', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                    </div>
+                        {{-- Area of House --}}
+                        <div class="mb-4">
+                            <label for="area_of_house" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_area')</label>
+                            <input type="text" name="area_of_house" id="area_of_house"
+                                value="{{ old('area_of_house') }}" required
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('area_of_house', 'newMaintenanceRequestErrors') border-red-500 @enderror">
+                        </div>
 
-                    {{-- Area of House --}}
-                    <div class="mb-4">
-                        <label for="area_of_house" class="block text-sm font-medium text-gray-700">Area of House
-                            (e.g., Kitchen, Bathroom)</label>
-                        <input type="text" name="area_of_house" id="area_of_house"
-                            value="{{ old('area_of_house') }}" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('area_of_house', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                    </div>
+                        {{-- Description --}}
+                        <div class="mb-4">
+                            <label for="maintenance_description"
+                                class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_description')</label>
+                            <textarea name="description" id="maintenance_description" rows="4" required
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'newMaintenanceRequestErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
+                        </div>
 
-                    {{-- Description --}}
-                    <div class="mb-4">
-                        <label for="maintenance_description"
-                            class="block text-sm font-medium text-gray-700">Description of Issue</label>
-                        <textarea name="description" id="maintenance_description" rows="4" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'newMaintenanceRequestErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
-                    </div>
+                        {{-- Refund Amount --}}
+                        <div class="mb-6">
+                            <label for="refund_amount" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_refund_optional')</label>
+                            <input type="number" name="refund_amount" id="refund_amount"
+                                value="{{ old('refund_amount') }}" step="0.01" min="0"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('refund_amount', 'newMaintenanceRequestErrors') border-red-500 @enderror">
+                        </div>
 
-                    {{-- Refund Amount --}}
-                    <div class="mb-6">
-                        <label for="refund_amount" class="block text-sm font-medium text-gray-700">Requested Refund
-                            Amount (Optional)</label>
-                        <input type="number" name="refund_amount" id="refund_amount"
-                            value="{{ old('refund_amount') }}" step="0.01" min="0"
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('refund_amount', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                    </div>
-
-                    <div class="flex justify-end">
-                        <button type="submit"
-                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Submit Request
-                        </button>
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                @lang('words.maintenance_modal_submit_request_button')
+                            </button>
                     </div>
                 </form>
             </div>
@@ -879,7 +896,7 @@
             <div class="w-full max-w-2xl mx-4 bg-white rounded-lg shadow-xl overflow-hidden">
                 <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
                     <h1 id="receivedMaintenanceDetailModalTitle" class="text-xl font-semibold text-gray-700">
-                        Maintenance Request Details</h1>
+                        @lang('words.maintenance_modal_details_title_landlord')</h1>
                     <button id="closeReceivedMaintenanceDetailModalBtn"
                         aria-label="Close received maintenance detail modal"
                         class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
@@ -893,36 +910,35 @@
                     <!-- Request Info Section -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-sm font-medium text-gray-500 mb-1">Tenant Name</h3>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_tenant_name')</h3>
                             <p id="modal_tenant_name" class="text-lg text-gray-800 font-semibold"></p>
                         </div>
                         <div>
-                            <h3 class="text-sm font-medium text-gray-500 mb-1">Area Of House</h3>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_area')</h3>
                             <p id="modal_area_of_house" class="text-lg text-gray-800"></p>
                         </div>
                     </div>
 
                     <div class="border-t border-gray-200 pt-4">
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Description of Issue</h3>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_description')</h3>
                         <p id="modal_description" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded-md"></p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                         <div id="modal_picture_container">
-                            <h3 class="text-sm font-medium text-gray-500 mb-2">Attached Picture</h3>
+                            <h3 class="text-sm font-medium text-gray-500 mb-2">@lang('words.maintenance_modal_label_attached_picture')</h3>
                             <img id="modal_picture" src="" alt="Maintenance Picture"
                                 class="mt-1 w-full max-w-sm rounded-lg border shadow-sm object-contain">
-                            <p id="modal_no_picture_text" class="text-gray-500 italic mt-1 p-3 bg-gray-50 rounded-md" style="display:none;">No picture
-                                provided.</p>
+                            <p id="modal_no_picture_text" class="text-gray-500 italic mt-1 p-3 bg-gray-50 rounded-md" style="display:none;">@lang('words.maintenance_modal_no_picture_provided')</p>
                         </div>
 
                         <div class="space-y-4">
                             <div>
-                                <h3 class="text-sm font-medium text-gray-500 mb-1">Requested Refund Amount</h3>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_refund_optional')</h3>
                                 <p id="modal_refund_amount" class="text-lg text-gray-800 font-semibold"></p>
                             </div>
                             <div>
-                                <h3 class="text-sm font-medium text-gray-500 mb-1">Current Status</h3>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.booking_section_current_status')</h3>
                                 <p id="modal_current_status_display" class="text-lg text-gray-800 capitalize-first"></p>
                             </div>
                         </div>
@@ -938,21 +954,21 @@
 
                         <div>
                             <label for="modal_landlord_response"
-                                class="block text-md font-semibold text-gray-700">Your Reply:</label>
+                                class="block text-md font-semibold text-gray-700">@lang('words.maintenance_modal_label_your_reply')</label>
                             <textarea name="landlord_response" id="modal_landlord_response" rows="4"
                                 class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                placeholder="Enter your response to the tenant..."></textarea>
+                                placeholder="@lang('words.maintenance_modal_placeholder_landlord_response')"></textarea>
                             <div id="modal_landlord_response_error" class="mt-1 text-xs text-red-500"></div>
                         </div>
                         
                         <div id="modal_accept_reject_actions_container" class="mt-6 flex flex-col sm:flex-row justify-end gap-3" style="display: none;">
                             <button type="button" id="modalAcceptBtn"
                                 class="w-full sm:w-auto inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
-                                <i class="fas fa-check-circle mr-2"></i>Accept & Send Reply
+                                <i class="fas fa-check-circle mr-2"></i>@lang('words.maintenance_modal_accept_reply_button')
                             </button>
                             <button type="button" id="modalRejectBtn"
                                 class="w-full sm:w-auto inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
-                                <i class="fas fa-times-circle mr-2"></i>Reject & Send Reply
+                                <i class="fas fa-times-circle mr-2"></i>@lang('words.maintenance_modal_reject_reply_button')
                             </button>
                         </div>
                     </form>
@@ -966,7 +982,7 @@
     <div id="updateSentMaintenanceRequestModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="updateSentMaintenanceModalTitle">
         <div class="w-full max-w-2xl mx-4 bg-white rounded-lg shadow-xl overflow-hidden">
             <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-                <h1 id="updateSentMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">Update Sent Maintenance Request</h1>
+                <h1 id="updateSentMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.maintenance_modal_update_sent_title')</h1>
                 <button id="closeUpdateSentMaintenanceModalBtn" aria-label="Close update sent maintenance modal" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
             </div>
 
@@ -976,7 +992,7 @@
 
                 {{-- Display Validation Errors (Example, adjust error bag name) --}}
                 <div id="updateSentMaintenanceErrorContainer" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
-                    <p class="font-bold">Please correct the following errors:</p>
+                    <p class="font-bold">@lang('words.error_fix_following')</p>
                     <ul id="updateSentMaintenanceErrorList" class="list-disc list-inside text-sm"></ul>
                 </div>
                 
@@ -984,52 +1000,52 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Property</h3>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_property')</h3>
                         <p id="modal_update_house_title" class="text-lg text-gray-800 font-semibold"></p>
                     </div>
                     <div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Area of House</h3>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_area')</h3>
                         <p id="modal_update_area_of_house" class="text-lg text-gray-800"></p>
                     </div>
                     <div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Request Date</h3>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_request_date')</h3>
                         <p id="modal_update_created_at" class="text-gray-700"></p>
                     </div>
                     <div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">Current Status</h3>
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.booking_section_current_status')</h3>
                         <p id="modal_update_status" class="text-lg text-gray-800 capitalize-first"></p>
                     </div>
                 </div>
 
                 <div class="mb-6 border-t border-gray-200 pt-4">
-                    <h3 class="text-sm font-medium text-gray-500 mb-1">Landlord's Response</h3>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_landlord_response')</h3>
                     <p id="modal_update_landlord_response" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded-md min-h-[50px]"></p>
                 </div>
                 
                 <div class="mb-4">
-                    <label for="modal_update_description" class="block text-sm font-medium text-gray-700">Update Description</label>
+                    <label for="modal_update_description" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_update_description')</label>
                     <textarea name="description" id="modal_update_description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700">Current Picture</label>
+                    <label class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_current_picture')</label>
                     <div id="modal_update_current_picture_container" class="mt-1">
                         <img id="modal_update_current_picture" src="" alt="Current Maintenance Picture" class="max-w-xs max-h-48 rounded border object-contain shadow-sm">
-                        <p id="modal_update_no_current_picture_text" class="text-gray-500 italic" style="display:none;">No picture was originally provided.</p>
+                        <p id="modal_update_no_current_picture_text" class="text-gray-500 italic" style="display:none;">@lang('words.maintenance_modal_no_picture_provided')</p>
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <label for="modal_update_new_picture" class="block text-sm font-medium text-gray-700">Upload New Picture (Optional - will replace current)</label>
+                    <label for="modal_update_new_picture" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_upload_new_picture_optional')</label>
                     <input type="file" name="picture" id="modal_update_new_picture" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 </div>
 
                 <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
                     <button type="button" id="cancelSentMaintenanceRequestBtn" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" style="display: none;">
-                        <i class="fas fa-times-circle mr-2"></i>Cancel This Request
+                        <i class="fas fa-times-circle mr-2"></i>@lang('words.maintenance_modal_cancel_request_button')
                     </button>
                     <button type="submit" id="updateSentMaintenanceSaveChangesBtn" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <i class="fas fa-save mr-2"></i>Save Changes
+                        <i class="fas fa-save mr-2"></i>@lang('words.maintenance_modal_save_changes_button')
                     </button>
                 </div>
             </form>
@@ -1376,7 +1392,7 @@
                             landlordResponseEl.textContent = data.landlordResponse;
                             landlordResponseEl.classList.remove('italic', 'text-gray-500');
                         } else {
-                            landlordResponseEl.textContent = 'No response from landlord yet.';
+                            landlordResponseEl.textContent = "@lang('words.maintenance_modal_no_landlord_response')";
                             landlordResponseEl.classList.add('italic', 'text-gray-500');
                         }
 
@@ -1393,6 +1409,7 @@
                         } else {
                             currentPicImg.style.display = 'none';
                             noCurrentPicText.style.display = 'block';
+                            noCurrentPicText.textContent = "@lang('words.maintenance_modal_no_picture_provided')";
                         }
                         // Clear the file input for new picture
                         document.getElementById('modal_update_new_picture').value = '';
@@ -1447,7 +1464,7 @@
 
                 if (cancelSentMaintenanceRequestBtn) {
                     cancelSentMaintenanceRequestBtn.addEventListener('click', function() {
-                        if (confirm('Are you sure you want to cancel this maintenance request? This action cannot be undone.')) {
+                        if (confirm("@lang('words.maintenance_confirm_cancel_request')")) {
                             cancelSentMaintenanceForm.submit();
                         }
                     });
@@ -1471,7 +1488,7 @@
                         document.getElementById('modal_update_status').textContent = data.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                         const landlordResponseEl = document.getElementById('modal_update_landlord_response');
                         if (data.landlordResponse) { landlordResponseEl.textContent = data.landlordResponse; landlordResponseEl.classList.remove('italic', 'text-gray-500'); } 
-                        else { landlordResponseEl.textContent = 'No response from landlord yet.'; landlordResponseEl.classList.add('italic', 'text-gray-500'); }
+                        else { landlordResponseEl.textContent = "@lang('words.maintenance_modal_no_landlord_response')"; landlordResponseEl.classList.add('italic', 'text-gray-500'); }
                         
                         // Keep old input for description if validation failed
                         // document.getElementById('modal_update_description').value = "{{ old('description') }}"; // This would be for Laravel old() helper
@@ -1479,7 +1496,7 @@
                         const currentPicImg = document.getElementById('modal_update_current_picture');
                         const noCurrentPicText = document.getElementById('modal_update_no_current_picture_text');
                         if (data.currentPictureUrl) { currentPicImg.src = data.currentPictureUrl; currentPicImg.style.display = 'block'; noCurrentPicText.style.display = 'none';} 
-                        else { currentPicImg.style.display = 'none'; noCurrentPicText.style.display = 'block'; }
+                        else { currentPicImg.style.display = 'none'; noCurrentPicText.style.display = 'block'; noCurrentPicText.textContent = "@lang('words.maintenance_modal_no_picture_provided')";}
                         
                         updateSentMaintenanceForm.action = data.updateActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
                         document.getElementById('update_maintenance_request_id').value = requestId;
