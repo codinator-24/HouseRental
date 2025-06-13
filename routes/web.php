@@ -167,6 +167,7 @@ Route::middleware('admin.auth')->group(function () {
     if (app()->environment('local')) {
         Route::get('/admin/configuration', [AdminConfigurationController::class, 'index'])->name('admin.configuration.index');
         Route::patch('/admin/configuration/bookings/{booking}/age', [AdminConfigurationController::class, 'ageBooking'])->name('admin.configuration.bookings.age');
+        Route::post('/admin/configuration/currency', [AdminConfigurationController::class, 'updateCurrencyRate'])->name('admin.configuration.currency.update'); // Added route
     }
    });
 

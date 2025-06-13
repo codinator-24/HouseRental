@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\CurrencyRate; // Added
 use Illuminate\Support\Facades\App; // For checking environment
+use Illuminate\Support\Facades\Config; // Added
+use Illuminate\Support\Facades\Validator; // Added
 
 class ConfigurationController extends Controller
 {
@@ -47,7 +50,52 @@ class ConfigurationController extends Controller
 
         $bookings = $query->paginate(20)->withQueryString(); // Paginate results
 
-        return view('admin.configuration', compact('bookings'));
+        // Fetch current USD to IQD rate
+        $usdToIqdRateSetting = CurrencyRate::where('rate_name', 'USD_TO_IQD')->first();
+        $currentUsdToIqdRate = $usdToIqdRateSetting ? (float)$usdToIqdRateSetting->rate_value : Config::get('currency.exchange_rates.USD_TO_IQD', 1460);
+        
+        $currentIqdToUsdRate = 0;
+        if ($currentUsdToIqdRate > 0) {
+            $currentIqdToUsdRate = 1 / $currentUsdToIqdRate;
+        } else {
+            // Fallback for IQD to USD if USD to IQD is zero or invalid
+            $defaultIqdToUsd = Config::get('currency.exchange_rates.IQD_TO_USD');
+            $currentIqdToUsdRate = $defaultIqdToUsd ?: (1/1460);
+        }
+
+
+        return view('admin.configuration', compact('bookings', 'currentUsdToIqdRate', 'currentIqdToUsdRate'));
+    }
+
+    /**
+     * Update the currency exchange rate.
+     */
+    public function updateCurrencyRate(Request $request)
+    {
+        if (!App::environment('local')) {
+            abort(403, 'This feature is only available in the local environment.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'usd_to_iqd_rate' => 'required|numeric|min:0.0001', // Ensure it's a positive number
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput()->with('error', 'Invalid exchange rate provided.');
+        }
+
+        $newRate = (float) $request->input('usd_to_iqd_rate');
+
+        try {
+            CurrencyRate::updateOrCreate(
+                ['rate_name' => 'USD_TO_IQD'],
+                ['rate_value' => $newRate]
+            );
+            return back()->with('success', 'Exchange rate updated successfully to 1 USD = ' . $newRate . ' IQD.');
+        } catch (\Exception $e) {
+            // Log error $e->getMessage()
+            return back()->with('error', 'Failed to update exchange rate. Please try again.');
+        }
     }
 
     /**

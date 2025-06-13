@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
+use App\Models\CurrencyRate; // Added import
 
 class SetCurrencyContext
 {
@@ -38,6 +39,19 @@ class SetCurrencyContext
         if (!in_array($currentCurrency, $currencyConfig['currencies'])) {
             $currentCurrency = $currencyConfig['default'];
             Session::put('currency', $currentCurrency); // Correct session if invalid
+        }
+
+        // Fetch dynamic exchange rate from database
+        $dynamicRate = CurrencyRate::where('rate_name', 'USD_TO_IQD')->first();
+        if ($dynamicRate && isset($currencyConfig['exchange_rates'])) {
+            $currencyConfig['exchange_rates']['USD_TO_IQD'] = (float) $dynamicRate->rate_value;
+            if ((float) $dynamicRate->rate_value > 0) {
+                $currencyConfig['exchange_rates']['IQD_TO_USD'] = 1 / (float) $dynamicRate->rate_value;
+            } else {
+                // Handle division by zero or invalid rate, fallback to config default or a safe value
+                $defaultIqdToUsd = Config::get('currency.exchange_rates.IQD_TO_USD');
+                $currencyConfig['exchange_rates']['IQD_TO_USD'] = $defaultIqdToUsd ?: (1/1460); // Fallback
+            }
         }
 
         // Share currency data with all views

@@ -3,6 +3,7 @@
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Database\Seeders\CurrencyRateSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,5 +20,7 @@ class DatabaseSeeder extends Seeder
 
         // Create 10 random Users
         User::factory(10)->create();
+
+        $this->call(CurrencyRateSeeder::class);
     }
 }
