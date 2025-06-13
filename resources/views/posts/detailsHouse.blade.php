@@ -249,6 +249,28 @@
                                         @endif
                                     @endauth
                                 </div>
+
+                                {{-- Contact Landlord/Inquire Button --}}
+                                @auth
+                                    @if (Auth::id() !== $house->landlord_id)
+                                        @can('start-inquiry', $house)
+                                            <div class="mt-4">
+                                                <a href="{{ route('houses.inquiry.show', $house) }}"
+                                                   class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                                    <i class="mr-2 fas fa-envelope"></i> @lang('words.contact_landlord_button') {{-- You'll need to add this translation --}}
+                                                </a>
+                                            </div>
+                                        @endcan
+                                    @endif
+                                @else
+                                    {{-- Guest: Prompt to login to contact --}}
+                                     <div class="mt-4">
+                                        <a href="{{ route('login', ['redirect_to' => route('houses.inquiry.show', $house)]) }}"
+                                           class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                            <i class="mr-2 fas fa-envelope"></i> @lang('words.login_to_contact_landlord_button') {{-- You'll need to add this translation --}}
+                                        </a>
+                                    </div>
+                                @endauth
                             </div>
                         @endif
 

@@ -81,6 +81,10 @@ Route::middleware('lang')->group(function () {
         Route::get('/agreements/{agreement}/messages', [MessageController::class, 'index'])->name('agreements.messages.index');
         Route::post('/agreements/{agreement}/messages', [MessageController::class, 'store'])->name('agreements.messages.store');
 
+        // Inquiry Messaging Routes
+        Route::get('/houses/{house}/inquire', [MessageController::class, 'showInquiryForm'])->name('houses.inquiry.show');
+        Route::post('/houses/{house}/inquire', [MessageController::class, 'storeInquiryMessage'])->name('houses.inquiry.store');
+
         // Example (adjust middleware as needed)
         Route::post('/maintenance', [MaintenanceController::class, 'InsertMaintenance'])->name('maintenance.insert');
         Route::put('/maintenance/tenant-update/{maintenance}', [MaintenanceController::class, 'tenantUpdate'])->name('maintenance.tenant.update');

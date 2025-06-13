@@ -428,4 +428,18 @@ return [
     'my_houses_per_month' => 'per month',
     'my_houses_update_property_tooltip' => 'Update Property',
     'my_houses_delete_property_tooltip' => 'Delete Property',
+
+    // Inquiry Messages
+    'contact_landlord_button' => 'Contact Landlord',
+    'login_to_contact_landlord_button' => 'Login to Contact Landlord',
+    'inquiry_thread_title_prefix' => 'Inquiry about',
+    'inquiry_thread_with_user_prefix' => 'with',
+    'inquiry_send_message_button' => 'Send Message',
+    'inquiry_message_placeholder' => 'Type your message here...',
+    'inquiry_landlord_reply_placeholder' => 'Type your reply to the inquirer...',
+    'inquiry_no_messages_yet' => 'No messages in this inquiry yet. Start the conversation!',
+    'message_overview_inquiry_title' => 'Inquiry about',
+    'message_overview_agreement_title' => 'Conversation for Agreement #',
+    'message_overview_with_user' => 'with',
+    'message_overview_no_threads' => 'You have no active message threads.',
 ];

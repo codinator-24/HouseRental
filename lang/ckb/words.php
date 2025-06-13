@@ -428,4 +428,18 @@ return [
     'my_houses_per_month' => 'مانگانە',
     'my_houses_update_property_tooltip' => 'نوێکردنەوەی موڵک',
     'my_houses_delete_property_tooltip' => 'سڕینەوەی موڵک',
+
+    // Inquiry Messages
+    'contact_landlord_button' => 'پەیوەندی بە خاوەن موڵکەوە بکە',
+    'login_to_contact_landlord_button' => 'بچۆ ژوورەوە بۆ پەیوەندیکردن بە خاوەن موڵک',
+    'inquiry_thread_title_prefix' => 'پرسیار دەربارەی',
+    'inquiry_thread_with_user_prefix' => 'لەگەڵ',
+    'inquiry_send_message_button' => 'نامە بنێرە',
+    'inquiry_message_placeholder' => 'نامەکەت لێرە بنووسە...',
+    'inquiry_landlord_reply_placeholder' => 'وەڵامەکەت بۆ پرسیارکەر بنووسە...',
+    'inquiry_no_messages_yet' => 'هێشتا هیچ نامەیەک لەم پرسیارەدا نییە. دەست بە گفتوگۆکە بکە!',
+    'message_overview_inquiry_title' => 'پرسیار دەربارەی',
+    'message_overview_agreement_title' => 'گفتوگۆ بۆ ڕێککەوتننامەی #',
+    'message_overview_with_user' => 'لەگەڵ',
+    'message_overview_no_threads' => 'هیچ زنجیرە نامەیەکی چالاکت نییە.',
 ];

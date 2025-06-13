@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Review; // Added for Review relationship
 use App\Models\Booking; // Added for Booking relationship
+use App\Models\Message; // Added for Message relationship
 
 class House extends Model
 {
@@ -164,5 +165,14 @@ class House extends Model
 
         // Check if the user has already reviewed this specific booking
         return !$this->reviews()->where('user_id', $user->id)->where('booking_id', $booking->id)->exists();
+    }
+
+    /**
+     * Get the inquiry messages for the house.
+     * These are messages not tied to a specific agreement.
+     */
+    public function inquiryMessages(): HasMany
+    {
+        return $this->hasMany(Message::class)->whereNull('agreement_id');
     }
 }

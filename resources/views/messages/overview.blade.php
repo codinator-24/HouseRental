@@ -1,66 +1,91 @@
 <x-layout>
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">My Messages</h1>
+    <div class="container px-4 py-8 mx-auto">
+        <h1 class="mb-6 text-3xl font-bold text-gray-800">@lang('words.Notifications')</h1> {{-- Re-using Notifications as it's a general term for messages/alerts --}}
 
-        @if ($agreements->isEmpty())
-            <p class="text-gray-600 text-center">You have no active agreements with messages.</p>
+        @if ($threads->isEmpty())
+            <p class="text-center text-gray-600">@lang('words.message_overview_no_threads')</p>
         @else
-            <div class="bg-white shadow-md rounded-lg">
+            <div class="bg-white rounded-lg shadow-md">
                 <ul class="divide-y divide-gray-200">
-                    @foreach ($agreements as $agreement)
+                    @foreach ($threads as $thread)
                         @php
-                            $otherParty = null;
-                            if (Auth::id() == $agreement->tenant->id) {
-                                $otherParty = $agreement->landlord;
-                            } else {
-                                $otherParty = $agreement->tenant;
+                            $unreadCount = 0;
+                            $item = $thread->item; // This is either Agreement or House model
+                            $otherParty = $thread->otherParty;
+                            $latestMessage = $thread->latestMessage;
+
+                            if ($thread->type === 'agreement') {
+                                $unreadCount = $item->messages()->where('receiver_id', Auth::id())->whereNull('read_at')->count();
+                                $itemTitle = $item->booking->house->title ?? __('words.booking_property_info_na');
+                                $titleText = __('words.message_overview_agreement_title') . $item->id . ' ' . __('words.message_overview_with_user') . ' ' . ($otherParty->user_name ?? __('words.booking_tenant_info_unavailable'));
+                            } elseif ($thread->type === 'inquiry') {
+                                // For inquiries, item is the House model
+                                // Unread count for inquiry messages related to this house and user
+                                $unreadCount = $item->inquiryMessages()
+                                                    ->where('receiver_id', Auth::id())
+                                                    ->where(function($q) use ($otherParty) { // Filter by the specific other party in this thread
+                                                        if ($otherParty) {
+                                                            $q->where('sender_id', $otherParty->id);
+                                                        }
+                                                    })
+                                                    ->whereNull('read_at')
+                                                    ->count();
+                                $itemTitle = $item->title;
+                                $titleText = __('words.message_overview_inquiry_title') . ' ' . $item->title . ' ' . __('words.message_overview_with_user') . ' ' . ($otherParty->user_name ?? __('words.booking_landlord_na'));
                             }
-                            $latestMessage = $agreement->messages->first(); // Already sorted by desc in controller
-                            $unreadCount = $agreement->messages->where('receiver_id', Auth::id())->whereNull('read_at')->count();
                         @endphp
                         <li>
-                            <a href="{{ route('agreements.messages.index', $agreement) }}" class="block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out">
+                            <a href="{{ $thread->link }}" class="block संक्रमण duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus:bg-gray-50">
                                 <div class="flex items-center px-4 py-4 sm:px-6">
-                                    <div class="min-w-0 flex-1 flex items-center">
+                                    <div class="flex items-center flex-1 min-w-0">
                                         <div class="flex-shrink-0">
-                                            <!-- You can add a user avatar or property image here -->
-                                            <img class="h-12 w-12 rounded-full" src="{{ $otherParty->picture ? asset('storage/' . $otherParty->picture) : asset('images/default-avatar.png') }}" alt="{{ $otherParty->full_name }}" />
+                                            <img class="w-12 h-12 rounded-full" 
+                                                 src="{{ $otherParty && $otherParty->picture ? asset($otherParty->picture) : asset('images/default-profile.png') }}" 
+                                                 alt="{{ $otherParty->user_name ?? 'User' }}" />
                                         </div>
-                                        <div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
+                                        <div class="flex-1 min-w-0 px-4 md:grid md:grid-cols-2 md:gap-4">
                                             <div>
-                                                <p class="text-sm font-medium text-indigo-600 truncate">Conversation with {{ $otherParty->full_name }}</p>
-                                                <p class="mt-2 flex items-center text-sm text-gray-500">
-                                                    <span class="truncate">Regarding: {{ $agreement->booking->house->title }}</span>
+                                                <p class="text-sm font-medium text-indigo-600 truncate">{{ $titleText }}</p>
+                                                <p class="flex items-center mt-2 text-sm text-gray-500">
+                                                    <span class="truncate">
+                                                        @if ($thread->type === 'agreement')
+                                                            @lang('words.booking_label_house') {{ $itemTitle }}
+                                                        @else
+                                                            {{-- For inquiry, item is the house itself --}}
+                                                            @lang('words.booking_label_house') {{ $itemTitle }}
+                                                        @endif
+                                                    </span>
                                                 </p>
                                             </div>
                                             <div class="hidden md:block">
                                                 <div>
                                                     @if ($latestMessage)
                                                         <p class="text-sm text-gray-900">
-                                                            {{ Str::limit($latestMessage->content, 50) }}
+                                                            <span class="font-semibold">{{ $latestMessage->sender_id == Auth::id() ? 'You' : $latestMessage->sender->user_name }}:</span>
+                                                            {{ Str::limit($latestMessage->content, 40) }}
                                                         </p>
-                                                        <p class="mt-2 flex items-center text-sm text-gray-500">
+                                                        <p class="flex items-center mt-2 text-sm text-gray-500">
                                                             {{ $latestMessage->created_at->diffForHumans() }}
                                                             @if($latestMessage->sender_id == Auth::id() && $latestMessage->read_at)
-                                                                <svg class="ml-1 w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                                                <i class="ml-1 fas fa-check-double text-sky-400" title="Read"></i>
                                                             @elseif($latestMessage->sender_id == Auth::id())
-                                                                <svg class="ml-1 w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                                                <i class="ml-1 fas fa-check text-gray-400" title="Sent"></i>
                                                             @endif
                                                         </p>
                                                     @else
-                                                        <p class="text-sm text-gray-500">No messages yet.</p>
+                                                        <p class="text-sm text-gray-500">@lang('words.inquiry_no_messages_yet')</p>
                                                     @endif
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="ml-4 flex-shrink-0 flex items-center">
+                                    <div class="flex items-center flex-shrink-0 ml-4">
                                         @if ($unreadCount > 0)
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500 text-white">
                                                 {{ $unreadCount }}
                                             </span>
                                         @endif
-                                        <svg class="h-5 w-5 text-gray-400 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <svg class="w-5 h-5 ml-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                                         </svg>
                                     </div>

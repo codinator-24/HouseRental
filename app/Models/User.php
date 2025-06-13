@@ -131,4 +131,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class);
     }
+
+    /**
+     * Get the inquiry messages sent by the user.
+     * These are messages not tied to a specific agreement.
+     */
+    public function sentInquiryMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id')->whereNull('agreement_id');
+    }
+
+    /**
+     * Get the inquiry messages received by the user.
+     * These are messages not tied to a specific agreement.
+     */
+    public function receivedInquiryMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id')->whereNull('agreement_id');
+    }
 }

@@ -12,6 +12,7 @@ class Message extends Model
 
     protected $fillable = [
         'agreement_id',
+        'house_id', // Added for inquiries
         'sender_id',
         'receiver_id',
         'content',
@@ -40,5 +41,13 @@ class Message extends Model
     public function receiver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'receiver_id');
+    }
+
+    /**
+     * Get the house that the message (inquiry) might belong to.
+     */
+    public function house(): BelongsTo
+    {
+        return $this->belongsTo(House::class);
     }
 }
