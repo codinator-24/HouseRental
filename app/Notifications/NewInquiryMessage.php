@@ -54,7 +54,8 @@ class NewInquiryMessage extends Notification implements ShouldQueue
         $greeting = "Hello " . ($notifiable->user_name ?? 'User') . ",";
         $line = $senderName . " has sent you a message regarding the property '" . $this->house->title . "'.";
         $actionText = "View Message";
-        $actionUrl = route('houses.inquiry.show', $this->house); // Link to the inquiry thread
+        // The "otherUser" for the route is the sender of the message that triggered this notification
+        $actionUrl = route('messages.inquiry.thread', ['house' => $this->house, 'otherUser' => $this->inquiryMessage->sender]);
 
         return (new MailMessage)
                     ->subject($subject)
@@ -93,7 +94,8 @@ class NewInquiryMessage extends Notification implements ShouldQueue
             'sender_id' => $this->inquiryMessage->sender_id,
             'sender_name' => $senderName,
             'text' => $text, // Dynamic text based on recipient
-            'link' => route('houses.inquiry.show', $this->house->id), // Link to the inquiry thread
+            // The "otherUser" for the route is the sender of the message that triggered this notification
+            'link' => route('messages.inquiry.thread', ['house' => $this->house->id, 'otherUser' => $this->inquiryMessage->sender_id]),
             'type' => 'inquiry_message',
         ];
     }
