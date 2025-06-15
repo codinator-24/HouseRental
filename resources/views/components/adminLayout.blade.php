@@ -288,12 +288,11 @@
                         <span>Manage Reviews</span>
                     </a>
                 </li>
-                 </li>
-                {{-- 1. New Communications Nav Item --}}
+                {{-- Communications Nav Item --}}
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.communications') ? 'activee' : '' }}"
-                        href="#"> {{-- Replace # with actual route e.g., {{ route('admin.communications') }} --}}
-                        <i class="bi bi-chat-left-text"></i> {{-- Official chat icon --}}
+                    <a class="nav-link {{ request()->routeIs('admin.communications.index') || request()->routeIs('admin.communications.inquiry.show') || request()->routeIs('admin.communications.agreement.show') ? 'activee' : '' }}"
+                        href="{{ route('admin.communications.index') }}">
+                        <i class="bi bi-chat-left-text"></i>
                         <span>Communications</span>
                     </a>
                 </li>

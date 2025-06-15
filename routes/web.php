@@ -176,6 +176,12 @@ Route::middleware('admin.auth')->group(function () {
         Route::patch('/admin/configuration/bookings/{booking}/age', [AdminConfigurationController::class, 'ageBooking'])->name('admin.configuration.bookings.age');
         Route::post('/admin/configuration/currency', [AdminConfigurationController::class, 'updateCurrencyRate'])->name('admin.configuration.currency.update'); // Added route
     }
+
+    // Admin Communications / Messages Monitoring
+    Route::get('/admin/communications', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'index'])->name('admin.communications.index');
+    Route::get('/admin/communications/inquiry/house/{house}/with/{userA}/{userB}', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'showInquiryThread'])->name('admin.communications.inquiry.show');
+    Route::get('/admin/communications/agreement/{agreement}', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'showAgreementThread'])->name('admin.communications.agreement.show');
+
    });
 
 //Stable
