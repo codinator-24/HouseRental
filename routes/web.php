@@ -82,8 +82,11 @@ Route::middleware('lang')->group(function () {
         Route::post('/agreements/{agreement}/messages', [MessageController::class, 'store'])->name('agreements.messages.store');
 
         // Inquiry Messaging Routes
-        Route::get('/houses/{house}/inquire', [MessageController::class, 'showInquiryForm'])->name('houses.inquiry.show');
-        Route::post('/houses/{house}/inquire', [MessageController::class, 'storeInquiryMessage'])->name('houses.inquiry.store');
+        Route::get('/messages/inquiry/house/{house}/with/{otherUser}', [MessageController::class, 'showInquiryThread'])->name('messages.inquiry.thread');
+        Route::post('/messages/inquiry/house/{house}/with/{otherUser}', [MessageController::class, 'storeInquiryThreadMessage'])->name('messages.inquiry.thread.store');
+        // Old routes, to be removed or redirected if necessary after confirming new ones work.
+        // Route::get('/houses/{house}/inquire/{inquirer_id?}', [MessageController::class, 'showInquiryForm'])->name('houses.inquiry.show');
+        // Route::post('/houses/{house}/inquire', [MessageController::class, 'storeInquiryMessage'])->name('houses.inquiry.store');
 
         // Example (adjust middleware as needed)
         Route::post('/maintenance', [MaintenanceController::class, 'InsertMaintenance'])->name('maintenance.insert');

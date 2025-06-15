@@ -179,7 +179,7 @@ class MessageController extends Controller
                 'otherParty' => $inquiry->otherParty,
                 'latest_message_at' => $inquiry->latestMessage->created_at,
                 'title' => 'Inquiry about ' . $inquiry->title . ' with ' . $otherPartyName,
-                'link' => route('houses.inquiry.show', $inquiry),
+                'link' => route('messages.inquiry.thread', ['house' => $inquiry->id, 'otherUser' => $inquiry->otherParty->id]),
                 'latestMessage' => $inquiry->latestMessage
             ]);
         }
@@ -190,94 +190,68 @@ class MessageController extends Controller
     }
 
     /**
-     * Display the inquiry form and message thread for a specific house.
+     * Display the inquiry message thread for a specific house with another user.
      *
      * @param  \App\Models\House  $house
+     * @param  \App\Models\User   $otherUser
      * @return \Illuminate\Http\Response
      */
-    public function showInquiryForm(House $house)
+    public function showInquiryThread(House $house, User $otherUser)
     {
-        // Gate::authorize('start-inquiry', $house); // Allows starting a new one
-        // More accurately, for viewing an existing/new thread:
-        Gate::authorize('view-inquiry-thread', $house);
-
-
         $currentUser = Auth::user();
-        $landlord = $house->landlord;
+
+        // Authorization: Ensure the current user is part of this conversation
+        // This Gate will check if $currentUser is either $house->landlord or $otherUser,
+        // and if $otherUser is appropriate for an inquiry with $house->landlord.
+        Gate::authorize('view-specific-inquiry-thread', [$house, $otherUser]);
 
         $messages = Message::where('house_id', $house->id)
                            ->whereNull('agreement_id')
-                           ->where(function ($query) use ($currentUser, $landlord) {
+                           ->where(function ($query) use ($currentUser, $otherUser) {
                                $query->where('sender_id', $currentUser->id)
-                                     ->where('receiver_id', $landlord->id);
+                                     ->where('receiver_id', $otherUser->id);
                            })
-                           ->orWhere(function ($query) use ($currentUser, $landlord) {
-                               $query->where('sender_id', $landlord->id)
+                           ->orWhere(function ($query) use ($currentUser, $otherUser) {
+                               $query->where('sender_id', $otherUser->id)
                                      ->where('receiver_id', $currentUser->id);
                            })
                            ->with(['sender', 'receiver'])
                            ->orderBy('created_at', 'asc')
                            ->get();
 
-        // Mark messages as read for the current user in this inquiry thread
+        // Mark messages as read for the current user in this specific thread
+        // (i.e., messages sent by $otherUser to $currentUser)
         Message::where('house_id', $house->id)
               ->whereNull('agreement_id')
               ->where('receiver_id', $currentUser->id)
+              ->where('sender_id', $otherUser->id) 
               ->whereNull('read_at')
               ->update(['read_at' => now()]);
         
         return view('messages.inquiry_thread', [
             'house' => $house,
             'messages' => $messages,
-            'landlord' => $landlord,
-            'currentUser' => $currentUser
+            'currentUser' => $currentUser,
+            'otherParty' => $otherUser, // This is the user they are conversing with
+            'landlord' => $house->landlord // Still useful to pass the actual landlord of the house
         ]);
     }
 
     /**
-     * Store a newly created inquiry message in storage.
+     * Store a newly created inquiry message in storage for a specific thread.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\House  $house
+     * @param  \App\Models\User   $otherUser (This is the $otherUser from the thread context, acting as receiver)
      * @return \Illuminate\Http\Response
      */
-    public function storeInquiryMessage(Request $request, House $house)
+    public function storeInquiryThreadMessage(Request $request, House $house, User $otherUser)
     {
-        $currentUser = Auth::user();
-        $receiver = null;
+        $sender = Auth::user();
 
-        // Determine receiver: if current user is landlord, they are replying to an inquirer.
-        // If current user is not landlord, they are sending to landlord.
-        if ($currentUser->id === $house->landlord_id) {
-            // This part is tricky without knowing who the landlord is replying to.
-            // The form needs to submit the ID of the other participant in the thread.
-            // For now, let's assume the request includes 'receiver_id' if landlord is replying.
-            // This needs robust implementation in the view.
-            // A simpler initial approach: landlord can only reply if there's an existing message from an inquirer.
-            // For a new message from tenant to landlord, receiver is always landlord.
-            $request->validate(['content' => 'required|string|max:5000']);
-            if ($request->has('receiver_id_for_reply') && User::find($request->receiver_id_for_reply)) {
-                 $receiver = User::find($request->receiver_id_for_reply);
-            } else {
-                // Attempt to find the last person who messaged the landlord about this house
-                $lastInquirer = Message::where('house_id', $house->id)
-                                    ->whereNull('agreement_id')
-                                    ->where('receiver_id', $currentUser->id) // Messages sent to landlord
-                                    ->orderBy('created_at', 'desc')
-                                    ->first();
-                if ($lastInquirer) {
-                    $receiver = $lastInquirer->sender;
-                } else {
-                     // This case should ideally not happen if UI guides landlord to reply to specific threads.
-                    // Or, if this is the very first message from landlord (unlikely for inquiry flow)
-                    abort(403, 'Cannot determine recipient for landlord reply.');
-                }
-            }
-        } else {
-            $receiver = $house->landlord;
-        }
-
-        Gate::authorize('send-inquiry-message', [$house, $receiver]);
+        // Authorization: Ensure the current user ($sender) can send a message 
+        // to $otherUser (the receiver) regarding this $house.
+        Gate::authorize('send-specific-inquiry-message', [$house, $otherUser]);
 
         $request->validate([
             'content' => 'required|string|max:5000',
@@ -285,18 +259,16 @@ class MessageController extends Controller
 
         $newMessage = Message::create([
             'house_id' => $house->id,
-            'sender_id' => $currentUser->id,
-            'receiver_id' => $receiver->id,
+            'sender_id' => $sender->id,
+            'receiver_id' => $otherUser->id, // Use $otherUser->id as the receiver_id
             'content' => $request->content,
             'agreement_id' => null,
         ]);
 
-        // Notify the receiver
-        if ($receiver) {
-            $receiver->notify(new NewInquiryMessage($newMessage, $house));
-        }
+        // Notify the $otherUser (receiver)
+        $otherUser->notify(new NewInquiryMessage($newMessage, $house));
 
-        return redirect()->route('houses.inquiry.show', $house)
+        return redirect()->route('messages.inquiry.thread', ['house' => $house, 'otherUser' => $otherUser])
                          ->with('success', 'Message sent successfully!');
     }
 }

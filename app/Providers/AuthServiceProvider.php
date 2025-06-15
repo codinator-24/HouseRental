@@ -38,46 +38,116 @@ class AuthServiceProvider extends ServiceProvider
                     && $agreement->status === 'active'; // Adjust 'active' if your status is different
         });
 
-        Gate::define('start-inquiry', function (User $user, House $house) {
-            // User cannot inquire about their own house, house must be approved/active
-            // Assuming 'approved' is the status for a live, viewable house listing.
-            return $user->id !== $house->landlord_id && $house->status === 'approved';
+        // New, more specific gates for inquiry threads:
+
+        Gate::define('initiate-inquiry-with-landlord', function(User $user, House $house) {
+            // User can start an inquiry if they are not the landlord and the house is available.
+            return $user->id !== $house->landlord_id && $house->status === 'available';
         });
 
-        Gate::define('view-inquiry-thread', function (User $user, House $house) {
-            // User must be the landlord of the house or have an existing inquiry message (sent or received) for this house.
-            if ($user->id === $house->landlord_id) {
+        Gate::define('view-specific-inquiry-thread', function(User $user, House $house, User $otherUserInThread) {
+            // $user: Currently authenticated user.
+            // $house: The house in question.
+            // $otherUserInThread: The other participant named in the route.
+
+            $landlordOfHouse = $house->landlord;
+
+            // Ensure $otherUserInThread is distinct from the landlord for a valid inquiry context.
+            // (An inquiry is between landlord and someone else).
+            // This check is implicitly handled if the link generation is correct,
+            // but as a safeguard, if $otherUserInThread IS the landlord, then $user must NOT be the landlord.
+            // If $otherUserInThread is NOT the landlord, then $user can be the landlord.
+
+            // Scenario 1: Current user ($user) is the landlord of the house,
+            // AND $otherUserInThread is an inquirer (i.e., not the landlord).
+            if ($user->id === $landlordOfHouse->id && $otherUserInThread->id !== $landlordOfHouse->id) {
                 return true;
             }
-            // Check if there's any inquiry message involving this user and house
-            return $house->inquiryMessages()
-                         ->where(function ($query) use ($user) {
-                             $query->where('sender_id', $user->id)
-                                   ->orWhere('receiver_id', $user->id);
-                         })
-                         ->exists();
+
+            // Scenario 2: Current user ($user) is an inquirer (i.e., not the landlord),
+            // AND $otherUserInThread is the landlord of the house.
+            // This means the current user is trying to view their conversation with the landlord.
+            if ($user->id !== $landlordOfHouse->id && $otherUserInThread->id === $landlordOfHouse->id) {
+                // To be absolutely sure this is the correct inquirer for this thread context,
+                // ensure the current user ($user) is the one who is supposed to be
+                // the "other party" when the landlord ($otherUserInThread) is specified in the route.
+                // This is implicitly true if the route was /messages/inquiry/house/{house}/with/{landlord}
+                // and the current user is the inquirer.
+                // The key is that $user is one party, and $otherUserInThread is the other.
+                // If $user is the inquirer, then $otherUserInThread must be the landlord.
+                return true;
+            }
+            
+            return false;
         });
 
-        Gate::define('send-inquiry-message', function (User $user, House $house, User $receiver) {
-            // House must be approved.
-            if ($house->status !== 'approved') {
+        Gate::define('send-specific-inquiry-message', function(User $user, House $house, User $receiverInThread) {
+            // House must be available to send messages.
+            if ($house->status !== 'available') {
                 return false;
             }
 
-            // Case 1: User is the landlord sending to an inquirer
-            if ($user->id === $house->landlord_id && $receiver->id !== $house->landlord_id) {
-                // Ensure the receiver has actually initiated an inquiry or is part of an ongoing one for this house
-                // This check might be implicit if the UI only allows replying to existing threads.
-                // For now, we assume if the landlord is sending to a non-landlord for this house, it's valid.
+            // The sender ($user) must be authorized to view this thread with $receiverInThread for this $house.
+            // This re-uses the logic of being one of the two parties.
+            if ($user->id === $house->landlord_id && $receiverInThread->id !== $house->landlord_id) {
+                // Landlord sending to the specific inquirer ($receiverInThread)
                 return true;
             }
-
-            // Case 2: User is a potential tenant (inquirer) sending to the landlord
-            if ($user->id !== $house->landlord_id && $receiver->id === $house->landlord_id) {
-                return true;
+            if ($user->id === $receiverInThread->id) {
+                // This case is wrong: user cannot be the receiver they are sending to.
+                // This implies an inquirer ($user) is sending to the landlord ($receiverInThread should be landlord)
+                // Let's re-evaluate: $user is sender, $receiverInThread is the recipient.
+                // If $user is inquirer, $receiverInThread must be $house->landlord_id
+                // If $user is landlord, $receiverInThread must be an inquirer (not $house->landlord_id)
+                 return false; // Should not happen, sender cannot be receiver.
             }
 
+            // Corrected logic:
+            // Case 1: Sender is the landlord, receiver is the otherUser (inquirer)
+            if ($user->id === $house->landlord_id && $receiverInThread->id !== $house->landlord_id) {
+                return true;
+            }
+            // Case 2: Sender is an inquirer ($user not landlord), receiver is the landlord
+            if ($user->id !== $house->landlord_id && $receiverInThread->id === $house->landlord_id) {
+                return true;
+            }
+            
             return false;
         });
+
+
+        // Old gates - can be commented out or removed once new ones are confirmed working.
+        // Gate::define('start-inquiry', function (User $user, House $house) {
+        //     return $user->id !== $house->landlord_id && $house->status === 'available';
+        // });
+
+        // Gate::define('view-inquiry-thread', function (User $user, House $house) {
+        //     if ($user->id === $house->landlord_id) {
+        //         return true;
+        //     }
+        //     $existingThread = $house->inquiryMessages()
+        //                          ->where(function ($query) use ($user) {
+        //                              $query->where('sender_id', $user->id)
+        //                                    ->orWhere('receiver_id', $user->id);
+        //                          })
+        //                          ->exists();
+        //     if ($existingThread) {
+        //         return true;
+        //     }
+        //     return $user->id !== $house->landlord_id && $house->status === 'available';
+        // });
+
+        // Gate::define('send-inquiry-message', function (User $user, House $house, User $receiver) {
+        //     if ($house->status !== 'available') {
+        //         return false;
+        //     }
+        //     if ($user->id === $house->landlord_id && $receiver->id !== $house->landlord_id) {
+        //         return true;
+        //     }
+        //     if ($user->id !== $house->landlord_id && $receiver->id === $house->landlord_id) {
+        //         return true;
+        //     }
+        //     return false;
+        // });
     }
 }

@@ -12,19 +12,8 @@
 
         <h1 class="mb-2 text-2xl font-semibold text-gray-800">
             @lang('words.inquiry_thread_title_prefix') <a href="{{ route('house.details', $house) }}" class="text-blue-600 hover:underline">{{ $house->title }}</a>
-            @if ($currentUser->id === $house->landlord_id)
-                {{-- Landlord is viewing, show who they are talking to if possible --}}
-                @php
-                    $otherParty = $messages->map(function($msg) use ($currentUser) {
-                        return $msg->sender_id === $currentUser->id ? $msg->receiver : $msg->sender;
-                    })->firstWhere('id', '!=', $currentUser->id);
-                @endphp
-                @if($otherParty)
-                    @lang('words.inquiry_thread_with_user_prefix') {{ $otherParty->user_name }}
-                @endif
-            @else
-                {{-- Tenant is viewing, they are talking to the landlord --}}
-                @lang('words.inquiry_thread_with_user_prefix') {{ $landlord->user_name }}
+            @if (isset($otherParty) && $otherParty)
+                @lang('words.inquiry_thread_with_user_prefix') {{ $otherParty->user_name }}
             @endif
         </h1>
 
@@ -64,17 +53,15 @@
 
             {{-- Message Input Form --}}
             <div class="p-4 bg-gray-100 border-t border-gray-200">
-                <form action="{{ route('houses.inquiry.store', $house) }}" method="POST">
+                {{-- The $otherParty is the recipient of the message being sent from this form --}}
+                <form action="{{ route('messages.inquiry.thread.store', ['house' => $house, 'otherUser' => $otherParty]) }}" method="POST">
                     @csrf
-                    {{-- Hidden field for landlord to specify receiver if replying to a specific inquirer in a multi-inquirer scenario (future enhancement) --}}
-                    @if ($currentUser->id === $house->landlord_id && isset($otherParty) && $otherParty)
-                        <input type="hidden" name="receiver_id_for_reply" value="{{ $otherParty->id }}">
-                    @endif
+                    {{-- No need for receiver_id_for_reply as $otherParty is now the explicit receiver in the route --}}
 
                     <div class="flex items-start space-x-3">
                         <textarea name="content" rows="3"
                             class="flex-1 block w-full px-3 py-2 text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                            placeholder="{{ $currentUser->id === $house->landlord_id ? __('words.inquiry_landlord_reply_placeholder') : __('words.inquiry_message_placeholder') }}" required>{{ old('content') }}</textarea>
+                            placeholder="@lang('words.inquiry_message_placeholder')" required>{{ old('content') }}</textarea>
                         <button type="submit"
                             class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             @lang('words.inquiry_send_message_button')
