@@ -24,13 +24,10 @@ class Payment extends Model
      */
     protected $fillable = [
         'agreement_id',
-        'maintenance_id', // Added
-        'user_id',        // Added (for the user making/receiving payment)
         'amount',
         'payment_method',
         'status',
         'paid_at',
-        'transaction_id', // Added
         'notes',
     ];
 

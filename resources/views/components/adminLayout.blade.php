@@ -44,12 +44,35 @@
         display: flex;
         flex-direction: column;
         z-index: 1000;
+        /* Scrollable functionality moved to .nav-container */
+        overflow-x: hidden;
     }
 
     .sidebar.collapsed {
         width: 90px;
         /* Adjusted collapsed width */
     }
+
+    /* Custom scrollbar styling for nav-container */
+    .nav-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .nav-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+
+    .nav-container::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+    }
+
+    .nav-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Firefox scrollbar properties moved to .nav-container rule */
 
     .sidebar .nav-link {
         color: #ffffff;
@@ -77,6 +100,8 @@
 
     .toggle-wrapper {
         padding: 0.75rem 1rem;
+        /* Keep toggle button at top - not scrollable */
+        flex-shrink: 0;
     }
 
     .toggle-btn {
@@ -91,6 +116,27 @@
         align-items: center;
         padding: 0;
         margin: 0;
+    }
+
+    /* Navigation container that will be scrollable */
+    .nav-container {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-bottom: 1rem;
+        direction: rtl; /* Makes scrollbar appear on the left */
+        scrollbar-width: thin; /* Firefox scrollbar */
+        scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1); /* Firefox scrollbar */
+    }
+
+    .nav-container > .nav {
+        direction: ltr; /* Resets direction for the content */
+    }
+
+    /* Settings container at bottom - not scrollable */
+    .settings-container {
+        flex-shrink: 0;
+        margin-top: auto;
     }
 
     main.main-content {
@@ -218,98 +264,102 @@
                     <i class="bi bi-list"></i>
                 </button>
             </div>
-            <ul class="nav nav-pills flex-column w-100">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('AdminDashboard') ? 'activee' : '' }}"
-                        href="{{ route('AdminDashboard') }}">
-                        <i class="bi bi-grid"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('users') ? 'activee' : '' }}" href="{{ route('users') }}">
-                        <i class="bi bi-people"></i>
-                        <span>Manage User</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('approve-user') ? 'activee' : '' }}"
-                        href="{{ route('approve-user') }}">
-                        <i class="bi bi-person-exclamation"></i>
-                        <span>Verify User</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('houses') ? 'activee' : '' }}"
-                        href="{{ route('houses') }}">
-                        <i class="bi bi-house-door"></i>
-                        <span>Manage House</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('aprove') ? 'activee' : '' }}"
-                        href="{{ route('aprove') }}">
-                        <i class="bi bi-check-circle"></i>
-                        <span>Approve Rents</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('agreement') ? 'activee' : '' }}"
-                        href="{{ route('agreement') }}">
-                        <i class="bi bi-file-earmark-text"></i>
-                        <span>Agreements</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('payment') ? 'activee' : '' }}"
-                        href="{{ route('payment') }}">
-                        <i class="bi bi-credit-card"></i>
-                        <span>Payments</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('profit') ? 'activee' : '' }}"
-                        href="{{ route('profit') }}">
-                        <i class="bi bi-bar-chart-line"></i>
-                        <span>Profit</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('feedback') ? 'activee' : '' }}"
-                        href="{{ route('feedback') }}">
-                        <i class="bi bi-chat-dots"></i>
-                        <span>Feedback</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.reviews.index') ? 'activee' : '' }}"
-                        href="{{ route('admin.reviews.index') }}">
-                        <i class="bi bi-star-half"></i> {{-- Or bi-chat-right-quote --}}
-                        <span>Manage Reviews</span>
-                    </a>
-                </li>
-                 </li>
-                {{-- 1. New Communications Nav Item --}}
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.communications') ? 'activee' : '' }}"
-                        href="#"> {{-- Replace # with actual route e.g., {{ route('admin.communications') }} --}}
-                        <i class="bi bi-chat-left-text"></i> {{-- Official chat icon --}}
-                        <span>Communications</span>
-                    </a>
-                </li>
-            </ul>
+            
+            <div class="nav-container">
+                <ul class="nav nav-pills flex-column w-100">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('AdminDashboard') ? 'activee' : '' }}"
+                            href="{{ route('AdminDashboard') }}">
+                            <i class="bi bi-grid"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('users') ? 'activee' : '' }}" href="{{ route('users') }}">
+                            <i class="bi bi-people"></i>
+                            <span>Manage User</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('approve-user') ? 'activee' : '' }}"
+                            href="{{ route('approve-user') }}">
+                            <i class="bi bi-person-exclamation"></i>
+                            <span>Verify User</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('houses') ? 'activee' : '' }}"
+                            href="{{ route('houses') }}">
+                            <i class="bi bi-house-door"></i>
+                            <span>Manage House</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('aprove') ? 'activee' : '' }}"
+                            href="{{ route('aprove') }}">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Approve Rents</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('agreement') ? 'activee' : '' }}"
+                            href="{{ route('agreement') }}">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>Agreements</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('payment') ? 'activee' : '' }}"
+                            href="{{ route('payment') }}">
+                            <i class="bi bi-credit-card"></i>
+                            <span>Payments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('profit') ? 'activee' : '' }}"
+                            href="{{ route('profit') }}">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <span>Profit</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('feedback') ? 'activee' : '' }}"
+                            href="{{ route('feedback') }}">
+                            <i class="bi bi-chat-dots"></i>
+                            <span>Feedback</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.reviews.index') ? 'activee' : '' }}"
+                            href="{{ route('admin.reviews.index') }}">
+                            <i class="bi bi-star-half"></i> {{-- Or bi-chat-right-quote --}}
+                            <span>Manage Reviews</span>
+                        </a>
+                    </li>
+                    {{-- 1. New Communications Nav Item --}}
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.communications') ? 'activee' : '' }}"
+                            href="#"> {{-- Replace # with actual route e.g., {{ route('admin.communications') }} --}}
+                            <i class="bi bi-chat-left-text"></i> {{-- Official chat icon --}}
+                            <span>Communications</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-             {{-- 2. Settings button at the bottom of the sidebar --}}
+            {{-- 2. Settings button at the bottom of the sidebar --}}
             @if(app()->environment('local'))
-            <ul class="nav nav-pills flex-column w-100 mt-auto" style="padding-bottom: 1rem;">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.configuration.index') ? 'activee' : '' }}"
-                        href="{{ route('admin.configuration.index') }}">
-                        <i class="bi bi-gear"></i>
-                        <span>Configuration</span>
-                    </a>
-                </li>
-            </ul>
+            <div class="settings-container">
+                <ul class="nav nav-pills flex-column w-100" style="padding-bottom: 1rem;">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.configuration.index') ? 'activee' : '' }}"
+                            href="{{ route('admin.configuration.index') }}">
+                            <i class="bi bi-gear"></i>
+                            <span>Configuration</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
             @endif
         </nav>
 
