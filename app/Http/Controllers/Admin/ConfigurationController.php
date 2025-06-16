@@ -128,12 +128,34 @@ class ConfigurationController extends Controller
         $booking->created_at = $newCreatedAt;
         $booking->updated_at = $newUpdatedAt; // Also adjust updated_at
 
+        $bookingWasSetToCompletedInThisAction = false;
         if ($setCompleted && $booking->status !== 'completed') {
             $booking->status = 'completed';
+            $bookingWasSetToCompletedInThisAction = true;
         }
 
-        $booking->save();
+        $booking->save(); // Save booking changes first
 
-        return back()->with('success', "Booking ID {$booking->id} successfully aged by {$monthsToAge} months. New created_at: {$booking->created_at->toDateTimeString()}");
+        $houseStatusMessage = ''; // Initialize a message for house status change
+
+        // If the booking was marked as 'completed' in this action,
+        // and its (now aged) end date is in the past, then update the house status.
+        if ($bookingWasSetToCompletedInThisAction) {
+            // Ensure month_duration is present for end date calculation
+            // A booking must have a duration to calculate its end.
+            if ($booking->month_duration && $booking->month_duration > 0) {
+                $endDate = $booking->created_at->copy()->addMonths($booking->month_duration);
+
+                if ($endDate->isPast() && $booking->house) { // Check if house relationship exists
+                    if ($booking->house->status === 'booked') {
+                        $booking->house->status = 'available';
+                        $booking->house->save();
+                        $houseStatusMessage = ". House ID {$booking->house->id} status updated to 'available'.";
+                    }
+                }
+            }
+        }
+
+        return back()->with('success', "Booking ID {$booking->id} successfully aged by {$monthsToAge} months. New created_at: {$booking->created_at->toDateTimeString()}{$houseStatusMessage}");
     }
 }
