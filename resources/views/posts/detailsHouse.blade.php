@@ -149,7 +149,8 @@
                                 {{-- Initial display, will be updated by JS --}}
                                 ${{ number_format($house->rent_amount, 2) }}
                             </span>
-                            <span class="ml-1 text-xl text-gray-600 md:text-2xl">@lang('words.property_card_per_month')</span> {{-- Adjusted styling for "/ month" --}}
+                            <span class="ml-1 text-xl text-gray-600 md:text-2xl">@lang('words.property_card_per_month')</span>
+                            {{-- Adjusted styling for "/ month" --}}
                         </div>
 
                         {{-- Address --}}
@@ -170,12 +171,14 @@
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-door-open"></i>
                                 <p class="text-sm text-gray-600">{{ $totalRooms }}
-                                    {{ $totalRooms == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }} (Total)</p>
+                                    {{ $totalRooms == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }}
+                                    (Total)</p>
                             </div>
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-layer-group"></i>
                                 <p class="text-sm text-gray-600">{{ $totalFloors }}
-                                    {{ $totalFloors == 1 ? __('words.property_card_floor_singular') : __('words.property_card_floor_plural') }}</p>
+                                    {{ $totalFloors == 1 ? __('words.property_card_floor_singular') : __('words.property_card_floor_plural') }}
+                                </p>
                             </div>
                             <div class="text-center">
                                 <i class="mb-1 text-2xl text-blue-500 fas fa-ruler-combined"></i>
@@ -207,11 +210,14 @@
                                 <div class="space-y-4">
                                     @foreach ($house->floors as $index => $floor)
                                         <div class="p-4 border rounded-md bg-gray-50">
-                                            <h3 class="text-lg font-semibold text-gray-700">@lang('words.add_house_floor_title_prefix') {{ $index + 1 }}:
+                                            <h3 class="text-lg font-semibold text-gray-700">@lang('words.add_house_floor_title_prefix')
+                                                {{ $index + 1 }}:
                                             </h3>
                                             <p class="text-sm text-gray-600">
-                                                {{ $floor->num_room }} {{ $floor->num_room == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }}.
-                                                @lang('words.details_house_bathroom_prefix') {{ $floor->bathroom ? __('words.details_house_bathroom_yes') : __('words.details_house_bathroom_no') }}.
+                                                {{ $floor->num_room }}
+                                                {{ $floor->num_room == 1 ? __('words.property_card_room_singular') : __('words.property_card_room_plural') }}.
+                                                @lang('words.details_house_bathroom_prefix')
+                                                {{ $floor->bathroom ? __('words.details_house_bathroom_yes') : __('words.details_house_bathroom_no') }}.
                                             </p>
                                         </div>
                                     @endforeach
@@ -226,7 +232,8 @@
                                 <div class="space-y-2 text-gray-700">
                                     <p>
                                         <i class="mr-2 fas fa-user text-slate-500"></i>
-                                        <strong>@lang('words.booking_label_name_colon')</strong> {{ $house->landlord->full_name ?? __('words.booking_landlord_na') }}
+                                        <strong>@lang('words.booking_label_name_colon')</strong>
+                                        {{ $house->landlord->full_name ?? __('words.booking_landlord_na') }}
                                     </p>
 
                                     <p>
@@ -256,23 +263,23 @@
                                         <div class="mt-4">
                                             {{-- The $house->landlord is the $otherUser for this new inquiry thread --}}
                                             <a href="{{ route('messages.inquiry.thread', ['house' => $house, 'otherUser' => $house->landlord]) }}"
-                                               class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                                 <i class="mr-2 fas fa-envelope"></i> @lang('words.contact_landlord_button')
                                             </a>
                                         </div>
                                     @endcan
                                 @else
                                     {{-- Guest: Prompt to login to contact --}}
-                                     <div class="mt-4">
-                                         {{-- For guest, $house->landlord is the intended $otherUser --}}
+                                    <div class="mt-4">
+                                        {{-- For guest, $house->landlord is the intended $otherUser --}}
                                         <a href="{{ route('login', ['redirect_to' => route('messages.inquiry.thread', ['house' => $house, 'otherUser' => $house->landlord_id])]) }}"
-                                           class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                             <i class="mr-2 fas fa-envelope"></i> @lang('words.login_to_contact_landlord_button')
                                         </a>
                                     </div>
                                 @endauth
                             </div>
->>>>>>> REPLACE
+
                         @endif
 
                         {{-- Reviews Section --}}
@@ -280,37 +287,48 @@
                             <h2 class="mb-4 text-2xl font-semibold text-gray-800">@lang('words.details_house_ratings_reviews_title')</h2>
                             @if ($house->total_approved_reviews > 0)
                                 <div class="flex items-center mb-6">
-                                    <span class="text-3xl font-bold text-yellow-500">{{ $house->average_rating }}</span>
+                                    <span
+                                        class="text-3xl font-bold text-yellow-500">{{ $house->average_rating }}</span>
                                     <span class="ml-2 text-gray-600">/ 5</span>
                                     <div class="ml-4">
                                         @for ($i = 1; $i <= 5; $i++)
-                                            <i class="fas fa-star text-xl {{ $i <= floor($house->average_rating) ? 'text-yellow-400' : ($i - 0.5 <= $house->average_rating ? 'text-yellow-400 fas fa-star-half-alt' : 'text-gray-300') }}"></i>
+                                            <i
+                                                class="fas fa-star text-xl {{ $i <= floor($house->average_rating) ? 'text-yellow-400' : ($i - 0.5 <= $house->average_rating ? 'text-yellow-400 fas fa-star-half-alt' : 'text-gray-300') }}"></i>
                                         @endfor
-                                        <p class="text-sm text-gray-500">@lang('words.details_house_based_on_reviews_prefix') {{ $house->total_approved_reviews }} {{ $house->total_approved_reviews == 1 ? __('words.property_card_review_singular') : __('words.property_card_review_plural') }}</p>
+                                        <p class="text-sm text-gray-500">@lang('words.details_house_based_on_reviews_prefix')
+                                            {{ $house->total_approved_reviews }}
+                                            {{ $house->total_approved_reviews == 1 ? __('words.property_card_review_singular') : __('words.property_card_review_plural') }}
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div class="space-y-6">
-                                    @foreach ($house->reviews()->where('is_approved', true)->latest()->take(5)->get() as $review) {{-- Show latest 5 reviews --}}
+                                    @foreach ($house->reviews()->where('is_approved', true)->latest()->take(5)->get() as $review)
+                                        {{-- Show latest 5 reviews --}}
                                         <div class="p-4 border rounded-md bg-gray-50">
                                             <div class="flex items-center mb-2">
-                                                <img src="{{ $review->user->picture ? asset($review->user->picture) : asset('images/default-profile.png') }}" alt="{{ $review->user->user_name }}" class="w-10 h-10 mr-3 rounded-full">
+                                                <img src="{{ $review->user->picture ? asset($review->user->picture) : asset('images/default-profile.png') }}"
+                                                    alt="{{ $review->user->user_name }}"
+                                                    class="w-10 h-10 mr-3 rounded-full">
                                                 <div>
-                                                    <p class="font-semibold text-gray-800">{{ $review->user->full_name ?? $review->user->user_name }}</p>
-                                                    <p class="text-xs text-gray-500">{{ $review->created_at->format('M d, Y') }}</p>
+                                                    <p class="font-semibold text-gray-800">
+                                                        {{ $review->user->full_name ?? $review->user->user_name }}</p>
+                                                    <p class="text-xs text-gray-500">
+                                                        {{ $review->created_at->format('M d, Y') }}</p>
                                                 </div>
                                             </div>
                                             <div class="flex items-center mb-2">
                                                 @for ($i = 1; $i <= 5; $i++)
-                                                    <i class="fas fa-star {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                                    <i
+                                                        class="fas fa-star {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
                                                 @endfor
                                             </div>
-                                            @if($review->comment)
+                                            @if ($review->comment)
                                                 <p class="text-gray-700 leading-relaxed">{{ $review->comment }}</p>
                                             @endif
                                         </div>
                                     @endforeach
-                                    @if($house->total_approved_reviews > 5)
+                                    @if ($house->total_approved_reviews > 5)
                                         {{-- Add a link to a page showing all reviews for this house if needed --}}
                                         {{-- <a href="#" class="text-blue-600 hover:underline">View all reviews</a> --}}
                                     @endif
@@ -318,15 +336,16 @@
                             @else
                                 <p class="text-gray-600">@lang('words.details_house_no_reviews_yet')</p>
                             @endif
-                             {{-- Link to write a review if user is eligible --}}
+                            {{-- Link to write a review if user is eligible --}}
                             @auth
                                 @php
                                     // Check if the current user has a completed booking for this house
                                     // and hasn't reviewed it yet.
-                                    $userEligibleBooking = Auth::user()->bookings()
-                                        ->where('house_id', $house->id)
-                                        ->where('status', 'completed')
-                                        ->whereDoesntHave('review') // Check if a review for this booking doesn't exist
+$userEligibleBooking = Auth::user()
+    ->bookings()
+    ->where('house_id', $house->id)
+    ->where('status', 'completed')
+    ->whereDoesntHave('review') // Check if a review for this booking doesn't exist
                                         ->get()
                                         ->first(function ($booking) {
                                             return $booking->isCompletedAndPast();
@@ -334,7 +353,8 @@
                                 @endphp
                                 @if ($userEligibleBooking)
                                     <div class="mt-6">
-                                        <a href="{{ route('reviews.create', $userEligibleBooking) }}" class="inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                                        <a href="{{ route('reviews.create', $userEligibleBooking) }}"
+                                            class="inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
                                             @lang('words.details_house_write_review_button')
                                         </a>
                                     </div>
@@ -425,7 +445,7 @@
                         @else
                             {{-- User is not authenticated (guest) --}}
                             <div class="pt-6 mt-6 mb-8 border-t">
-                                <p class="text-lg text-gray-700">@lang('words.details_house_guest_login_register_prompt', ['Login' => '<a href="'.route('login').'" class="font-semibold text-indigo-600 hover:underline">'.__('words.Login').'</a>', 'Register' => '<a href="'.route('register').'" class="font-semibold text-indigo-600 hover:underline">'.__('words.Register').'</a>'])</p>
+                                <p class="text-lg text-gray-700">@lang('words.details_house_guest_login_register_prompt', ['Login' => '<a href="' . route('login') . '" class="font-semibold text-indigo-600 hover:underline">' . __('words.Login') . '</a>', 'Register' => '<a href="' . route('register') . '" class="font-semibold text-indigo-600 hover:underline">' . __('words.Register') . '</a>'])</p>
                             </div>
                         @endauth
 
@@ -462,24 +482,28 @@
                         class="px-6 py-6">
                         @csrf
                         <div class="mb-4">
-                            <label for="reason_category" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.report_modal_label_reason')</label>
+                            <label for="reason_category"
+                                class="block mb-1 text-sm font-medium text-gray-700">@lang('words.report_modal_label_reason')</label>
                             <select name="reason_category" id="reason_category"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('reason_category', 'reportFormErrors') border-red-500 @enderror">
                                 <option value="">@lang('words.report_modal_select_reason_placeholder')</option>
                                 <option value="Misleading Information"
-                                    {{ old('reason_category') == 'Misleading Information' ? 'selected' : '' }}>@lang('words.report_reason_misleading_info')</option>
+                                    {{ old('reason_category') == 'Misleading Information' ? 'selected' : '' }}>
+                                    @lang('words.report_reason_misleading_info')</option>
                                 <option value="Safety Concern"
                                     {{ old('reason_category') == 'Safety Concern' ? 'selected' : '' }}>@lang('words.report_reason_safety_concern')
                                 </option>
                                 <option value="Landlord Behavior"
-                                    {{ old('reason_category') == 'Landlord Behavior' ? 'selected' : '' }}>@lang('words.report_reason_landlord_behavior')
+                                    {{ old('reason_category') == 'Landlord Behavior' ? 'selected' : '' }}>
+                                    @lang('words.report_reason_landlord_behavior')
                                 </option>
                                 <option value="Scam/Fraud" {{ old('reason_category') == 'Scam/Fraud' ? 'selected' : '' }}>
                                     @lang('words.report_reason_scam_fraud')</option>
                                 <option value="Technical Issue with Listing"
                                     {{ old('reason_category') == 'Technical Issue with Listing' ? 'selected' : '' }}>
                                     @lang('words.report_reason_technical_issue')</option>
-                                <option value="Other" {{ old('reason_category') == 'Other' ? 'selected' : '' }}>@lang('words.report_reason_other')
+                                <option value="Other" {{ old('reason_category') == 'Other' ? 'selected' : '' }}>
+                                    @lang('words.report_reason_other')
                                 </option>
                             </select>
                             @error('reason_category', 'reportFormErrors')
@@ -490,8 +514,7 @@
                         <div class="mb-4">
                             <label for="report_description"
                                 class="block mb-1 text-sm font-medium text-gray-700">@lang('words.add_house_section_description')</label>
-                            <textarea name="description" id="report_description" rows="5"
-                                placeholder="@lang('words.report_modal_placeholder_description')"
+                            <textarea name="description" id="report_description" rows="5" placeholder="@lang('words.report_modal_placeholder_description')"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'reportFormErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
                             @error('description', 'reportFormErrors')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -543,15 +566,16 @@
                         class="px-6 py-6">
                         @csrf
                         <div class="mb-4">
-                            <label for="month_duration" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.booking_modal_label_duration')</label>
+                            <label for="month_duration"
+                                class="block mb-1 text-sm font-medium text-gray-700">@lang('words.booking_modal_label_duration')</label>
                             <input type="number" name="month_duration" id="month_duration"
                                 placeholder="@lang('words.booking_modal_placeholder_duration')"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('month_duration', 'sendBookingFormErrors') border-red-500 @enderror"{{ old('month_duration') }}>
                         </div>
                         <div class="mb-4">
-                            <label for="booking_message" class="block mb-1 text-sm font-medium text-gray-700">@lang('words.booking_modal_label_message_optional')</label>
-                            <textarea name="booking_message" id="booking_message" rows="5"
-                                placeholder="@lang('words.booking_modal_placeholder_message')"
+                            <label for="booking_message"
+                                class="block mb-1 text-sm font-medium text-gray-700">@lang('words.booking_modal_label_message_optional')</label>
+                            <textarea name="booking_message" id="booking_message" rows="5" placeholder="@lang('words.booking_modal_placeholder_message')"
                                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('booking_message', 'sendBookingFormErrors') border-red-500 @enderror">{{ old('booking_message') }}</textarea>
                         </div>
 
@@ -580,27 +604,31 @@
     @endauth
 
     @push('scripts')
-
-<!-- Guest Favorite Login Modal -->
-<div id="guestFavoriteLoginModal" class="fixed inset-0 z-[80] flex items-center justify-center bg-opacity-60 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-labelledby="guestFavoriteLoginModalTitle">
-    <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
-        <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-            <h1 id="guestFavoriteLoginModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.modal_login_required_title')</h1>
-            <button id="closeGuestFavoriteLoginModalBtnTop" aria-label="Close login required modal" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
-        </div>
-        <div class="px-6 py-6">
-            <p class="text-gray-700">
-                @lang('words.modal_login_required_text', ['Login' => "<a href='".route('login')."' class='font-semibold text-blue-600 hover:underline'>".__('words.Login')."</a>", 'Register' => "<a href='".route('register')."' class='font-semibold text-blue-600 hover:underline'>".__('words.Register')."</a>"])
-            </p>
-            <div class="flex justify-end mt-6">
-                <button id="closeGuestFavoriteLoginModalBtnBottom" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    @lang('words.modal_close_button')
-                </button>
+        <!-- Guest Favorite Login Modal -->
+        <div id="guestFavoriteLoginModal"
+            class="fixed inset-0 z-[80] flex items-center justify-center bg-opacity-60 backdrop-blur-sm hidden"
+            role="dialog" aria-modal="true" aria-labelledby="guestFavoriteLoginModalTitle">
+            <div class="w-full max-w-md mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
+                <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+                    <h1 id="guestFavoriteLoginModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.modal_login_required_title')
+                    </h1>
+                    <button id="closeGuestFavoriteLoginModalBtnTop" aria-label="Close login required modal"
+                        class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <div class="px-6 py-6">
+                    <p class="text-gray-700">
+                        @lang('words.modal_login_required_text', ['Login' => "<a href='" . route('login') . "' class='font-semibold text-blue-600 hover:underline'>" . __('words.Login') . '</a>', 'Register' => "<a href='" . route('register') . "' class='font-semibold text-blue-600 hover:underline'>" . __('words.Register') . '</a>'])
+                    </p>
+                    <div class="flex justify-end mt-6">
+                        <button id="closeGuestFavoriteLoginModalBtnBottom" type="button"
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            @lang('words.modal_close_button')
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<!-- End Guest Favorite Login Modal -->
+        <!-- End Guest Favorite Login Modal -->
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -749,10 +777,13 @@
                 // --- Guest Favorite Login Modal Script ---
                 const guestFavoriteBtn = document.querySelector('.favorite-btn-guest');
                 const guestFavoriteLoginModal = document.getElementById('guestFavoriteLoginModal');
-                const closeGuestFavoriteLoginModalBtnTop = document.getElementById('closeGuestFavoriteLoginModalBtnTop');
-                const closeGuestFavoriteLoginModalBtnBottom = document.getElementById('closeGuestFavoriteLoginModalBtnBottom');
+                const closeGuestFavoriteLoginModalBtnTop = document.getElementById(
+                'closeGuestFavoriteLoginModalBtnTop');
+                const closeGuestFavoriteLoginModalBtnBottom = document.getElementById(
+                    'closeGuestFavoriteLoginModalBtnBottom');
 
-                if (guestFavoriteBtn && guestFavoriteLoginModal && closeGuestFavoriteLoginModalBtnTop && closeGuestFavoriteLoginModalBtnBottom) {
+                if (guestFavoriteBtn && guestFavoriteLoginModal && closeGuestFavoriteLoginModalBtnTop &&
+                    closeGuestFavoriteLoginModalBtnBottom) {
                     guestFavoriteBtn.addEventListener('click', function(event) {
                         event.preventDefault(); // Prevent any default action
                         guestFavoriteLoginModal.classList.remove('hidden');
@@ -784,15 +815,19 @@
     @endpush
 
     @if ($house->latitude !== null && $house->longitude !== null)
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy09TICTEciWuJe8Xq_fhNDcFAvBBL4IQ&callback=initDetailsHouseMap" async
-            defer></script>
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy09TICTEciWuJe8Xq_fhNDcFAvBBL4IQ&callback=initDetailsHouseMap"
+            async defer></script>
         <script>
             let detailsHouseMapInstance;
 
             function initDetailsHouseMap() {
                 const lat = parseFloat('{{ $house->latitude }}') || 35.555744; // Default to Sulaymaniyah center
                 const lng = parseFloat('{{ $house->longitude }}') || 45.435123; // Default to Sulaymaniyah center
-                const houseLocation = { lat: lat, lng: lng };
+                const houseLocation = {
+                    lat: lat,
+                    lng: lng
+                };
 
                 detailsHouseMapInstance = new google.maps.Map(document.getElementById('map'), {
                     center: houseLocation,
