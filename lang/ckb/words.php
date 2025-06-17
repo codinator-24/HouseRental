@@ -1,6 +1,7 @@
 <?php
 return [
     //Layout
+    'HomeDiscover'=> '‌هۆم دیسکەڤەر',
     'Home' => 'پەڕەی سەرەکی',
     'Dashboard' => 'داشبۆرد',
     'Register' => 'تۆمارکردن', // Used for links and general "Register" text
@@ -17,7 +18,7 @@ return [
     'Loading...' => '...بارکردن',
     'No new notifications.' => '.هیچ ئاگادارکردنەوەیەکی نوێ نییە',
     'View all notifications' => 'بینینی هەموو ئاگادارکردنەوەکان',
-    'Profile' => 'پڕۆفایل', 
+    'Profile' => 'پڕۆفایل',
     'Houses' => 'خانووەکان',
     'Add House' => 'زیاد کردنی خانوو', // General "Add House" text, e.g. for nav links
     'My Houses' => 'خانووەکانم',
@@ -33,7 +34,7 @@ return [
     'Privacy Policy' => 'سیاسەتی نهێنی',
     'Terms of Service' => 'مەرجەکانی خزمەتگوزاری',
     'Contact Us' => 'پەیوەندیمان پێوە بکەن',
-    
+
     //Register Page (Existing more general keys)
     'Register_New' => 'تۆمارکردنی ئەکاونتی نوێ', // Page title for Register
     'Full_Name' => 'ناوی سیانی',
@@ -100,7 +101,7 @@ return [
     // 'No hidden fees or surprise costs, ever.' => 'هیچ کرێیەکی شاراوە و تێچووی سەرسوڕهێنەر، نیە',
     // 'Quality Verified' => 'کوالیتی پشتڕاستکراوەتەوە',
     // 'All our listings are verified for quality and accuracy.' => '.هەموو لیستەکانمان پشتڕاست دەکرێنەوە بۆ کوالیتی و وردی',
-       
+
     //Index (Old section)
     'Our_Services' => 'خزمەت گووزاریەکانمان',
 
@@ -120,7 +121,7 @@ return [
     'search_option_property_type_default' => 'جۆری موڵک', // Dropdown default
     'property_type_apartment' => 'شوقە',
     'property_type_house' => 'خانوو',
-    'property_type_condo' => 'کۆندۆ', 
+    'property_type_condo' => 'کۆندۆ',
     'property_type_studio' => 'ستۆدیۆ',
     'search_button_text' => 'گەڕان',
     'featured_properties_title' => 'موڵکە دیارەکان',
@@ -136,7 +137,7 @@ return [
     'property_card_floor_plural' => 'نهۆمەکان',
     'property_card_view_details' => 'بینینی وردەکارییەکان', // Button on property card
     'featured_properties_none_found' => 'لە ئێستادا هیچ موڵکێک نەدۆزرایەوە.',
-    'why_choose_title' => 'بۆچی هاوسڕێنتاڵ هەڵبژێریت؟',
+    'why_choose_title' => 'بۆچی ‌هۆم دیسکەڤەر هەڵبژێریت؟',
     'why_choose_subtitle' => 'ئێمە دۆزینەوەی ماڵە نموونەییەکەت ئاسان و بێ سترێس دەکەین.',
     'why_choose_feature1_title' => 'شوێنە نموونەییەکان',
     'why_choose_feature1_desc' => 'گەشت بکە بەنێو موڵکەکان لە باشترین شوێنەکانی شاردا.',
@@ -372,7 +373,7 @@ return [
     'dashboard_no_pending_reviews_text' => 'هیچ مانەوەیەکی تەواوکراوت نییە کە چاوەڕوانی پێداچوونەوە بێت.',
     'dashboard_my_submitted_reviews_title' => 'پێداچوونەوە نێردراوەکانم',
     'dashboard_label_reviewed_date' => 'پێداچوونەوە کراوە لە:',
-    'review_status_approved' => 'پەسەندکراو', 
+    'review_status_approved' => 'پەسەندکراو',
     'dashboard_no_submitted_reviews_text' => "تۆ هێشتا هیچ پێداچوونەوەیەکت نەناردووە.",
     'maintenance_modal_create_title' => 'دروستکردنی داواکاری نوێی چاککردنەوە',
     'maintenance_modal_label_property' => 'موڵک',
@@ -442,4 +443,17 @@ return [
     'message_overview_agreement_title' => 'گفتوگۆ بۆ ڕێککەوتننامەی #',
     'message_overview_with_user' => 'لەگەڵ',
     'message_overview_no_threads' => 'هیچ زنجیرە نامەیەکی چالاکت نییە.',
+
+    // Footer specific & new general terms - وەرگێڕانی تایبەت بە فووتەر و دەستەواژە گشتییە نوێیەکان
+    'Explore' => 'گەڕان',
+    'AllProperties' => 'هەموو موڵکەکان',
+    'AddProperty' => 'زیادکردنی موڵک',
+    'SupportAndLegal' => 'پشتگیری و یاسایی',
+    'FAQ' => 'پرسیارە باوەکان',
+    'AllRightsReserved' => 'هەموو مافێکی پارێزراوە.',
+    'ContactUs' => 'پەیوەندیمان پێوە بکە ',
+    'PrivacyPolicy' => 'پاراستنی نهێنی و سیاسەت',
+    'TermsOfService' => 'مەرجەکان و خزمەتگوزارییەکان',
+    'DescribeFooter'=> 'دۆزینەوەی ماڵە شایستەکەت هەرگیز ئاسانتر نەبووە. هەڵبژاردەی بەرفراوانی موڵکەکانمان بگەڕێ و ئەو موڵکە بدۆزەرەوە کە لەگەڵ پێداویستییەکانتان بگونجێت.',
+
 ];

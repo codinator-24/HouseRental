@@ -1,6 +1,7 @@
 <?php
 return [
     // Layout
+    'HomeDiscover' => 'Home Discover',
     'Home' => 'Home',
     'Dashboard' => 'Dashboard',
     'Register' => 'Register', // Used for links and general "Register" text
@@ -100,7 +101,7 @@ return [
     // 'No hidden fees or surprise costs, ever.' => 'No hidden fees or surprise costs, ever.',
     // 'Quality Verified' => 'Quality Verified',
     // 'All our listings are verified for quality and accuracy.' => 'All our listings are verified for quality and accuracy.',
-    
+
     //Index (Old section, can be merged or kept if 'Our_Services' is specific to a different index concept)
     'Our_Services' => 'Our Services',
 
@@ -136,7 +137,7 @@ return [
     'property_card_floor_plural' => 'Floors',
     'property_card_view_details' => 'View Details', // Button on property card
     'featured_properties_none_found' => 'No properties found at the moment.',
-    'why_choose_title' => 'Why Choose HouseRental?',
+    'why_choose_title' => 'Why Choose Home Discover?',
     'why_choose_subtitle' => 'We make finding your perfect home simple and stress-free.',
     'why_choose_feature1_title' => 'Ideal Locations',
     'why_choose_feature1_desc' => 'Explore properties in prime locations across the city.',
@@ -372,7 +373,7 @@ return [
     'dashboard_no_pending_reviews_text' => 'You have no completed stays that are pending a review.',
     'dashboard_my_submitted_reviews_title' => 'My Submitted Reviews',
     'dashboard_label_reviewed_date' => 'Reviewed:',
-    'review_status_approved' => 'Approved', 
+    'review_status_approved' => 'Approved',
     'dashboard_no_submitted_reviews_text' => "You haven't submitted any reviews yet.",
     'maintenance_modal_create_title' => 'Create New Maintenance Request',
     'maintenance_modal_label_property' => 'Property',
@@ -442,4 +443,16 @@ return [
     'message_overview_agreement_title' => 'Conversation for Agreement #',
     'message_overview_with_user' => 'with',
     'message_overview_no_threads' => 'You have no active message threads.',
+
+    // Footer specific & new general terms
+    'Explore' => 'Explore',
+    'AllProperties' => 'All Properties',
+    'AddProperty' => 'Add Property', // General term for adding any property
+    'SupportAndLegal' => 'Support & Legal',
+    'FAQ' => 'FAQ', // Stands for Frequently Asked Questions
+    'AllRightsReserved' => 'All Rights Reserved.',
+    'ContactUs' => 'ContactUs',
+    'PrivacyPolicy' => 'Privacy & Policy',
+    'TermsOfService' => 'Terms & Services',
+    'DescribeFooter' => 'Finding your perfect home has never been easier. Browse our wide selection of properties and find the one that suits your needs.',
 ];
