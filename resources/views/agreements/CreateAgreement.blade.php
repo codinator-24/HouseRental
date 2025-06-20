@@ -62,7 +62,12 @@
             if (paymentMethod === 'Credit') {
                 this.showConfirmModal = true;
             } else if (paymentMethod === 'Cash') {
-                this.$dispatch('open-cash-modal', { bookingId: {{ $booking->id }} });
+                const rentAmountValue = document.getElementById('rent_amount').value;
+                if (!rentAmountValue || parseFloat(rentAmountValue) < 0.50) {
+                    alert('Please enter a valid rent amount (minimum $0.50) before choosing cash payment.');
+                    return;
+                }
+                this.$dispatch('open-cash-modal', { bookingId: {{ $booking->id }}, rentAmount: rentAmountValue });
             }
         },
     
@@ -502,8 +507,8 @@
             </div>
 
             <!-- Modal of Cash -->
-            <div x-data="{ show: false, bookingId: null }"
-                x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId" x-show="show" x-cloak
+            <div x-data="{ show: false, bookingId: null, rentAmount: null }"
+                x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId; rentAmount = $event.detail.rentAmount" x-show="show" x-cloak
                 class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-opacity-50">
                 <div @click.away="show = false" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
@@ -516,20 +521,23 @@
                     <form method="POST" action="{{ route('cash.appointment') }}">
                         @csrf
                         <input type="hidden" name="booking_id" :value="bookingId">
+                        <input type="hidden" name="rent_amount" :value="rentAmount">
+                         
+                              <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                  Are you sure you want to sign this agreement?
+                                  This business processes a cash payment and creates a legally binding contract.
+                                </p>
+                                <div class="mt-3 p-3 bg-blue-50 rounded-lg">
+                                    <p class="text-sm text-blue-800">
+                                        <strong>Rent Amount:</strong> $<span x-text="rentAmount || '0.00'"></span><br>
+                                        <strong>Duration:</strong> {{ $booking->month_duration }}
+                                        month{{ $booking->month_duration > 1 ? 's' : '' }}
+                                    </p>
+                                </div>
+                            </div>
 
-                        <div class="mb-6">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Preferred Date</label>
-                            <input type="date" name="date" required
-                                class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition">
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Preferred Time</label>
-                            <input type="time" name="time" required
-                                class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition">
-                        </div>
-
-                        <div class="flex justify-end space-x-4">
+                        <div class="flex justify-end space-x-4 mt-6">
                             <button type="button" @click="show = false"
                                 class="px-6 py-2 rounded-lg bg-gray-300 text-gray-800 font-semibold hover:bg-gray-400 transition">
                                 Cancel

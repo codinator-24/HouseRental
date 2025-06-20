@@ -25,6 +25,8 @@ class Agreement extends Model
         'rent_amount',
         'rent_frequency',
         'status',
+        'landlord_keys_delivered',
+        'key_delivery_deadline',
     ];
 
     /**

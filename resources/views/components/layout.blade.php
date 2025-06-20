@@ -25,7 +25,8 @@
         <nav class="container flex items-center justify-between px-6 py-3 mx-auto">
             <!-- Left side: Logo -->
             <a href="{{ route('home') }}" class="flex items-center text-xl font-bold text-blue-600">
-                <img src="{{ asset('images/logo.png') }}" alt="ORS Logo" class="w-auto h-10 mr-3"> Home Discover
+                <img src="{{ asset('images/logo.png') }}" alt="ORS Logo" class="w-auto h-10 mr-3">
+                @lang('words.HomeDiscover')
             </a>
 
             <!-- Center: Desktop Navigation Links -->
@@ -350,37 +351,69 @@
 
     <footer class="py-12 bg-slate-800 text-slate-300">
         <div class="container grid grid-cols-1 gap-8 px-6 mx-auto md:grid-cols-3">
-            <!-- ORS Info -->
+
+            <!-- Column 1: Brand & Connect -->
             <div>
-                <h3 class="mb-4 text-lg font-semibold text-white">Home Discover</h3>
-                <p class="text-sm">
-                    Finding your perfect home has never been easier. Browse our wide selection of properties and find
-                    the one that suits your needs.
+                <h3 class="mb-4 text-xl font-semibold text-white">
+                    @lang('words.HomeDiscover')
+                </h3>
+                <p class="text-sm mb-6 text-slate-400">
+                    @lang('words.DescribeFooter')
                 </p>
+                <div class="flex space-x-4">
+                    <a href="#" target="_blank"
+                        class="text-slate-400 hover:text-white transition-colors duration-200" aria-label="Facebook">
+                        <i class="fab fa-facebook-f fa-lg"></i>
+                    </a>
+                    <a href="#" target="_blank"
+                        class="text-slate-400 hover:text-white transition-colors duration-200" aria-label="Twitter">
+                        <i class="fab fa-twitter fa-lg"></i>
+                    </a>
+                    <a href="#" target="_blank"
+                        class="text-slate-400 hover:text-white transition-colors duration-200" aria-label="Instagram">
+                        <i class="fab fa-instagram fa-lg"></i>
+                    </a>
+                    <a href="#" target="_blank"
+                        class="text-slate-400 hover:text-white transition-colors duration-200" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in fa-lg"></i>
+                    </a>
+                </div>
             </div>
 
-            <!-- Navigation Links -->
-            <div>
-                <h3 class="mb-4 text-lg font-semibold text-white">NAVIGATION</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="{{ route('home') }}" class="hover:text-blue-400">Home</a></li>
-                    <li><a href="#" class="hover:text-blue-400">About</a></li>
-                    {{-- Add other footer navigation links here --}}
+            <!-- Column 2: Explore -->
+            <div class="ml-28">
+                <h3 class="mb-4 text-lg font-semibold text-white">@lang('words.Explore', ['default' => 'Explore'])</h3>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="{{ route('home') }}"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.Home')</a></li>
+                    <li><a href="#"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.About')</a></li>
+                    <li><a href="#"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.AllProperties', ['default' => 'All Properties'])</a></li>
+                    <li><a href="{{ route('Show.house.add') }}"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.AddProperty', ['default' => 'Add Property'])</a></li>
+                    <li><a href="{{ route('contact') }}"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.Feedback')</a></li>
                 </ul>
             </div>
 
-            <!-- Legal Links -->
-            <div>
-                <h3 class="mb-4 text-lg font-semibold text-white">LEGAL</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-blue-400">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-blue-400">Terms of Service</a></li>
-                    <li><a href="{{ route('contact') }}" class="hover:text-blue-400">Contact Us</a></li>
+            <!-- Column 3: Support & Legal -->
+            <div class="ml-24">
+                <h3 class="mb-4 text-lg font-semibold text-white">@lang('words.SupportAndLegal', ['default' => 'Support & Legal'])</h3>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="{{ route('contact') }}"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.ContactUs', ['default' => 'Contact Us'])</a></li>
+                    <li><a href="#"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.FAQ', ['default' => 'FAQ'])</a></li>
+                    <li><a href="#"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.PrivacyPolicy', ['default' => 'Privacy Policy'])</a></li>
+                    <li><a href="#"
+                            class="hover:text-blue-400 transition-colors duration-200">@lang('words.TermsOfService', ['default' => 'Terms of Service'])</a></li>
                 </ul>
             </div>
         </div>
-        <div class="container px-6 pt-8 mx-auto mt-8 text-sm text-center border-t border-slate-600">
-            &copy; {{ date('Y') }} ORS. All Rights Reserved.
+        <div class="container px-6 pt-8 mx-auto mt-10 text-sm text-center border-t border-slate-700 text-slate-400">
+            &copy; {{ date('Y') }} Home Discover. @lang('words.AllRightsReserved', ['default' => 'All Rights Reserved.'])
         </div>
     </footer>
 

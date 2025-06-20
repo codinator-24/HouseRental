@@ -68,6 +68,7 @@ Route::middleware('lang')->group(function () {
         Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
         Route::get('/agreement/{booking}/create', [AgreementController::class, 'create'])->name('agreement.create');
+        Route::post('/cash-appointment', [AgreementController::class, 'CashAppointment'])->name('cash.appointment');
 
         // Report a house
         Route::post('/houses/{house}/report', [ReportController::class, 'store'])->name('house.report');
@@ -160,6 +161,8 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
     Route::get('/agreements', [AdminController::class, 'ViewAgreement'])->name('agreement');
     Route::get('/payments', [AdminController::class, 'ViewPayment'])->name('payment');
+    Route::post('/admin/payments/{payment}/update-cash-details', [AdminController::class, 'updateCashPaymentDetails'])->name('admin.payments.update.cash');
+    Route::post('/admin/payments/{payment}/update-credit-landlord-details', [AdminController::class, 'updateCreditLandlordDetails'])->name('admin.payments.update.credit');
 
     // Admin routes for managing reports
     Route::get('/admin/reports/{report}', [AdminController::class, 'showReportDetails'])->name('admin.reports.show');
@@ -187,7 +190,6 @@ Route::middleware('admin.auth')->group(function () {
 //Stable
 
 // Lerawa Route dika zia bkan
-Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
-Route::post('/cash-appointment', [BookingController::class, 'scheduleCashAppointment'])->name('cash.appointment');
+
 Route::get('/contactUs', [DashboardController::class, 'show_contact'])->name('contact');
 Route::post('/add_contact', [DashboardController::class, 'insert_contact'])->name('submit.contact');

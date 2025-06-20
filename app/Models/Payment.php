@@ -26,6 +26,7 @@ class Payment extends Model
         'agreement_id',
         'amount',
         'payment_method',
+        'payment_deadline',
         'status',
         'paid_at',
         'notes',
@@ -38,6 +39,7 @@ class Payment extends Model
      */
     protected $casts = [
         'paid_at' => 'datetime',
+        'payment_deadline' => 'datetime',
         'amount' => 'decimal:2', // Ensures 'amount' is treated as a decimal with 2 places
     ];
 

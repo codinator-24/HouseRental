@@ -229,8 +229,67 @@ class AdminController extends  Controller
         // Fetch payments with necessary relationships
         $payments = Payment::with([
             'agreement.booking.tenant', // To get tenant info
-            'agreement.booking.house'   // To get house info
+            'agreement.booking.house.landlord', // To get house info and landlord info for the agreement accessor
+            'agreement' // To ensure agreement fields like key_delivery_deadline are loaded
         ])->latest()->get();
         return view('admin.payments', compact('payments'));
+    }
+
+    public function updateCashPaymentDetails(Request $request, Payment $payment)
+    {
+        $validated = $request->validate([
+            'cash_payment_deadline' => 'nullable|date',
+            'cash_payment_received' => 'nullable|boolean',
+            'key_delivery_deadline' => 'nullable|date',
+            'key_handed_over' => 'nullable|boolean',
+        ]);
+
+        try {
+            if ($request->filled('cash_payment_deadline')) {
+                $payment->payment_deadline = $validated['cash_payment_deadline'];
+            }
+
+            // Payment status: 'completed' if checked, 'pending' if not.
+            // The checkbox sends '1' (true) when checked, and is absent if not checked.
+            // So, if 'cash_payment_received' is present and true, status is 'completed'. Otherwise, 'pending'.
+            $payment->status = $request->boolean('cash_payment_received') ? 'completed' : 'pending';
+            $payment->save();
+
+            if ($payment->agreement) {
+                if ($request->filled('key_delivery_deadline')) {
+                    $payment->agreement->key_delivery_deadline = $validated['key_delivery_deadline'];
+                }
+                $payment->agreement->landlord_keys_delivered = $request->boolean('key_handed_over');
+                $payment->agreement->save();
+            }
+
+            return response()->json(['success' => true, 'message' => 'Cash payment details updated successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error updating details: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function updateCreditLandlordDetails(Request $request, Payment $payment)
+    {
+        $validated = $request->validate([
+            'credit_key_delivery_deadline' => 'nullable|date',
+            'credit_key_handed_over' => 'nullable|boolean',
+        ]);
+
+        try {
+            if (!$payment->agreement) {
+                return response()->json(['success' => false, 'message' => 'Agreement not found for this payment.'], 404);
+            }
+
+            if ($request->filled('credit_key_delivery_deadline')) {
+                $payment->agreement->key_delivery_deadline = $validated['credit_key_delivery_deadline'];
+            }
+            $payment->agreement->landlord_keys_delivered = $request->boolean('credit_key_handed_over');
+            $payment->agreement->save();
+
+            return response()->json(['success' => true, 'message' => 'Landlord details updated successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error updating details: ' . $e->getMessage()], 500);
+        }
     }
 }
