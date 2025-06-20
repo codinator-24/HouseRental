@@ -14,6 +14,12 @@ use App\Models\Floor;
 use App\Models\Feedback;
 use App\Models\Payment;
 use App\Models\Report; // Added Report model
+use Carbon\Carbon;
+use App\Notifications\TenantCashDeadlineUpdated; // Added for notification
+use App\Notifications\LandlordKeyDeadlineUpdated; // Added for notification
+use App\Notifications\TenantKeyCollectionReminder; // Added for key collection notification
+use App\Notifications\LandlordCashReceivedNotification; // Added for cash received notification
+use Illuminate\Support\Facades\Log; // Added for logging notification errors
 
 class AdminController extends  Controller
 {
@@ -245,26 +251,121 @@ class AdminController extends  Controller
         ]);
 
         try {
-            if ($request->filled('cash_payment_deadline')) {
-                $payment->payment_deadline = $validated['cash_payment_deadline'];
-            }
+            // Eager load necessary relationships
+            $payment->loadMissing('agreement.booking.tenant', 'agreement.booking.house.landlord');
 
-            // Payment status: 'completed' if checked, 'pending' if not.
-            // The checkbox sends '1' (true) when checked, and is absent if not checked.
-            // So, if 'cash_payment_received' is present and true, status is 'completed'. Otherwise, 'pending'.
-            $payment->status = $request->boolean('cash_payment_received') ? 'completed' : 'pending';
-            $payment->save();
+            // Store original deadlines and status for comparison
+            $originalPaymentDeadlineString = $payment->payment_deadline ? Carbon::parse($payment->payment_deadline)->toDateString() : null;
+            $originalPaymentStatus = $payment->status; // Store original payment status
+            $originalKeyDeliveryDeadlineString = null;
+            $originalLandlordKeysDelivered = false;
 
             if ($payment->agreement) {
-                if ($request->filled('key_delivery_deadline')) {
-                    $payment->agreement->key_delivery_deadline = $validated['key_delivery_deadline'];
+                if ($payment->agreement->key_delivery_deadline) {
+                    $originalKeyDeliveryDeadlineString = Carbon::parse($payment->agreement->key_delivery_deadline)->toDateString();
                 }
-                $payment->agreement->landlord_keys_delivered = $request->boolean('key_handed_over');
-                $payment->agreement->save();
+                $originalLandlordKeysDelivered = (bool) $payment->agreement->landlord_keys_delivered;
+            }
+
+            $paymentDeadlineChanged = false;
+            $keyDeliveryDeadlineChanged = false;
+            // Variable to track if keys_delivered status changed to true
+            $keysNowDelivered = false;
+            $paymentMarkedAsReceived = false; // Flag to track if cash_payment_received was true in this request
+
+            // Handle payment deadline update
+            if ($request->boolean('cash_payment_received')) {
+                $payment->status = 'paid';
+                $payment->paid_at = Carbon::now();
+                $paymentMarkedAsReceived = true; // Set flag
+            } else {
+                // Only update payment_deadline if cash_payment_received is false and the field is provided
+                if ($request->filled('cash_payment_deadline')) {
+                    $newDeadline = Carbon::parse($validated['cash_payment_deadline'])->toDateString();
+                    if ($newDeadline !== $originalPaymentDeadlineString) {
+                        $payment->payment_deadline = $validated['cash_payment_deadline'];
+                        $paymentDeadlineChanged = true;
+                    }
+                }
+                $payment->status = 'paying';
+                $payment->paid_at = null;
+            }
+            
+            $payment->save();
+
+            // Notify tenant if cash payment deadline changed and payment not marked as received
+            if ($paymentDeadlineChanged && !$request->boolean('cash_payment_received')) {
+                $agreementForTenant = $payment->agreement;
+                if ($agreementForTenant && $agreementForTenant->booking && $agreementForTenant->booking->tenant) {
+                    try {
+                        $agreementForTenant->booking->tenant->notify(new TenantCashDeadlineUpdated($payment, $agreementForTenant));
+                    } catch (\Exception $e) {
+                        Log::error("Failed to send TenantCashDeadlineUpdated notification for payment ID {$payment->id}: " . $e->getMessage());
+                    }
+                }
+            }
+            
+            // Notify Landlord if cash payment was marked as received and status changed to 'paid'
+            if ($paymentMarkedAsReceived && $payment->status === 'paid' && $originalPaymentStatus !== 'paid') {
+                $agreementForCashNotification = $payment->agreement;
+                if ($agreementForCashNotification && $agreementForCashNotification->booking && $agreementForCashNotification->booking->house && $agreementForCashNotification->booking->house->landlord) {
+                    try {
+                        $agreementForCashNotification->booking->house->landlord->notify(new LandlordCashReceivedNotification($payment, $agreementForCashNotification));
+                    } catch (\Exception $e) {
+                        Log::error("Failed to send LandlordCashReceivedNotification for payment ID {$payment->id}: " . $e->getMessage());
+                    }
+                }
+            }
+
+            // Handle key delivery deadline update
+            $agreementForLandlord = $payment->agreement;
+            if ($agreementForLandlord) {
+                if ($request->filled('key_delivery_deadline')) {
+                    $newKeyDeadline = Carbon::parse($validated['key_delivery_deadline'])->toDateString();
+                    if ($newKeyDeadline !== $originalKeyDeliveryDeadlineString) {
+                        $agreementForLandlord->key_delivery_deadline = $validated['key_delivery_deadline'];
+                        $keyDeliveryDeadlineChanged = true;
+                    }
+                }
+                $agreementForLandlord->landlord_keys_delivered = $request->boolean('key_handed_over');
+                
+                // Save agreement only if something related to it changed
+                if ($keyDeliveryDeadlineChanged || $agreementForLandlord->isDirty('landlord_keys_delivered') || $agreementForLandlord->isDirty('key_delivery_deadline')) {
+                    $agreementForLandlord->save();
+                }
+
+                // Notify landlord if key delivery deadline changed
+                if ($keyDeliveryDeadlineChanged) {
+                    if ($agreementForLandlord->booking && $agreementForLandlord->booking->house && $agreementForLandlord->booking->house->landlord) {
+                        try {
+                            $agreementForLandlord->booking->house->landlord->notify(new LandlordKeyDeadlineUpdated($agreementForLandlord));
+                        } catch (\Exception $e) {
+                            Log::error("Failed to send LandlordKeyDeadlineUpdated notification for agreement ID {$agreementForLandlord->id}: " . $e->getMessage());
+                        }
+                    }
+                }
+
+                // Check if landlord_keys_delivered changed to true
+                $newLandlordKeysDelivered = (bool) $agreementForLandlord->landlord_keys_delivered;
+                if ($newLandlordKeysDelivered && !$originalLandlordKeysDelivered) {
+                    $keysNowDelivered = true; // Set flag
+                }
+
+                // Notify Tenant if keys are now marked as delivered
+                if ($keysNowDelivered) {
+                    if ($agreementForLandlord->booking && $agreementForLandlord->booking->tenant) {
+                        try {
+                            $agreementForLandlord->booking->tenant->notify(new TenantKeyCollectionReminder($agreementForLandlord));
+                        } catch (\Exception $e) {
+                            Log::error("Failed to send TenantKeyCollectionReminder for agreement ID {$agreementForLandlord->id} from cash update: " . $e->getMessage());
+                        }
+                    }
+                }
             }
 
             return response()->json(['success' => true, 'message' => 'Cash payment details updated successfully.']);
         } catch (\Exception $e) {
+            Log::error('Error updating cash payment details: ' . $e->getMessage() . ' Stack: ' . $e->getTraceAsString());
             return response()->json(['success' => false, 'message' => 'Error updating details: ' . $e->getMessage()], 500);
         }
     }
@@ -280,15 +381,61 @@ class AdminController extends  Controller
             if (!$payment->agreement) {
                 return response()->json(['success' => false, 'message' => 'Agreement not found for this payment.'], 404);
             }
+            
+            // Eager load necessary relationships for agreement
+            $payment->agreement->loadMissing('booking.house.landlord', 'booking.tenant'); // Also load tenant for key collection notification
+
+            $originalKeyDeliveryDeadlineString = $payment->agreement->key_delivery_deadline ? Carbon::parse($payment->agreement->key_delivery_deadline)->toDateString() : null;
+            $originalLandlordKeysDeliveredCredit = (bool) $payment->agreement->landlord_keys_delivered; // Store original state for this function too
+            $keyDeliveryDeadlineChanged = false;
+            $keysNowDeliveredCredit = false; // Flag for this function
 
             if ($request->filled('credit_key_delivery_deadline')) {
-                $payment->agreement->key_delivery_deadline = $validated['credit_key_delivery_deadline'];
+                $newKeyDeadline = Carbon::parse($validated['credit_key_delivery_deadline'])->toDateString();
+                 if ($newKeyDeadline !== $originalKeyDeliveryDeadlineString) {
+                    $payment->agreement->key_delivery_deadline = $validated['credit_key_delivery_deadline'];
+                    $keyDeliveryDeadlineChanged = true;
+                }
             }
             $payment->agreement->landlord_keys_delivered = $request->boolean('credit_key_handed_over');
-            $payment->agreement->save();
+            
+            if ($keyDeliveryDeadlineChanged || $payment->agreement->isDirty('landlord_keys_delivered')) {
+                $payment->agreement->save();
+            }
+
+            // Notify landlord if key delivery deadline changed
+            // This logic is duplicated from updateCashPaymentDetails, consider refactoring if it grows
+            if ($keyDeliveryDeadlineChanged) {
+                // Access landlord via booking and house relationships
+                if ($payment->agreement && $payment->agreement->booking && $payment->agreement->booking->house && $payment->agreement->booking->house->landlord) {
+                     try {
+                        $payment->agreement->booking->house->landlord->notify(new LandlordKeyDeadlineUpdated($payment->agreement));
+                    } catch (\Exception $e) {
+                        Log::error("Failed to send LandlordKeyDeadlineUpdated from credit update for agreement ID {$payment->agreement->id}: " . $e->getMessage());
+                    }
+                }
+            }
+
+            // Check if landlord_keys_delivered changed to true in this function's context
+            $newLandlordKeysDeliveredCredit = (bool) $payment->agreement->landlord_keys_delivered;
+            if ($newLandlordKeysDeliveredCredit && !$originalLandlordKeysDeliveredCredit) {
+                $keysNowDeliveredCredit = true;
+            }
+
+            // Notify Tenant if keys are now marked as delivered
+            if ($keysNowDeliveredCredit) {
+                if ($payment->agreement && $payment->agreement->booking && $payment->agreement->booking->tenant) {
+                    try {
+                        $payment->agreement->booking->tenant->notify(new TenantKeyCollectionReminder($payment->agreement));
+                    } catch (\Exception $e) {
+                        Log::error("Failed to send TenantKeyCollectionReminder for agreement ID {$payment->agreement->id} from credit update: " . $e->getMessage());
+                    }
+                }
+            }
 
             return response()->json(['success' => true, 'message' => 'Landlord details updated successfully.']);
         } catch (\Exception $e) {
+            Log::error('Error updating credit landlord details: ' . $e->getMessage() . ' Stack: ' . $e->getTraceAsString());
             return response()->json(['success' => false, 'message' => 'Error updating details: ' . $e->getMessage()], 500);
         }
     }

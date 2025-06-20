@@ -34,7 +34,7 @@
                             <h3 style="color:rgb(50, 149, 235);">Filter by Status</h3>
                             <select id="paymentStatusFilter" class="form-select">
                                 <option value="">All Statuses</option>
-                                <option value="pending">Paying</option> {{-- Matches "pending" in JS --}}
+                                <option value="paying">Paying</option> {{-- Matches "paying" in JS --}}
                                 <option value="paid">Paid</option> {{-- Matches "paid" or "succeeded" in JS --}}
                                 <option value="failed">Failed</option>
                             </select>
@@ -84,8 +84,8 @@
                                                     <td>
                                                         <span
                                                             class="badge 
-                                                            @if ($payment->status == 'completed' || $payment->status == 'paid') bg-success 
-                                                            @elseif($payment->status == 'pending') bg-warning text-dark
+                                                            @if ($payment->status == 'paid' || $payment->status == 'paid') bg-success 
+                                                            @elseif($payment->status == 'paying') bg-warning text-dark
                                                             @elseif($payment->status == 'failed') bg-danger
                                                             @else bg-secondary @endif">
                                                             {{ ucfirst(str_replace('_', ' ', $payment->status)) }}
@@ -146,7 +146,7 @@
                                                                     <dt class="col-sm-4">Status</dt>
                                                                     <dd class="col-sm-8">
                                                                         <span
-                                                                            class="badge @if ($payment->status == 'completed' || $payment->status == 'paid') bg-success @elseif($payment->status == 'pending') bg-warning text-dark @elseif($payment->status == 'failed') bg-danger @else bg-secondary @endif">
+                                                                            class="badge @if ($payment->status == 'paid' || $payment->status == 'paid') bg-success @elseif($payment->status == 'paying') bg-warning text-dark @elseif($payment->status == 'failed') bg-danger @else bg-secondary @endif">
                                                                             {{ ucfirst(str_replace('_', ' ', $payment->status)) }}
                                                                         </span>
                                                                     </dd>
@@ -260,8 +260,8 @@
                                                     <td>
                                                         <span
                                                             class="badge 
-                                                            @if ($payment->status == 'completed' || $payment->status == 'paid') bg-success 
-                                                            @elseif($payment->status == 'pending') bg-warning text-dark
+                                                            @if ($payment->status == 'paid' || $payment->status == 'paid') bg-success 
+                                                            @elseif($payment->status == 'paying') bg-warning text-dark
                                                             @elseif($payment->status == 'failed') bg-danger
                                                             @else bg-secondary @endif">
                                                             {{ ucfirst(str_replace('_', ' ', $payment->status)) }}
@@ -327,7 +327,7 @@
                                                                     <dt class="col-sm-4">Status</dt>
                                                                     <dd class="col-sm-8">
                                                                         <span
-                                                                            class="badge @if ($payment->status == 'completed' || $payment->status == 'paid') bg-success @elseif($payment->status == 'pending') bg-warning text-dark @elseif($payment->status == 'failed') bg-danger @else bg-secondary @endif">
+                                                                            class="badge @if ($payment->status == 'paid' || $payment->status == 'paid') bg-success @elseif($payment->status == 'paying') bg-warning text-dark @elseif($payment->status == 'failed') bg-danger @else bg-secondary @endif">
                                                                             {{ ucfirst(str_replace('_', ' ', $payment->status)) }}
                                                                         </span>
                                                                     </dd>
@@ -506,11 +506,11 @@
 
                         if (selectedStatus === "") { // "All Statuses"
                             matchesStatus = true;
-                        } else if (selectedStatus === "pending") {
-                            matchesStatus = (rowStatusText === "pending");
+                        } else if (selectedStatus === "paying") {
+                            matchesStatus = (rowStatusText === "paying");
                         } else if (selectedStatus === "paid") {
                             matchesStatus = (rowStatusText === "paid" || rowStatusText === "succeeded" ||
-                                rowStatusText === "completed");
+                                rowStatusText === "paid");
                         } else if (selectedStatus === "failed") {
                             matchesStatus = (rowStatusText === "failed");
                         }
@@ -609,7 +609,7 @@
 
                         // Set checkbox states
                         if (cashPaymentCheck) {
-                            cashPaymentCheck.checked = (paymentStatus === 'completed' || paymentStatus === 'paid');
+                            cashPaymentCheck.checked = (paymentStatus === 'paid' || paymentStatus === 'paid');
                         }
                         if (keyCheck) {
                             keyCheck.checked = (keyHandedOver === '1');

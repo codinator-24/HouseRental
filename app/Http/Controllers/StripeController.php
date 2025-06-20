@@ -14,6 +14,7 @@ use App\Http\Controllers\MaintenanceController; // Added MaintenanceController f
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth; // Added Auth Facade
+use App\Notifications\KeyDeliveryReminder; // Added for notification
 
 class StripeController extends Controller
 {
@@ -102,6 +103,7 @@ class StripeController extends Controller
                 'status' => 'agreed', // or 'active' depending on your preference
                 'signed_at' => Carbon::now(), // Update signed date when agreement is finalized
                 'expires_at' => $expiresDate,
+                'key_delivery_deadline' => Carbon::now()->addMonth(),
             ]);
 
             // Create the Payment record
@@ -111,13 +113,25 @@ class StripeController extends Controller
                 'agreement_id' => $agreement->id,
                 'amount' => $rentAmount,
                 'payment_method' => 'Credit', // Since it's Stripe payment
-                'status' => 'completed',
+                'payment_deadline' => Carbon::now()->addMonth(),
+                'status' => 'paid',
                 'paid_at' => Carbon::now(),
                 'notes' => 'Initial rental agreement payment via Stripe. Session ID: ' . $sessionId,
             ]);
 
             // Optionally update booking status
             $booking->update(['status' => 'agreement_signed']); // Adjust field name as per your booking table
+
+            // Send notification to landlord for key delivery
+            $landlord = $agreement->landlord; // Using the accessor from Agreement model
+            if ($landlord && $agreement->key_delivery_deadline) {
+                try {
+                    $landlord->notify(new KeyDeliveryReminder($agreement));
+                } catch (\Exception $e) {
+                    Log::error("Failed to send KeyDeliveryReminder notification for agreement ID {$agreement->id}: " . $e->getMessage());
+                    // Optionally, decide if this failure should affect the user's redirect or message
+                }
+            }
 
             // Redirect back to agreement creation page with success message
             return redirect()->route('agreement.create', ['booking' => $bookingId])

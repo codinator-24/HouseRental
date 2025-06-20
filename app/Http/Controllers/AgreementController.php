@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\KeyDeliveryReminder; // Added for landlord notification
+use App\Notifications\TenantCashPaymentReminder; // Added for tenant notification
 
 use function Ramsey\Uuid\v8;
 
@@ -80,6 +82,7 @@ class AgreementController extends Controller
                 'status' => 'agreed', // User can change this to 'pending_cash_payment' if needed
                 'signed_at' => Carbon::now(),
                 'expires_at' => $expiresDate,
+                'key_delivery_deadline' => Carbon::now()->addMonth(),
             ]);
 
             // Create Payment Record
@@ -93,8 +96,29 @@ class AgreementController extends Controller
                 'notes' => 'Cash payment initiated for rental agreement. Booking ID: ' . $bookingId,
             ]);
 
+            // Store the newly created payment to pass to the notification
+            $payment = Payment::where('agreement_id', $agreement->id)->latest()->first(); // Get the payment we just created
+
             // Update Booking Status
             $booking->update(['status' => 'agreement_signed']); // User can change this to 'awaiting_cash_payment'
+
+            // Send notifications
+            try {
+                // Notify Landlord for Key Delivery
+                $landlord = $agreement->landlord;
+                if ($landlord && $agreement->key_delivery_deadline) {
+                    $landlord->notify(new KeyDeliveryReminder($agreement));
+                }
+
+                // Notify Tenant for Cash Payment
+                $tenant = $agreement->tenant; // Access tenant via agreement's booking
+                if ($tenant && $payment) {
+                    $tenant->notify(new TenantCashPaymentReminder($agreement, $payment));
+                }
+            } catch (\Exception $notificationException) {
+                Log::error('Failed to send notification in CashAppointment: ' . $notificationException->getMessage());
+                // Continue with the process even if notification fails, but log it.
+            }
 
             return redirect()->route('agreement.create', ['booking' => $bookingId])
                              ->with('success', 'Cash appointment successfully recorded. Payment is pending.');
