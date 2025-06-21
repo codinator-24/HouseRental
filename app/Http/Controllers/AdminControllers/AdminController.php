@@ -19,9 +19,10 @@ use App\Notifications\TenantCashDeadlineUpdated; // Added for notification
 use App\Notifications\LandlordKeyDeadlineUpdated; // Added for notification
 use App\Notifications\TenantKeyCollectionReminder; // Added for key collection notification
 use App\Notifications\LandlordCashReceivedNotification; // Added for cash received notification
+use Illuminate\Support\Facades\DB; // Added for database queries
 use Illuminate\Support\Facades\Log; // Added for logging notification errors
 
-class AdminController extends  Controller
+class AdminController extends Controller
 {
 
     public function dashboard()
@@ -172,52 +173,65 @@ class AdminController extends  Controller
         return redirect()->back();
     }
 
-   public function ViewProfit()
-{
-    // Your new profit data
-    $profitData = [
-        'labels' => ['Houses', 'Apartments', 'Commercials'],
-        'data' => [25.3, 17.4, 12.0], // in thousands
-    ];
-    
-    // Calculate totals
-    $totalProfit = array_sum($profitData['data']);
-    $fivePercentOfTotal = $totalProfit * 0.05;
-    
-    // Colors for the chart segments
-    $colors = [
-        'rgba(54, 162, 235, 0.7)',   // Blue for Houses
-        'rgba(255, 99, 132, 0.7)',   // Red for Apartments
-        'rgba(255, 206, 86, 0.7)',   // Yellow for Commercials
-    ];
-    
-    $borderColors = [
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 99, 132, 1)',
-        'rgba(255, 206, 86, 1)',
-    ];
-    
-    $chartDataFromServer = [
-        'labels' => $profitData['labels'],
-        'datasets' => [
-            [
-                'label' => 'Profit Distribution',
-                'data' => $profitData['data'],
-                'backgroundColor' => array_slice($colors, 0, count($profitData['data'])),
-                'borderColor' => array_slice($borderColors, 0, count($profitData['data'])),
-                'borderWidth' => 2
+    public function ViewProfit()
+    {
+        // --- Start of Dynamic Profit Data ---
+        $profitData = Payment::join('agreements', 'payments.agreement_id', '=', 'agreements.id')
+            ->join('bookings', 'agreements.booking_id', '=', 'bookings.id')
+            ->join('houses', 'bookings.house_id', '=', 'houses.id')
+            ->where('payments.status', 'paid')
+            ->select('houses.property_type', DB::raw('SUM(payments.amount) as total_profit'))
+            ->groupBy('houses.property_type')
+            ->get();
+
+        $profitLabels = $profitData->pluck('property_type');
+        $profitValues = $profitData->pluck('total_profit')->map(fn ($val) => round($val / 1000, 1));
+        $totalProfit = $profitValues->sum();
+        $fivePercentOfTotal = $totalProfit * 0.05;
+        // --- End of Dynamic Profit Data ---
+
+        // --- Chart Colors ---
+        $profitChartColors = ['rgba(54, 162, 235, 0.7)', 'rgba(255, 99, 132, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)'];
+        $cityChartColors = ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)'];
+
+        // --- Dynamic Chart Data ---
+        $chartDataFromServer = [
+            'labels' => $profitLabels,
+            'datasets' => [['label' => 'Profit Distribution', 'data' => $profitValues, 'backgroundColor' => $profitChartColors, 'borderColor' => array_map(fn ($c) => str_replace('0.7', '1', $c), $profitChartColors), 'borderWidth' => 2]],
+        ];
+
+        // --- Fake Presentation Data ---
+        $fakeProfitChartData = [
+            'labels' => ['Houses', 'Apartments', 'Commercials'],
+            'datasets' => [['label' => 'Profit Distribution', 'data' => [25.3, 17.4, 12.0], 'backgroundColor' => array_slice($profitChartColors, 0, 3), 'borderColor' => array_map(fn ($c) => str_replace('0.7', '1', $c), array_slice($profitChartColors, 0, 3)), 'borderWidth' => 2]],
+        ];
+        $fakeTotalProfit = array_sum($fakeProfitChartData['datasets'][0]['data']);
+        $fakeAdditionalData = [
+            'totalProfit' => $fakeTotalProfit,
+            'fivePercentOfTotal' => $fakeTotalProfit * 0.05,
+            'breakdown' => [
+                ['label' => 'Houses', 'value' => 25.3, 'percentage' => ($fakeTotalProfit > 0 ? (25.3 / $fakeTotalProfit) * 100 : 0)],
+                ['label' => 'Apartments', 'value' => 17.4, 'percentage' => ($fakeTotalProfit > 0 ? (17.4 / $fakeTotalProfit) * 100 : 0)],
+                ['label' => 'Commercials', 'value' => 12.0, 'percentage' => ($fakeTotalProfit > 0 ? (12.0 / $fakeTotalProfit) * 100 : 0)],
+            ],
+            'cards' => [
+                ['label' => 'Houses', 'value' => 25.3],
+                ['label' => 'Apartments', 'value' => 17.4],
+                ['label' => 'Commercials', 'value' => 12.0],
             ]
-        ]
-    ];
-    
-    // Pass additional data for display
-    $additionalData = [
-        'totalProfit' => $totalProfit,
-        'fivePercentOfTotal' => $fivePercentOfTotal
-    ];
-    
-    return view('admin.profit', compact('chartDataFromServer', 'additionalData'));
-}
+        ];
+
+        // --- Houses per City ---
+        $housesPerCity = House::select('city', DB::raw('count(*) as house_count'))->groupBy('city')->orderBy('house_count', 'desc')->get();
+        $housesPerCityChart = [
+            'labels' => $housesPerCity->pluck('city'),
+            'datasets' => [['label' => 'Number of Houses', 'data' => $housesPerCity->pluck('house_count'), 'backgroundColor' => $cityChartColors, 'borderColor' => array_map(fn ($c) => str_replace('0.7', '1', $c), $cityChartColors), 'borderWidth' => 2]],
+        ];
+
+        // --- Pass All Data to View ---
+        $additionalData = ['totalProfit' => $totalProfit, 'fivePercentOfTotal' => $fivePercentOfTotal];
+        return view('admin.profit', compact('chartDataFromServer', 'additionalData', 'housesPerCityChart', 'fakeProfitChartData', 'fakeAdditionalData'));
+    }
 
     public function ViewAgreement()
     {

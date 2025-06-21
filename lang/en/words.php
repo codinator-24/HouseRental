@@ -444,6 +444,9 @@ return [
     'message_overview_with_user' => 'with',
     'message_overview_no_threads' => 'You have no active message threads.',
 
+    'privacy_warning_title' => 'Privacy Warning',
+    'privacy_warning_message' => 'Please be careful. This messaging service is not end-to-end encrypted. Conversations can be monitored by the site administrator for security and support purposes.',
+
     // Footer specific & new general terms
     'Explore' => 'Explore',
     'AllProperties' => 'All Properties',

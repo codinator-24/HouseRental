@@ -17,6 +17,22 @@
             @endif
         </h1>
 
+        <div class="p-3 mb-4 text-sm text-yellow-800 bg-yellow-50 border-l-4 border-yellow-400 rounded-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="w-5 h-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.696-1.742-3.03l5.58-9.92zM10 13a1 1 0 110-2 1 1 0 010 2zm-1-3a1 1 0 00-1 1v1a1 1 0 102 0v-1a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700">
+                        <span class="font-semibold">@lang('words.privacy_warning_title'):</span>
+                        @lang('words.privacy_warning_message')
+                    </p>
+                </div>
+            </div>
+        </div>
+
         @if (session('success'))
             <div class="relative px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded" role="alert">
                 <span class="block sm:inline">{{ session('success') }}</span>
