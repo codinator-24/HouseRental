@@ -71,8 +71,9 @@ class AdminController extends Controller
     public function viewfeedback()
     {
         $feedbacks = Feedback::latest()->get();
-        $reports = Report::with(['reporter', 'house', 'reportedUser'])->latest()->get();
-        return view('admin/feedback', compact('feedbacks', 'reports'));
+        $reports = Report::with(['reporter', 'house', 'reportedUser'])->whereNotNull('house_id')->latest()->get();
+        $userReports = Report::with(['reporter', 'house', 'reportedUser'])->whereNull('house_id')->orWhereNotNull('reported_user_id')->latest()->get();
+        return view('admin/feedback', compact('feedbacks', 'reports', 'userReports'));
     }
 
     public function updateReportStatus(Request $request, Report $report)

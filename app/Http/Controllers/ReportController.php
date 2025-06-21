@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\House;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -45,5 +46,31 @@ class ReportController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Report submitted successfully.');
+    }
+
+    public function reportUser(Request $request, User $reportedUser)
+    {
+        $validator = Validator::make($request->all(), [
+            'reason_category' => 'required|string|max:255',
+            'description' => 'required|string|max:5000',
+            'house_id' => 'required|exists:houses,id',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                        ->withErrors($validator, 'reportFormErrors')
+                        ->withInput();
+        }
+
+        Report::create([
+            'user_id' => Auth::id(),
+            'house_id' => $request->input('house_id'),
+            'reported_user_id' => $reportedUser->id,
+            'reason_category' => $request->input('reason_category'),
+            'description' => $request->input('description'),
+            'status' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'User reported successfully.');
     }
 }

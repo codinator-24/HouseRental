@@ -575,6 +575,7 @@
                 <!-- Properties Tab -->
                 <div id="content-properties" class="tab-panel hidden">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <x-commission-info />
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_tab_my_properties')</h2>
                             <a href="{{ route('Show.house.add') }}"

@@ -72,6 +72,7 @@ Route::middleware('lang')->group(function () {
 
         // Report a house
         Route::post('/houses/{house}/report', [ReportController::class, 'store'])->name('house.report');
+        Route::post('/report/user/{reportedUser}', [ReportController::class, 'reportUser'])->name('report.user');
 
         // Favorite a house
         Route::post('/favorites/{house}/toggle', [FavoriteController::class, 'toggleFavorite'])->name('favorites.toggle');

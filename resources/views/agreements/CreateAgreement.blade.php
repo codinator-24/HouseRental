@@ -46,7 +46,7 @@
 </style>
 
 <x-layout>
-    <div class="bg-gray-50 min-h-screen py-8" x-data="{
+    <div id="pdf-content" class="bg-gray-50 min-h-screen py-8" x-data="{
         showConfirmModal: false,
     
         initiateSignAgreement() {
@@ -123,16 +123,15 @@
             <div class="gradient-bg rounded-2xl p-8 mb-8 text-white">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-bold mb-2">New Rental Agreement</h1>
-                        <p class="text-blue-100">Professional Property Rental Contract</p>
+                        <h1 class="text-3xl font-bold mb-2">@lang('words.agreement_create_title')</h1>
+                        <p class="text-blue-100">@lang('words.agreement_create_subtitle')</p>
                     </div>
                     <div class="text-right">
                         <div class="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                            <p class="text-sm font-medium">Agreement ID</p>
+                            <p class="text-sm font-medium">@lang('words.agreement_id_label')</p>
                             <p class="text-lg font-bold">
-                                {{ $agreement ? '#' . $agreement->id : '#NEW' }}
+                                {{ $agreement ? '#' . $agreement->id : __('words.agreement_status_new') }}
                             </p>
-
                         </div>
                     </div>
                 </div>
@@ -146,7 +145,7 @@
                         <div class="bg-blue-100 rounded-full p-3 mr-4">
                             <i class="fas fa-user text-blue-600 text-xl"></i>
                         </div>
-                        <h2 class="text-xl font-semibold text-gray-800">Tenant Information</h2>
+                        <h2 class="text-xl font-semibold text-gray-800">@lang('words.tenant_info_title')</h2>
                     </div>
 
                     <div class="flex items-start mb-6">
@@ -192,7 +191,7 @@
                             <div class="profile-placeholder h-24 rounded-lg flex items-center justify-center">
                                 <div class="text-center">
                                     <i class="fas fa-id-card text-gray-400 text-2xl mb-2"></i>
-                                    <p class="text-sm text-gray-500">ID Card Not Provided</p>
+                                    <p class="text-sm text-gray-500">@lang('words.id_card_not_provided')</p>
                                 </div>
                             </div>
                         @endif
@@ -205,7 +204,7 @@
                         <div class="bg-green-100 rounded-full p-3 mr-4">
                             <i class="fas fa-user-tie text-green-600 text-xl"></i>
                         </div>
-                        <h2 class="text-xl font-semibold text-gray-800">Landlord Information</h2>
+                        <h2 class="text-xl font-semibold text-gray-800">@lang('words.landlord_info_title')</h2>
                     </div>
 
                     <div class="flex items-start mb-6">
@@ -253,7 +252,7 @@
                             <div class="profile-placeholder h-24 rounded-lg flex items-center justify-center">
                                 <div class="text-center">
                                     <i class="fas fa-id-card text-gray-400 text-2xl mb-2"></i>
-                                    <p class="text-sm text-gray-500">ID Card Not Provided</p>
+                                    <p class="text-sm text-gray-500">@lang('words.id_card_not_provided')</p>
                                 </div>
                             </div>
                         @endif
@@ -267,24 +266,24 @@
                     <div class="bg-purple-100 rounded-full p-3 mr-4">
                         <i class="fas fa-home text-purple-600 text-xl"></i>
                     </div>
-                    <h2 class="text-xl font-semibold text-gray-800">Property Information</h2>
+                    <h2 class="text-xl font-semibold text-gray-800">@lang('words.property_info_title')</h2>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Property Name:</span>
+                            <span class="text-gray-600">@lang('words.property_name_label'):</span>
                             <span class="font-semibold text-gray-800">{{ $booking->house->title ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Property Type:</span>
+                            <span class="text-gray-600">@lang('words.property_type_label'):</span>
                             <span
                                 class="font-semibold text-gray-800">{{ $booking->house->property_type ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Property Address:</span>
+                            <span class="text-gray-600">@lang('words.property_address_label'):</span>
                             <span class="font-semibold text-gray-800">{{ $booking->house->first_address ?? '' }}
                                 {{ $booking->house->second_address ?? '' }},
                                 {{ $booking->house->city ?? 'N/A' }}</span>
@@ -293,19 +292,19 @@
 
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Number of Rooms:</span>
+                            <span class="text-gray-600">@lang('words.number_of_rooms_label'):</span>
                             <span
                                 class="font-semibold text-gray-800">{{ $booking->house->floors->sum('num_room') ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Number of Floors:</span>
+                            <span class="text-gray-600">@lang('words.number_of_floors_label'):</span>
                             <span
                                 class="font-semibold text-gray-800">{{ $booking->house->floors->count() ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Square Footage:</span>
+                            <span class="text-gray-600">@lang('words.square_footage_label'):</span>
                             <span class="font-semibold text-gray-800">{{ $booking->house->square_footage ?? 'N/A' }}
                                 m²</span>
                         </div>
@@ -315,34 +314,35 @@
 
             <!-- Agreement Details -->
             <div class="bg-white rounded-2xl p-6 card-shadow mb-8 info-card">
+                <x-commission-info />
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center">
                         <div class="bg-orange-100 rounded-full p-3 mr-4">
                             <i class="fas fa-file-contract text-orange-600 text-xl"></i>
                         </div>
-                        <h2 class="text-xl font-semibold text-gray-800">Agreement Information</h2>
+                        <h2 class="text-xl font-semibold text-gray-800">@lang('words.agreement_info_title')</h2>
                     </div>
                     @if ($agreement)
                         @if ($agreement->status === 'pending')
                             <div
                                 class="status-badge bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-medium text-sm">
-                                <i class="fas fa-clock mr-2"></i>Pending Signature
+                                <i class="fas fa-clock mr-2"></i>@lang('words.agreement_status_pending')
                             </div>
                         @elseif($agreement->status === 'active' || $agreement->status === 'agreed')
                             <div
                                 class="status-badge bg-green-100 text-green-800 px-4 py-2 rounded-full font-medium text-sm">
-                                <i class="fas fa-check-circle mr-2"></i>Agreement Active
+                                <i class="fas fa-check-circle mr-2"></i>@lang('words.agreement_status_active')
                             </div>
                         @else
                             {{-- Display other statuses or a default --}}
                             <div
                                 class="status-badge bg-gray-100 text-gray-800 px-4 py-2 rounded-full font-medium text-sm">
-                                Status: {{ ucfirst($agreement->status) }}
+                                @lang('words.agreement_status_label'): {{ ucfirst($agreement->status) }}
                             </div>
                         @endif
                     @else
                         <div class="status-badge bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium text-sm">
-                            <i class="fas fa-plus-circle mr-2"></i>New Agreement
+                            <i class="fas fa-plus-circle mr-2"></i>@lang('words.agreement_create_title')
                         </div>
                     @endif
                 </div>
@@ -351,7 +351,7 @@
                     <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4">
                         <div class="flex items-center mb-2">
                             <i class="fas fa-calendar-plus text-blue-600 mr-2"></i>
-                            <span class="text-sm font-medium text-blue-800">Signed Date</span>
+                            <span class="text-sm font-medium text-blue-800">@lang('words.signed_date_label')</span>
                         </div>
                         <p class="text-xl font-bold text-blue-900">{{ $signedDate->format('d/m/Y') }}</p>
                     </div>
@@ -359,7 +359,7 @@
                     <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4">
                         <div class="flex items-center mb-2">
                             <i class="fas fa-calendar-times text-red-600 mr-2"></i>
-                            <span class="text-sm font-medium text-red-800">Expires Date</span>
+                            <span class="text-sm font-medium text-red-800">@lang('words.expires_date_label')</span>
                         </div>
                         <p class="text-xl font-bold text-red-900">{{ $expiresDate->format('d/m/Y') }}</p>
                     </div>
@@ -367,8 +367,7 @@
                     <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
                         <div class="flex items-center mb-2">
                             <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
-                            <label for="rent_amount" class="text-sm font-medium text-green-800">Monthly Rent
-                                ($)</label>
+                            <label for="rent_amount" class="text-sm font-medium text-green-800">@lang('words.monthly_rent_label')</label>
                         </div>
                         <input type="number" id="rent_amount" name="rent_amount"
                             value="{{ $booking->house->rent_amount ?? '0.00' }}"
@@ -380,34 +379,33 @@
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <label for="rent_frequency" class="text-gray-600">Rent Frequency:</label>
+                            <label for="rent_frequency" class="text-gray-600">@lang('words.rent_frequency_label'):</label>
                             <select id="rent_frequency" name="rent_frequency"
                                 class="font-semibold text-gray-800 border border-gray-300 rounded-md p-1 focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly" selected>Monthly</option>
-                                <option value="yearly">Yearly</option>
+                                <option value="weekly">@lang('words.rent_frequency_weekly')</option>
+                                <option value="monthly" selected>@lang('words.rent_frequency_monthly')</option>
+                                <option value="yearly">@lang('words.rent_frequency_yearly')</option>
                             </select>
                         </div>
                         <div class="flex justify-between items-center">
-                            <label for="payment_method" class="text-gray-600">Payment Method:</label>
+                            <label for="payment_method" class="text-gray-600">@lang('words.payment_method_label'):</label>
                             <select id="payment_method" name="payment_method"
                                 class="font-semibold text-gray-800 border border-gray-300 rounded-md p-1 focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="Credit">Credit Card</option>
-                                <option value="Cash">Cash</option>
+                                <option value="Credit">@lang('words.payment_method_credit')</option>
+                                <option value="Cash">@lang('words.payment_method_cash')</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Payment Date:</span>
-                            <span class="font-semibold text-gray-800">{{ $signedDate->format('d/m/Y') }} (or as
-                                agreed)</span>
+                            <span class="text-gray-600">@lang('words.payment_date_label'):</span>
+                            <span class="font-semibold text-gray-800">{{ $signedDate->format('d/m/Y') }} @lang('words.payment_date_value')</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Duration:</span>
+                            <span class="text-gray-600">@lang('words.duration_label'):</span>
                             <span class="font-semibold text-gray-800">{{ $booking->month_duration }}
-                                Month{{ $booking->month_duration > 1 ? 's' : '' }}</span>
+                                {{ $booking->month_duration > 1 ? __('words.duration_month_plural') : __('words.duration_month_singular') }}</span>
                         </div>
                     </div>
                 </div>
@@ -417,10 +415,10 @@
                         <div class="flex items-start">
                             <i class="fas fa-sticky-note text-blue-600 mr-3 mt-1"></i>
                             <div class="w-full">
-                                <h4 class="font-semibold text-blue-900 mb-2">Additional Notes</h4>
+                                <h4 class="font-semibold text-blue-900 mb-2">@lang('words.additional_notes_label')</h4>
                                 <textarea name="notes" rows="3"
                                     class="w-full p-2 border border-blue-200 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-blue-800"
-                                    placeholder="Enter any additional terms or notes here...">This agreement is for the rental of the property located at {{ $booking->house->first_address ?? '' }} {{ $booking->house->second_address ?? '' }}, {{ $booking->house->city ?? 'N/A' }} for a duration of {{ $booking->month_duration }} month{{ $booking->month_duration > 1 ? 's' : '' }}.</textarea>
+                                    placeholder="@lang('words.agreement_notes_placeholder')">@lang('words.agreement_notes_default', ['address' => ($booking->house->first_address ?? '') . ' ' . ($booking->house->second_address ?? '') . ', ' . ($booking->house->city ?? 'N/A'), 'duration' => $booking->month_duration])</textarea>
                             </div>
                         </div>
                     </div>
@@ -431,12 +429,12 @@
             <div class="mt-10 flex justify-end space-x-4">
                 <button onclick="downloadPDFAgreement()"
                     class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
-                    <i class="fas fa-download mr-2"></i>Download PDF Agreement
+                    <i class="fas fa-download mr-2"></i>@lang('words.download_pdf_button')
                 </button>
                 @if ($agreement->status === 'pending')
                     <button type="button" @click="initiateSignAgreement()"
                         class="gradient-bg text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
-                        <i class="fas fa-file-signature mr-2"></i>Sign Agreement
+                        <i class="fas fa-file-signature mr-2"></i>@lang('words.sign_agreement_button')
                     </button>
                 @endif
             </div>
@@ -465,19 +463,18 @@
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Confirm Agreement Signing
+                                @lang('words.confirm_signing_title')
                             </h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
-                                    Are you sure you want to sign this agreement? This action will process the payment
-                                    and create a legally binding contract.
+                                    @lang('words.confirm_signing_message')
                                 </p>
                                 <div class="mt-3 p-3 bg-blue-50 rounded-lg">
                                     <p class="text-sm text-blue-800">
-                                        <strong>Rent Amount:</strong> $<span
+                                        <strong>@lang('words.rent_amount_label'):</strong> $<span
                                             x-text="document.getElementById('rent_amount')?.value || '0.00'"></span><br>
-                                        <strong>Duration:</strong> {{ $booking->month_duration }}
-                                        month{{ $booking->month_duration > 1 ? 's' : '' }}
+                                        <strong>@lang('words.duration_label'):</strong> {{ $booking->month_duration }}
+                                        {{ $booking->month_duration > 1 ? __('words.duration_month_plural') : __('words.duration_month_singular') }}
                                     </p>
                                 </div>
                             </div>
@@ -494,13 +491,13 @@
                             <button @click="processSignAgreement()" type="button"
                                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm transition duration-150 ease-in-out">
                                 <i class="fas fa-credit-card mr-2"></i>
-                                Yes, Sign & Pay
+                                @lang('words.sign_and_pay_button')
                             </button>
                         </form>
 
                         <button @click="showConfirmModal = false" type="button"
                             class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm transition duration-150 ease-in-out">
-                            Cancel
+                            @lang('words.cancel_button')
                         </button>
                     </div>
                 </div>
@@ -516,7 +513,7 @@
                     x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
                     class="bg-white rounded-2xl shadow-2xl p-8 max-w-3xl w-full mx-4 sm:mx-auto"
                     style="min-width: 400px;">
-                    <h2 class="text-2xl font-bold mb-6 text-indigo-700">Schedule Cash Appointment</h2>
+                    <h2 class="text-2xl font-bold mb-6 text-indigo-700">@lang('words.cash_appointment_title')</h2>
 
                     <form method="POST" action="{{ route('cash.appointment') }}">
                         @csrf
@@ -525,14 +522,13 @@
                          
                               <div class="mt-2">
                                 <p class="text-sm text-gray-500">
-                                  Are you sure you want to sign this agreement?
-                                  This business processes a cash payment and creates a legally binding contract.
+                                  @lang('words.cash_appointment_message')
                                 </p>
                                 <div class="mt-3 p-3 bg-blue-50 rounded-lg">
                                     <p class="text-sm text-blue-800">
-                                        <strong>Rent Amount:</strong> $<span x-text="rentAmount || '0.00'"></span><br>
-                                        <strong>Duration:</strong> {{ $booking->month_duration }}
-                                        month{{ $booking->month_duration > 1 ? 's' : '' }}
+                                        <strong>@lang('words.rent_amount_label'):</strong> $<span x-text="rentAmount || '0.00'"></span><br>
+                                        <strong>@lang('words.duration_label'):</strong> {{ $booking->month_duration }}
+                                        {{ $booking->month_duration > 1 ? __('words.duration_month_plural') : __('words.duration_month_singular') }}
                                     </p>
                                 </div>
                             </div>
@@ -540,11 +536,11 @@
                         <div class="flex justify-end space-x-4 mt-6">
                             <button type="button" @click="show = false"
                                 class="px-6 py-2 rounded-lg bg-gray-300 text-gray-800 font-semibold hover:bg-gray-400 transition">
-                                Cancel
+                                @lang('words.cancel_button')
                             </button>
                             <button type="submit"
                                 class="px-6 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition">
-                                Submit
+                                @lang('words.submit_button')
                             </button>
                         </div>
                     </form>
@@ -553,18 +549,25 @@
 
             <!-- Footer -->
             <div class="text-center py-8 mt-4">
-                <p class="text-gray-500 text-sm">© {{ date('Y') }} Rental Agreement System. All rights reserved.
+                <p class="text-gray-500 text-sm">@lang('words.footer_copyright', ['year' => date('Y')])
                 </p>
             </div>
         </div>
     </div>
 
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script>
-        // Optional: Add downloadPDFAgreement function if needed
         function downloadPDFAgreement() {
-            // Implement PDF download functionality
-            alert('PDF download functionality to be implemented');
+            const element = document.getElementById('pdf-content');
+            const opt = {
+                margin:       0.5,
+                filename:     'agreement-{{ $agreement->id }}.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
         }
     </script>
 </x-layout>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\KeyDeliveryReminder; // Added for landlord notification
 use App\Notifications\TenantCashPaymentReminder; // Added for tenant notification
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use function Ramsey\Uuid\v8;
 
@@ -130,4 +131,5 @@ class AgreementController extends Controller
                              ->with('error', 'An error occurred while processing the cash appointment. Please try again.');
         }
     }
+
 }

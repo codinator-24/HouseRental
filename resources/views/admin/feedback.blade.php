@@ -18,6 +18,13 @@
                     Property Reports
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="user-reports-tab" data-bs-toggle="tab" data-bs-target="#user-reports" type="button"
+                    role="tab" aria-controls="user-reports" aria-selected="false">
+                    <i class="bi bi-person-x"></i>
+                    User Reports
+                </button>
+            </li>
         </ul>
 
         <!-- Tab Content -->
@@ -188,6 +195,105 @@
                                 @empty
                                     <tr>
                                         <td colspan="9" class="text-center py-4">No reports yet.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Reports Tab -->
+            <div class="tab-pane fade" id="user-reports" role="tabpanel" aria-labelledby="user-reports-tab">
+                <div class="tab-header">
+                    <h2 class="h4">User Reports</h2>
+                    <p class="text-muted">Review and manage user-submitted reports against other users.</p>
+                </div>
+
+                <div class="card custom-table">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" style="font-size: 12px;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Reported By</th>
+                                    <th>Reported User</th>
+                                    <th>Related House</th>
+                                    <th>Reason</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($userReports as $report)
+                                    <tr>
+                                        <td>{{ $report->id }}</td>
+                                        <td>
+                                            {{ $report->reporter->full_name ?? 'N/A' }} <br>
+                                            <small class="text-muted">{{ $report->reporter->email ?? '' }}</small>
+                                        </td>
+                                        <td>
+                                            {{ $report->reportedUser->full_name ?? 'N/A' }} <br>
+                                            <small class="text-muted">{{ $report->reportedUser->email ?? '' }}</small>
+                                        </td>
+                                        <td>
+                                            <a href="{{ $report->house_id && $report->house ? route('house.details', $report->house_id) : '#' }}"
+                                                target="_blank">
+                                                {{ $report->house->title ?? 'N/A' }}
+                                            </a>
+                                        </td>
+                                        <td>{{ $report->reason_category }}</td>
+                                        <td>{{ Str::limit($report->description, 100) }}</td>
+                                        <td>
+                                            <span
+                                                class="badge bg-{{ $report->status === 'pending' ? 'warning' : ($report->status === 'resolved' ? 'success' : ($report->status === 'under_review' ? 'info' : ($report->status === 'dismissed' ? 'secondary' : 'light'))) }} {{ $report->status === 'pending' || $report->status === 'under_review' ? 'text-dark' : '' }}">
+                                                {{ ucfirst(str_replace('_', ' ', $report->status)) }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $report->created_at->format('Y-m-d H:i') }}</td>
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-sm btn-info view-report-btn"
+                                                data-bs-toggle="modal" data-bs-target="#reportDetailsModal"
+                                                data-report-id="{{ $report->id }}"
+                                                data-reporter-name="{{ $report->reporter?->full_name ?? 'N/A' }}"
+                                                data-reporter-email="{{ $report->reporter?->email ?? 'N/A' }}"
+                                                data-house-title="{{ $report->house?->title ?? 'N/A' }}"
+                                                data-house-url="{{ $report->house_id && $report->house ? route('house.details', $report->house_id) : '#' }}"
+                                                data-reported-landlord-name="{{ $report->reportedUser?->full_name ?? 'N/A' }}"
+                                                data-reported-landlord-email="{{ $report->reportedUser?->email ?? 'N/A' }}"
+                                                data-reason="{{ $report->reason_category ?? 'N/A' }}"
+                                                data-description="{{ $report->description ?? 'N/A' }}"
+                                                data-status="{{ $report->status ?? 'N/A' }}"
+                                                data-date="{{ $report->created_at?->format('Y-m-d H:i') ?? 'N/A' }}">
+                                                View
+                                            </button>
+                                            <form action="{{ route('admin.reports.updateStatus', $report->id) }}"
+                                                method="POST" class="d-inline-block ms-1">
+                                                @csrf
+                                                <select name="status" class="form-select form-select-sm d-inline-block"
+                                                    style="width: auto; font-size: 0.8rem; padding: 0.25rem 0.5rem;"
+                                                    onchange="this.form.submit()">
+                                                    <option value="pending"
+                                                        {{ $report->status === 'pending' ? 'selected' : '' }}>Pending
+                                                    </option>
+                                                    <option value="under_review"
+                                                        {{ $report->status === 'under_review' ? 'selected' : '' }}>
+                                                        Under Review</option>
+                                                    <option value="resolved"
+                                                        {{ $report->status === 'resolved' ? 'selected' : '' }}>Resolved
+                                                    </option>
+                                                    <option value="dismissed"
+                                                        {{ $report->status === 'dismissed' ? 'selected' : '' }}>
+                                                        Dismissed</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center py-4">No user reports yet.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

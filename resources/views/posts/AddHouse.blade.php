@@ -50,7 +50,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Title --}}
                             <div class="mb-4">
-                                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_title')</label>
+                                <label for="title"
+                                    class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_title')</label>
                                 <input type="text" id="title" name="title" value="{{ old('title') }}"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('title') border-red-500 @enderror">
                                 @error('title')
@@ -60,15 +61,19 @@
 
                             {{-- Property Type --}}
                             <div class="mb-4">
-                                <label for="property_type" class="block text-sm font-medium text-gray-700 mb-2">@lang('words.add_house_label_property_type')</label>
+                                <label for="property_type"
+                                    class="block text-sm font-medium text-gray-700 mb-2">@lang('words.add_house_label_property_type')</label>
                                 <select id="property_type" name="property_type"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white shadow appearance-none @error('property_type') border-red-500 @enderror">
-                                    <option value="" {{ old('property_type') == '' ? 'selected' : '' }}>@lang('words.add_house_select_property_type')</option>
+                                    <option value="" {{ old('property_type') == '' ? 'selected' : '' }}>
+                                        @lang('words.add_house_select_property_type')</option>
                                     <option value="apartment" {{ old('property_type') == 'apartment' ? 'selected' : '' }}>
                                         @lang('words.property_type_apartment')</option>
-                                    <option value="house" {{ old('property_type') == 'house' ? 'selected' : '' }}>@lang('words.property_type_house')
+                                    <option value="house" {{ old('property_type') == 'house' ? 'selected' : '' }}>
+                                        @lang('words.property_type_house')
                                     </option>
-                                    <option value="commercial" {{ old('property_type') == 'commercial' ? 'selected' : '' }}>@lang('words.property_type_commercial')
+                                    <option value="commercial" {{ old('property_type') == 'commercial' ? 'selected' : '' }}>
+                                        @lang('words.property_type_commercial')
                                     </option>
                                 </select>
                                 @error('property_type')
@@ -84,16 +89,22 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                             {{-- City --}}
                             <div class="mb-4">
-                                <label for="city" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_city_colon')</label>
+                                <label for="city"
+                                    class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_city_colon')</label>
                                 <select id="city" name="city"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white @error('city') border-red-500 @enderror">
-                                    <option value="" {{ old('city') == '' ? 'selected' : '' }}>@lang('words.add_house_select_city')</option>
+                                    <option value="" {{ old('city') == '' ? 'selected' : '' }}>@lang('words.add_house_select_city')
+                                    </option>
                                     <option value="Sulaymaniyah" {{ old('city') == 'Sulaymaniyah' ? 'selected' : '' }}>
                                         @lang('words.Sulaymaniyah')</option>
-                                    <option value="Hawler" {{ old('city') == 'Hawler' ? 'selected' : '' }}>@lang('words.Hawler')</option>
-                                    <option value="Karkuk" {{ old('city') == 'Karkuk' ? 'selected' : '' }}>@lang('words.Karkuk')</option>
-                                    <option value="Dhok" {{ old('city') == 'Dhok' ? 'selected' : '' }}>@lang('words.Dhok')</option>
-                                    <option value="Halabja" {{ old('city') == 'Halabja' ? 'selected' : '' }}>@lang('words.Halabja')
+                                    <option value="Hawler" {{ old('city') == 'Hawler' ? 'selected' : '' }}>
+                                        @lang('words.Hawler')</option>
+                                    <option value="Karkuk" {{ old('city') == 'Karkuk' ? 'selected' : '' }}>
+                                        @lang('words.Karkuk')</option>
+                                    <option value="Dhok" {{ old('city') == 'Dhok' ? 'selected' : '' }}>@lang('words.Dhok')
+                                    </option>
+                                    <option value="Halabja" {{ old('city') == 'Halabja' ? 'selected' : '' }}>
+                                        @lang('words.Halabja')
                                     </option>
                                 </select>
                                 @error('city')
@@ -117,7 +128,8 @@
                         </div>
                         {{-- Second Address --}}
                         <div class="mb-6"> {{-- Increased bottom margin --}}
-                            <label for="second_address" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_second_address')</label>
+                            <label for="second_address"
+                                class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_second_address')</label>
                             <input type="text" id="second_address" name="second_address"
                                 value="{{ old('second_address') }}"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('second_address') border-red-500 @enderror">
@@ -133,7 +145,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Square Footage --}}
                             <div class="mb-4">
-                                <label for="square_footage" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_square_meter')</label>
+                                <label for="square_footage"
+                                    class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_square_meter')</label>
                                 <input type="number" id="square_footage" name="square_footage"
                                     value="{{ old('square_footage') }}" min="0"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('square_footage') border-red-500 @enderror">
@@ -144,9 +157,10 @@
 
                             {{-- Rent Amount --}}
                             <div class="mb-4">
-                                <label for="rent_amount" class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_rent_amount')</label>
-                                <input type="number" id="rent_amount" name="rent_amount"
-                                    value="{{ old('rent_amount') }}" min="0" step="0.01"
+                                <label for="rent_amount"
+                                    class="block text-gray-700 text-sm font-bold mb-2">@lang('words.add_house_label_rent_amount')</label>
+                                <input type="number" id="rent_amount" name="rent_amount" value="{{ old('rent_amount') }}"
+                                    min="0" step="0.01"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('rent_amount') border-red-500 @enderror">
                                 @error('rent_amount')
                                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
@@ -176,7 +190,8 @@
                             @foreach ($floorEntries as $index => $floorData)
                                 <div class="floor-section p-4 border rounded-md shadow-sm bg-gray-50"
                                     data-index="{{ $index }}">
-                                    <h3 class="text-xl font-semibold mb-3 text-gray-600">@lang('words.add_house_floor_title_prefix') {{ $index + 1 }}
+                                    <h3 class="text-xl font-semibold mb-3 text-gray-600">@lang('words.add_house_floor_title_prefix')
+                                        {{ $index + 1 }}
                                     </h3>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
@@ -257,7 +272,9 @@
                     {{-- Section 7: House Pictures --}}
                     <div class="mb-8">
                         <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">@lang('words.add_house_section_house_pictures')</h2>
-                        <label for="pictures" class="block text-gray-700 text-sm font-bold mb-2 sr-only">@lang('words.add_house_label_house_pictures_sr')</label> {{-- Label is visually hidden --}}
+                        <label for="pictures"
+                            class="block text-gray-700 text-sm font-bold mb-2 sr-only">@lang('words.add_house_label_house_pictures_sr')</label>
+                        {{-- Label is visually hidden --}}
                         <input type="file" id="pictures" name="pictures[]" multiple accept="image/*"
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none @error('pictures.*') border-red-500 @enderror @error('pictures') border-red-500 @enderror">
                         <p class="mt-1 text-sm text-gray-500" id="file_input_help">@lang('words.add_house_pictures_help_text')</p>
@@ -268,6 +285,8 @@
                             <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <x-commission-info />
 
                     {{-- Submit Button --}}
                     <div class="flex items-center justify-end mt-8 pt-6 border-t"> {{-- Increased top margin --}}
@@ -284,7 +303,7 @@
         {{-- Optional: Message for guests trying to access this page directly,
              though ideally, route middleware should redirect them to login. --}}
         <div class="container mx-auto px-4 py-8 text-center">
-            <p class="text-xl text-gray-700">@lang('words.add_house_guest_login_prompt', ['Login' => '<a href="'.route('login').'" class="text-blue-600 hover:underline">'.__('words.Login').'</a>'])</p>
+            <p class="text-xl text-gray-700">@lang('words.add_house_guest_login_prompt', ['Login' => '<a href="' . route('login') . '" class="text-blue-600 hover:underline">' . __('words.Login') . '</a>'])</p>
         </div>
     @endauth
 
@@ -449,7 +468,8 @@
                     const selectedCity = cityDropdown.value;
 
                     // Clear previous neighborhood options and add the default placeholder
-                    neighborhoodDropdown.innerHTML = '<option value="">' + "{{ __('words.add_house_select_neighborhood') }}" + '</option>';
+                    neighborhoodDropdown.innerHTML = '<option value="">' +
+                        "{{ __('words.add_house_select_neighborhood') }}" + '</option>';
 
                     if (selectedCity && neighborhoodsByCity[selectedCity] && neighborhoodsByCity[selectedCity]
                         .length > 0) {
