@@ -91,7 +91,8 @@
                                             @else
                                                 <h3 class="text-lg font-bold text-red-600 mb-2">@lang('words.dashboard_property_unavailable')
                                                 </h3>
-                                                <p class="text-sm text-gray-500 mb-3">@lang('words.dashboard_label_to_landlord') @lang('words.booking_landlord_na')</p>
+                                                <p class="text-sm text-gray-500 mb-3">@lang('words.dashboard_label_to_landlord')
+                                                    @lang('words.booking_landlord_na')</p>
                                             @endif
 
                                             <div class="space-y-2 mb-4">
@@ -248,7 +249,7 @@
                     {{-- tenant Maintenance section --}}
                     @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
                         <div class="flex justify-between items-center mb-6">
-                             <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_sent_maintenance_requests_title')</h2>
+                            <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_sent_maintenance_requests_title')</h2>
                             <button type="button" id="openNewMaintenanceModalBtn"
                                 class="text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2"
                                 style="background: linear-gradient(135deg, #1b61c2, #3b82f6);">
@@ -328,8 +329,7 @@
                                                     data-landlord-response="{{ $request->landlord_response ?? '' }}"
                                                     data-created-at="{{ $request->created_at->format('M d, Y H:i') }}"
                                                     data-update-action-template="{{ route('maintenance.tenant.update', ['maintenance' => 'REQUEST_ID_PLACEHOLDER']) }}"
-                                                    data-cancel-action-template="{{ route('maintenance.tenant.cancel', ['maintenance' => 'REQUEST_ID_PLACEHOLDER']) }}"
-                                                    >
+                                                    data-cancel-action-template="{{ route('maintenance.tenant.cancel', ['maintenance' => 'REQUEST_ID_PLACEHOLDER']) }}">
                                                     <i class="fas fa-edit"></i> @lang('words.dashboard_maintenance_view_update_button')
                                                 </button>
                                             </div>
@@ -371,9 +371,8 @@
                             <div
                                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                                 @foreach ($receivedMaintenanceRequests as $receivedRequest)
-                                    <button type="button"
-                                        data-request-id="{{ $receivedRequest->id }}"
-                                        data-tenant-name="{{ $receivedRequest->tenant->full_name ?? $receivedRequest->tenant->user_name ?? __('words.dashboard_tenant_na') }}"
+                                    <button type="button" data-request-id="{{ $receivedRequest->id }}"
+                                        data-tenant-name="{{ $receivedRequest->tenant->full_name ?? ($receivedRequest->tenant->user_name ?? __('words.dashboard_tenant_na')) }}"
                                         data-picture-url="{{ $receivedRequest->picture ? asset('storage/' . $receivedRequest->picture) : '' }}"
                                         data-area-of-house="{{ $receivedRequest->area_of_house }}"
                                         data-description="{{ $receivedRequest->description }}"
@@ -394,7 +393,8 @@
                                             @if ($receivedRequest->house)
                                                 <p class="text-sm text-gray-500 mb-3 flex items-center">
                                                     <i class="fas fa-home mr-2" style="color: #1b61c2;"></i>
-                                                    @lang('words.dashboard_label_for_property') {{ Str::limit($receivedRequest->house->title ?? __('words.booking_property_title_na'), 30) }}
+                                                    @lang('words.dashboard_label_for_property')
+                                                    {{ Str::limit($receivedRequest->house->title ?? __('words.booking_property_title_na'), 30) }}
                                                 </p>
                                             @endif
 
@@ -405,7 +405,8 @@
                                                 </div>
                                                 <div class="flex items-center text-sm text-gray-600">
                                                     <i class="fas fa-user w-4 mr-2" style="color: #1b61c2;"></i>
-                                                    <span>@lang('words.dashboard_label_by_tenant') {{ $receivedRequest->tenant->full_name ?? ($receivedRequest->tenant->user_name ?? __('words.dashboard_tenant_na')) }}</span>
+                                                    <span>@lang('words.dashboard_label_by_tenant')
+                                                        {{ $receivedRequest->tenant->full_name ?? ($receivedRequest->tenant->user_name ?? __('words.dashboard_tenant_na')) }}</span>
                                                 </div>
                                                 <div class="flex items-center">
                                                     <i class="fas fa-info-circle w-4 mr-2"
@@ -434,7 +435,8 @@
                                                 </div>
                                             </div>
                                             <div class="border-t border-gray-100 mt-4 pt-4 text-center">
-                                                <span class="text-sm font-semibold" style="color: #1b61c2;">@lang('words.dashboard_maintenance_view_reply_button')</span>
+                                                <span class="text-sm font-semibold"
+                                                    style="color: #1b61c2;">@lang('words.dashboard_maintenance_view_reply_button')</span>
                                             </div>
                                         </div>
                                     </button>
@@ -548,26 +550,27 @@
                                     <div
                                         class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 card-hover flex flex-col items-center justify-center p-6 min-h-[280px]">
                                         <a href="{{ route('my.bookings') }}" class="text-center">
-                                        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
-                                            style="background-color: rgba(27, 97, 194, 0.1);">
-                                            <i class="fas fa-arrow-right text-xl" style="color: #1b61c2;"></i>
-                                        </div>
-                                        <p class="font-semibold mb-1" style="color: #1b61c2;">@lang('words.dashboard_view_all_link')</p>
-                                        <p class="text-sm text-gray-500">@lang('words.dashboard_tab_received_bookings')</p>
-                                    </a>
-                                </div>
-                            @endif
-                        </div>
-                    @else
-                        <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                            </svg>
-                            <p class="mt-4 text-lg font-medium text-gray-700">@lang('words.dashboard_no_received_bookings_title')</p>
-                            <p class="text-sm text-gray-500 mt-1">@lang('words.dashboard_no_received_bookings_text')</p>
-                        </div>
+                                            <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
+                                                style="background-color: rgba(27, 97, 194, 0.1);">
+                                                <i class="fas fa-arrow-right text-xl" style="color: #1b61c2;"></i>
+                                            </div>
+                                            <p class="font-semibold mb-1" style="color: #1b61c2;">@lang('words.dashboard_view_all_link')
+                                            </p>
+                                            <p class="text-sm text-gray-500">@lang('words.dashboard_tab_received_bookings')</p>
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="bg-white rounded-lg shadow-md p-8 border border-gray-200 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                </svg>
+                                <p class="mt-4 text-lg font-medium text-gray-700">@lang('words.dashboard_no_received_bookings_title')</p>
+                                <p class="text-sm text-gray-500 mt-1">@lang('words.dashboard_no_received_bookings_text')</p>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -633,11 +636,11 @@
                                                 class="flex-1">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                    onclick="return confirm('@lang('words.dashboard_confirm_delete_property')');"
+                                                <button type="submit" onclick="return confirm('@lang('words.dashboard_confirm_delete_property')');"
                                                     class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all">
                                                     <i class="fas fa-trash"></i>
-                                                    <span class="ml-1 hidden sm:inline">@lang('words.booking_delete_button')</span> {{-- Reusing delete button text --}}
+                                                    <span class="ml-1 hidden sm:inline">@lang('words.booking_delete_button')</span>
+                                                    {{-- Reusing delete button text --}}
                                                 </button>
                                             </form>
                                         </div>
@@ -705,16 +708,17 @@
                                 return $booking->isCompletedAndPast() && is_null($booking->review);
                             });
                         $userSubmittedReviews = \App\Models\Review::where('user_id', $currentUser->id)
-                                                        ->with(['house', 'booking'])
-                                                        ->latest()
-                                                        ->paginate(5, ['*'], 'submitted_reviews_page'); // Paginate with a unique page name
+                            ->with(['house', 'booking'])
+                            ->latest()
+                            ->paginate(5, ['*'], 'submitted_reviews_page'); // Paginate with a unique page name
                     @endphp
 
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-2xl font-bold text-gray-800">@lang('words.dashboard_my_reviews_ratings_title')</h2>
                             {{-- Link to the full page if desired, or manage all here --}}
-                            <a href="{{ route('reviews.my') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700">
+                            <a href="{{ route('reviews.my') }}"
+                                class="text-sm font-semibold text-blue-600 hover:text-blue-700">
                                 @lang('words.dashboard_view_all_my_reviews_link')
                             </a>
                         </div>
@@ -722,18 +726,22 @@
                         <!-- Section for Pending Reviews (Bookings to Review) -->
                         <section class="mb-10">
                             <h3 class="text-xl font-semibold text-gray-700 mb-4">@lang('words.dashboard_rate_past_stays_title')</h3>
-                            @if($reviewableBookings->isNotEmpty())
+                            @if ($reviewableBookings->isNotEmpty())
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($reviewableBookings as $booking)
                                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                                            @if($booking->house)
-                                                <h4 class="text-md font-bold text-gray-800 mb-1 truncate" title="{{ $booking->house->title }}">
+                                            @if ($booking->house)
+                                                <h4 class="text-md font-bold text-gray-800 mb-1 truncate"
+                                                    title="{{ $booking->house->title }}">
                                                     {{ Str::limit($booking->house->title, 30) }}
                                                 </h4>
                                                 <p class="text-xs text-gray-500 mb-1">
-                                                    @lang('words.dashboard_label_booked_date') {{ $booking->created_at->format('M d, Y') }} | @lang('words.dashboard_label_duration') {{ $booking->month_duration }} {{ $booking->month_duration == 1 ? __('words.duration_month_singular') : __('words.duration_month_plural') }}
+                                                    @lang('words.dashboard_label_booked_date') {{ $booking->created_at->format('M d, Y') }} |
+                                                    @lang('words.dashboard_label_duration') {{ $booking->month_duration }}
+                                                    {{ $booking->month_duration == 1 ? __('words.duration_month_singular') : __('words.duration_month_plural') }}
                                                 </p>
-                                                <a href="{{ route('reviews.create', $booking) }}" class="mt-2 inline-block w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-md text-sm transition duration-300">
+                                                <a href="{{ route('reviews.create', $booking) }}"
+                                                    class="mt-2 inline-block w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-md text-sm transition duration-300">
                                                     @lang('words.dashboard_write_review_button')
                                                 </a>
                                             @else
@@ -750,33 +758,40 @@
                         <!-- Section for Submitted Reviews -->
                         <section>
                             <h3 class="text-xl font-semibold text-gray-700 mb-4">@lang('words.dashboard_my_submitted_reviews_title')</h3>
-                            @if($userSubmittedReviews->isNotEmpty())
+                            @if ($userSubmittedReviews->isNotEmpty())
                                 <div class="space-y-4">
                                     @foreach ($userSubmittedReviews as $review)
                                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                                             <div class="flex justify-between items-start">
                                                 <div>
-                                                    @if($review->house)
-                                                        <h4 class="text-md font-bold text-gray-800">{{ $review->house->title }}</h4>
+                                                    @if ($review->house)
+                                                        <h4 class="text-md font-bold text-gray-800">
+                                                            {{ $review->house->title }}</h4>
                                                     @else
-                                                        <h4 class="text-md font-bold text-red-600">@lang('words.dashboard_property_unavailable')</h4>
+                                                        <h4 class="text-md font-bold text-red-600">@lang('words.dashboard_property_unavailable')
+                                                        </h4>
                                                     @endif
-                                                    <p class="text-xs text-gray-500">@lang('words.dashboard_label_reviewed_date') {{ $review->created_at->format('M d, Y') }}</p>
+                                                    <p class="text-xs text-gray-500">@lang('words.dashboard_label_reviewed_date')
+                                                        {{ $review->created_at->format('M d, Y') }}</p>
                                                 </div>
                                                 <div class="flex items-center text-sm">
                                                     @for ($i = 1; $i <= 5; $i++)
-                                                        <i class="fas fa-star {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                                        <i
+                                                            class="fas fa-star {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
                                                     @endfor
                                                 </div>
                                             </div>
-                                            @if($review->comment)
-                                                <p class="text-sm text-gray-600 mt-2">{{ Str::limit($review->comment, 150) }}</p>
+                                            @if ($review->comment)
+                                                <p class="text-sm text-gray-600 mt-2">
+                                                    {{ Str::limit($review->comment, 150) }}</p>
                                             @endif
                                             <div class="mt-2">
-                                                @if($review->is_approved)
-                                                    <span class="px-2 py-0.5 text-xs font-semibold text-green-700 bg-green-100 rounded-full">@lang('words.review_status_approved')</span>
+                                                @if ($review->is_approved)
+                                                    <span
+                                                        class="px-2 py-0.5 text-xs font-semibold text-green-700 bg-green-100 rounded-full">@lang('words.review_status_approved')</span>
                                                 @else
-                                                    <span class="px-2 py-0.5 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full">@lang('words.booking_status_pending')</span>
+                                                    <span
+                                                        class="px-2 py-0.5 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full">@lang('words.booking_status_pending')</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -800,88 +815,92 @@
         <div id="newMaintenanceRequestModal"
             class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
             style="display: none;" role="dialog" aria-modal="true" aria-labelledby="newMaintenanceModalTitle">
-                <div class="w-full max-w-lg mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
-                    <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-                        <h1 id="newMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.maintenance_modal_create_title')</h1>
-                        <button id="closeNewMaintenanceModalBtn" aria-label="Close new maintenance modal"
-                            class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+            <div class="w-full max-w-lg mx-4 overflow-hidden bg-white rounded-lg shadow-xl">
+                <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+                    <h1 id="newMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.maintenance_modal_create_title')
+                    </h1>
+                    <button id="closeNewMaintenanceModalBtn" aria-label="Close new maintenance modal"
+                        class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+
+                <form method="POST" action="{{ route('maintenance.insert') }}" enctype="multipart/form-data"
+                    class="px-6 py-6">
+                    @csrf
+
+                    {{-- Display Validation Errors --}}
+                    @if ($errors->hasBag('newMaintenanceRequestErrors') && $errors->newMaintenanceRequestErrors->any())
+                        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded" role="alert">
+                            <p class="font-bold">@lang('words.error_fix_following')</p>
+                            <ul>
+                                @foreach ($errors->newMaintenanceRequestErrors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    {{-- House Selection --}}
+                    <div class="mb-4">
+                        <label for="maintenance_house_id"
+                            class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_property')</label>
+                        <select name="house_id" id="maintenance_house_id" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('house_id', 'newMaintenanceRequestErrors') border-red-500 @enderror">
+                            <option value="">@lang('words.maintenance_modal_select_property_placeholder')</option>
+                            @if (isset($rentedHouses) && $rentedHouses->count() > 0)
+                                @foreach ($rentedHouses as $house)
+                                    <option value="{{ $house->id }}"
+                                        {{ old('house_id') == $house->id ? 'selected' : '' }}>
+                                        {{ $house->title }}
+                                        @if (!empty($house->full_address))
+                                            ({{ Str::limit($house->full_address, 40) }})
+                                        @endif
+                                    </option>
+                                @endforeach
+                            @else
+                                <option value="" disabled>@lang('words.maintenance_modal_no_eligible_properties')</option>
+                            @endif
+                        </select>
                     </div>
 
-                    <form method="POST" action="{{ route('maintenance.insert') }}" enctype="multipart/form-data"
-                        class="px-6 py-6">
-                        @csrf
+                    {{-- Picture --}}
+                    <div class="mb-4">
+                        <label for="maintenance_picture"
+                            class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_picture_optional')</label>
+                        <input type="file" name="picture" id="maintenance_picture" accept="image/*"
+                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('picture', 'newMaintenanceRequestErrors') border-red-500 @enderror">
+                    </div>
 
-                        {{-- Display Validation Errors --}}
-                        @if ($errors->hasBag('newMaintenanceRequestErrors') && $errors->newMaintenanceRequestErrors->any())
-                            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded" role="alert">
-                                <p class="font-bold">@lang('words.error_fix_following')</p>
-                                <ul>
-                                    @foreach ($errors->newMaintenanceRequestErrors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                    {{-- Area of House --}}
+                    <div class="mb-4">
+                        <label for="area_of_house"
+                            class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_area')</label>
+                        <input type="text" name="area_of_house" id="area_of_house"
+                            value="{{ old('area_of_house') }}" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('area_of_house', 'newMaintenanceRequestErrors') border-red-500 @enderror">
+                    </div>
 
-                        {{-- House Selection --}}
-                        <div class="mb-4">
-                            <label for="maintenance_house_id"
-                                class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_property')</label>
-                            <select name="house_id" id="maintenance_house_id" required
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('house_id', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                                <option value="">@lang('words.maintenance_modal_select_property_placeholder')</option>
-                                @if (isset($rentedHouses) && $rentedHouses->count() > 0)
-                                    @foreach ($rentedHouses as $house)
-                                        <option value="{{ $house->id }}"
-                                            {{ old('house_id') == $house->id ? 'selected' : '' }}>
-                                            {{ $house->title }}
-                                            @if (!empty($house->full_address))
-                                                ({{ Str::limit($house->full_address, 40) }})
-                                            @endif
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <option value="" disabled>@lang('words.maintenance_modal_no_eligible_properties')</option>
-                                @endif
-                            </select>
-                        </div>
+                    {{-- Description --}}
+                    <div class="mb-4">
+                        <label for="maintenance_description"
+                            class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_description')</label>
+                        <textarea name="description" id="maintenance_description" rows="4" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'newMaintenanceRequestErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
+                    </div>
 
-                        {{-- Picture --}}
-                        <div class="mb-4">
-                            <label for="maintenance_picture" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_picture_optional')</label>
-                            <input type="file" name="picture" id="maintenance_picture" accept="image/*"
-                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('picture', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                        </div>
+                    {{-- Refund Amount --}}
+                    <div class="mb-6">
+                        <label for="refund_amount"
+                            class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_refund_optional')</label>
+                        <input type="number" name="refund_amount" id="refund_amount"
+                            value="{{ old('refund_amount') }}" step="0.01" min="0"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('refund_amount', 'newMaintenanceRequestErrors') border-red-500 @enderror">
+                    </div>
 
-                        {{-- Area of House --}}
-                        <div class="mb-4">
-                            <label for="area_of_house" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_area')</label>
-                            <input type="text" name="area_of_house" id="area_of_house"
-                                value="{{ old('area_of_house') }}" required
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('area_of_house', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                        </div>
-
-                        {{-- Description --}}
-                        <div class="mb-4">
-                            <label for="maintenance_description"
-                                class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_description')</label>
-                            <textarea name="description" id="maintenance_description" rows="4" required
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('description', 'newMaintenanceRequestErrors') border-red-500 @enderror">{{ old('description') }}</textarea>
-                        </div>
-
-                        {{-- Refund Amount --}}
-                        <div class="mb-6">
-                            <label for="refund_amount" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_refund_optional')</label>
-                            <input type="number" name="refund_amount" id="refund_amount"
-                                value="{{ old('refund_amount') }}" step="0.01" min="0"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('refund_amount', 'newMaintenanceRequestErrors') border-red-500 @enderror">
-                        </div>
-
-                        <div class="flex justify-end">
-                            <button type="submit"
-                                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                @lang('words.maintenance_modal_submit_request_button')
-                            </button>
+                    <div class="flex justify-end">
+                        <button type="submit"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            @lang('words.maintenance_modal_submit_request_button')
+                        </button>
                     </div>
                 </form>
             </div>
@@ -922,7 +941,8 @@
 
                     <div class="border-t border-gray-200 pt-4">
                         <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_description')</h3>
-                        <p id="modal_description" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded-md"></p>
+                        <p id="modal_description" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded-md">
+                        </p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -930,7 +950,8 @@
                             <h3 class="text-sm font-medium text-gray-500 mb-2">@lang('words.maintenance_modal_label_attached_picture')</h3>
                             <img id="modal_picture" src="" alt="Maintenance Picture"
                                 class="mt-1 w-full max-w-sm rounded-lg border shadow-sm object-contain">
-                            <p id="modal_no_picture_text" class="text-gray-500 italic mt-1 p-3 bg-gray-50 rounded-md" style="display:none;">@lang('words.maintenance_modal_no_picture_provided')</p>
+                            <p id="modal_no_picture_text" class="text-gray-500 italic mt-1 p-3 bg-gray-50 rounded-md"
+                                style="display:none;">@lang('words.maintenance_modal_no_picture_provided')</p>
                         </div>
 
                         <div class="space-y-4">
@@ -940,18 +961,21 @@
                             </div>
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.booking_section_current_status')</h3>
-                                <p id="modal_current_status_display" class="text-lg text-gray-800 capitalize-first"></p>
+                                <p id="modal_current_status_display" class="text-lg text-gray-800 capitalize-first">
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Landlord Response and Actions Section -->
-                    <form id="landlordProcessResponseForm" method="POST" action="" class="border-t border-gray-200 pt-6 mt-6">
+                    <form id="landlordProcessResponseForm" method="POST" action=""
+                        class="border-t border-gray-200 pt-6 mt-6">
                         @csrf
                         {{-- The hidden input for new_status is no longer strictly needed if using separate routes for accept/reject,
                              but kept for potential compatibility or if the old processLandlordResponse route is still used by something.
                              The new controller actions acceptMaintenanceRequest and rejectMaintenanceRequest do not use it. --}}
-                        <input type="hidden" name="action_type_for_old_route" id="modal_new_status"> {{-- Renamed to avoid confusion --}}
+                        <input type="hidden" name="action_type_for_old_route" id="modal_new_status">
+                        {{-- Renamed to avoid confusion --}}
 
                         <div>
                             <label for="modal_landlord_response"
@@ -961,8 +985,9 @@
                                 placeholder="@lang('words.maintenance_modal_placeholder_landlord_response')"></textarea>
                             <div id="modal_landlord_response_error" class="mt-1 text-xs text-red-500"></div>
                         </div>
-                        
-                        <div id="modal_accept_reject_actions_container" class="mt-6 flex flex-col sm:flex-row justify-end gap-3" style="display: none;">
+
+                        <div id="modal_accept_reject_actions_container"
+                            class="mt-6 flex flex-col sm:flex-row justify-end gap-3" style="display: none;">
                             <button type="button" id="modalAcceptBtn"
                                 class="w-full sm:w-auto inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
                                 <i class="fas fa-check-circle mr-2"></i>@lang('words.maintenance_modal_accept_reply_button')
@@ -980,83 +1005,100 @@
 
     {{-- Update Sent Maintenance Request Modal (for Tenant) --}}
     @if (auth()->user()->role === 'tenant' || auth()->user()->role === 'both')
-    <div id="updateSentMaintenanceRequestModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="updateSentMaintenanceModalTitle">
-        <div class="w-full max-w-2xl mx-4 bg-white rounded-lg shadow-xl overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
-                <h1 id="updateSentMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">@lang('words.maintenance_modal_update_sent_title')</h1>
-                <button id="closeUpdateSentMaintenanceModalBtn" aria-label="Close update sent maintenance modal" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+        <div id="updateSentMaintenanceRequestModal"
+            class="fixed inset-0 z-[70] flex items-center justify-center bg-opacity-50 backdrop-blur-sm"
+            style="display: none;" role="dialog" aria-modal="true"
+            aria-labelledby="updateSentMaintenanceModalTitle">
+            <div class="w-full max-w-2xl mx-4 bg-white rounded-lg shadow-xl overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 bg-gray-100 border-b border-gray-200">
+                    <h1 id="updateSentMaintenanceModalTitle" class="text-xl font-semibold text-gray-700">
+                        @lang('words.maintenance_modal_update_sent_title')</h1>
+                    <button id="closeUpdateSentMaintenanceModalBtn" aria-label="Close update sent maintenance modal"
+                        class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+
+                <form id="updateSentMaintenanceForm" method="POST" action="" enctype="multipart/form-data"
+                    class="px-6 py-6 max-h-[80vh] overflow-y-auto">
+                    @csrf
+                    @method('PUT') {{-- Or PATCH --}}
+
+                    {{-- Display Validation Errors (Example, adjust error bag name) --}}
+                    <div id="updateSentMaintenanceErrorContainer"
+                        class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+                        <p class="font-bold">@lang('words.error_fix_following')</p>
+                        <ul id="updateSentMaintenanceErrorList" class="list-disc list-inside text-sm"></ul>
+                    </div>
+
+                    <input type="hidden" name="maintenance_request_id" id="update_maintenance_request_id">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_property')</h3>
+                            <p id="modal_update_house_title" class="text-lg text-gray-800 font-semibold"></p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_area')</h3>
+                            <p id="modal_update_area_of_house" class="text-lg text-gray-800"></p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_request_date')</h3>
+                            <p id="modal_update_created_at" class="text-gray-700"></p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.booking_section_current_status')</h3>
+                            <p id="modal_update_status" class="text-lg text-gray-800 capitalize-first"></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 border-t border-gray-200 pt-4">
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_landlord_response')</h3>
+                        <p id="modal_update_landlord_response"
+                            class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded-md min-h-[50px]"></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="modal_update_description"
+                            class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_update_description')</label>
+                        <textarea name="description" id="modal_update_description" rows="4"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_current_picture')</label>
+                        <div id="modal_update_current_picture_container" class="mt-1">
+                            <img id="modal_update_current_picture" src="" alt="Current Maintenance Picture"
+                                class="max-w-xs max-h-48 rounded border object-contain shadow-sm">
+                            <p id="modal_update_no_current_picture_text" class="text-gray-500 italic"
+                                style="display:none;">@lang('words.maintenance_modal_no_picture_provided')</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="modal_update_new_picture"
+                            class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_upload_new_picture_optional')</label>
+                        <input type="file" name="picture" id="modal_update_new_picture" accept="image/*"
+                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
+                        <button type="button" id="cancelSentMaintenanceRequestBtn"
+                            class="px-4 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            style="display: none;">
+                            <i class="fas fa-times-circle mr-2"></i>@lang('words.maintenance_modal_cancel_request_button')
+                        </button>
+                        <button type="submit" id="updateSentMaintenanceSaveChangesBtn"
+                            class="px-4 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-save mr-2"></i>@lang('words.maintenance_modal_save_changes_button')
+                        </button>
+                    </div>
+                </form>
+                {{-- Separate form for cancellation to avoid issues with file uploads on cancel --}}
+                <form id="cancelSentMaintenanceForm" method="POST" action="" style="display: none;">
+                    @csrf
+                    @method('POST') {{-- Or DELETE, depending on how you want to handle it semantically --}}
+                </form>
             </div>
-
-            <form id="updateSentMaintenanceForm" method="POST" action="" enctype="multipart/form-data" class="px-6 py-6 max-h-[80vh] overflow-y-auto">
-                @csrf
-                @method('PUT') {{-- Or PATCH --}}
-
-                {{-- Display Validation Errors (Example, adjust error bag name) --}}
-                <div id="updateSentMaintenanceErrorContainer" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
-                    <p class="font-bold">@lang('words.error_fix_following')</p>
-                    <ul id="updateSentMaintenanceErrorList" class="list-disc list-inside text-sm"></ul>
-                </div>
-                
-                <input type="hidden" name="maintenance_request_id" id="update_maintenance_request_id">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_property')</h3>
-                        <p id="modal_update_house_title" class="text-lg text-gray-800 font-semibold"></p>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_area')</h3>
-                        <p id="modal_update_area_of_house" class="text-lg text-gray-800"></p>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_request_date')</h3>
-                        <p id="modal_update_created_at" class="text-gray-700"></p>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.booking_section_current_status')</h3>
-                        <p id="modal_update_status" class="text-lg text-gray-800 capitalize-first"></p>
-                    </div>
-                </div>
-
-                <div class="mb-6 border-t border-gray-200 pt-4">
-                    <h3 class="text-sm font-medium text-gray-500 mb-1">@lang('words.maintenance_modal_label_landlord_response')</h3>
-                    <p id="modal_update_landlord_response" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-3 rounded-md min-h-[50px]"></p>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="modal_update_description" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_update_description')</label>
-                    <textarea name="description" id="modal_update_description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
-                </div>
-
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_current_picture')</label>
-                    <div id="modal_update_current_picture_container" class="mt-1">
-                        <img id="modal_update_current_picture" src="" alt="Current Maintenance Picture" class="max-w-xs max-h-48 rounded border object-contain shadow-sm">
-                        <p id="modal_update_no_current_picture_text" class="text-gray-500 italic" style="display:none;">@lang('words.maintenance_modal_no_picture_provided')</p>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <label for="modal_update_new_picture" class="block text-sm font-medium text-gray-700">@lang('words.maintenance_modal_label_upload_new_picture_optional')</label>
-                    <input type="file" name="picture" id="modal_update_new_picture" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                </div>
-
-                <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
-                    <button type="button" id="cancelSentMaintenanceRequestBtn" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" style="display: none;">
-                        <i class="fas fa-times-circle mr-2"></i>@lang('words.maintenance_modal_cancel_request_button')
-                    </button>
-                    <button type="submit" id="updateSentMaintenanceSaveChangesBtn" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <i class="fas fa-save mr-2"></i>@lang('words.maintenance_modal_save_changes_button')
-                    </button>
-                </div>
-            </form>
-            {{-- Separate form for cancellation to avoid issues with file uploads on cancel --}}
-            <form id="cancelSentMaintenanceForm" method="POST" action="" style="display: none;">
-                @csrf
-                @method('POST') {{-- Or DELETE, depending on how you want to handle it semantically --}}
-            </form>
         </div>
-    </div>
     @endif
 
     <style>
@@ -1179,11 +1221,13 @@
             // --- Received Maintenance Detail Modal Script ---
             const receivedMaintenanceCards = document.querySelectorAll('.received-maintenance-card');
             const receivedMaintenanceDetailModal = document.getElementById('receivedMaintenanceDetailModal');
-            const closeReceivedMaintenanceDetailModalBtn = document.getElementById('closeReceivedMaintenanceDetailModalBtn');
+            const closeReceivedMaintenanceDetailModalBtn = document.getElementById(
+                'closeReceivedMaintenanceDetailModalBtn');
             const landlordProcessResponseForm = document.getElementById('landlordProcessResponseForm');
             const modalLandlordResponseTextarea = document.getElementById('modal_landlord_response');
             const modalNewStatusInput = document.getElementById('modal_new_status');
-            const modalAcceptRejectActionsContainer = document.getElementById('modal_accept_reject_actions_container');
+            const modalAcceptRejectActionsContainer = document.getElementById(
+                'modal_accept_reject_actions_container');
             const modalAcceptBtn = document.getElementById('modalAcceptBtn');
             const modalRejectBtn = document.getElementById('modalRejectBtn');
 
@@ -1223,7 +1267,8 @@
             @endif
 
             // --- Received Maintenance Detail Modal Logic ---
-            if (receivedMaintenanceDetailModal && closeReceivedMaintenanceDetailModalBtn && landlordProcessResponseForm && modalAcceptBtn && modalRejectBtn) {
+            if (receivedMaintenanceDetailModal && closeReceivedMaintenanceDetailModalBtn &&
+                landlordProcessResponseForm && modalAcceptBtn && modalRejectBtn) {
                 receivedMaintenanceCards.forEach(card => {
                     card.addEventListener('click', function() {
                         const data = this.dataset;
@@ -1240,13 +1285,18 @@
                             pictureElement.style.display = 'none';
                             noPictureText.style.display = 'block';
                         }
-                        document.getElementById('modal_area_of_house').textContent = data.areaOfHouse;
+                        document.getElementById('modal_area_of_house').textContent = data
+                            .areaOfHouse;
                         document.getElementById('modal_description').textContent = data.description;
-                        document.getElementById('modal_refund_amount').textContent = '$' + parseFloat(data.refundAmount).toFixed(2);
-                        document.getElementById('modal_current_status_display').textContent = data.currentStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        
-                        if(modalLandlordResponseTextarea) modalLandlordResponseTextarea.value = data.landlordResponse || '';
-                        
+                        document.getElementById('modal_refund_amount').textContent = '$' +
+                            parseFloat(data.refundAmount).toFixed(2);
+                        document.getElementById('modal_current_status_display').textContent = data
+                            .currentStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l
+                        .toUpperCase());
+
+                        if (modalLandlordResponseTextarea) modalLandlordResponseTextarea.value =
+                            data.landlordResponse || '';
+
                         // Store accept/reject URLs from card data
                         landlordProcessResponseForm.dataset.acceptUrl = data.acceptUrl;
                         landlordProcessResponseForm.dataset.rejectUrl = data.rejectUrl;
@@ -1259,33 +1309,37 @@
                         }
 
                         // Clear previous errors
-                        const landlordResponseErrorContainer = document.getElementById('landlordResponseErrorContainer');
-                        if(landlordResponseErrorContainer) {
+                        const landlordResponseErrorContainer = document.getElementById(
+                            'landlordResponseErrorContainer');
+                        if (landlordResponseErrorContainer) {
                             landlordResponseErrorContainer.classList.add('hidden');
                             landlordResponseErrorContainer.innerHTML = '';
                         }
-                        const landlordResponseErrorEl = document.getElementById('modal_landlord_response_error');
-                        if(landlordResponseErrorEl) landlordResponseErrorEl.textContent = '';
+                        const landlordResponseErrorEl = document.getElementById(
+                            'modal_landlord_response_error');
+                        if (landlordResponseErrorEl) landlordResponseErrorEl.textContent = '';
 
 
                         receivedMaintenanceDetailModal.style.display = 'flex';
                     });
                 });
 
-                if(modalAcceptBtn) {
+                if (modalAcceptBtn) {
                     modalAcceptBtn.addEventListener('click', function() {
                         if (landlordProcessResponseForm && landlordProcessResponseForm.dataset.acceptUrl) {
-                            landlordProcessResponseForm.action = landlordProcessResponseForm.dataset.acceptUrl;
+                            landlordProcessResponseForm.action = landlordProcessResponseForm.dataset
+                                .acceptUrl;
                             // modalNewStatusInput.value = 'accepted'; // Not strictly needed for new routes
                             landlordProcessResponseForm.submit();
                         }
                     });
                 }
 
-                if(modalRejectBtn) {
+                if (modalRejectBtn) {
                     modalRejectBtn.addEventListener('click', function() {
                         if (landlordProcessResponseForm && landlordProcessResponseForm.dataset.rejectUrl) {
-                            landlordProcessResponseForm.action = landlordProcessResponseForm.dataset.rejectUrl;
+                            landlordProcessResponseForm.action = landlordProcessResponseForm.dataset
+                                .rejectUrl;
                             // modalNewStatusInput.value = 'rejected'; // Not strictly needed for new routes
                             landlordProcessResponseForm.submit();
                         }
@@ -1310,26 +1364,36 @@
 
                 // Re-open modal if there were validation errors
                 @if (session('error_modal_open') === 'receivedMaintenanceDetailModal' && session('open_modal_request_id'))
-                    const errorRequestId = "{{ session('open_modal_request_id') }}"; 
-                    const cardToReopen = document.querySelector(`.received-maintenance-card[data-request-id="${errorRequestId}"]`);
-                    
+                    const errorRequestId = "{{ session('open_modal_request_id') }}";
+                    const cardToReopen = document.querySelector(
+                        `.received-maintenance-card[data-request-id="${errorRequestId}"]`);
+
                     if (cardToReopen) {
-                        receivedMaintenanceDetailModal.style.display = 'flex'; 
+                        receivedMaintenanceDetailModal.style.display = 'flex';
                         const data = cardToReopen.dataset;
                         const requestId = data.requestId; // Use requestId from the card data for consistency
 
                         document.getElementById('modal_tenant_name').textContent = data.tenantName;
                         const pictureElement = document.getElementById('modal_picture');
                         const noPictureText = document.getElementById('modal_no_picture_text');
-                        if (data.pictureUrl) { pictureElement.src = data.pictureUrl; pictureElement.style.display = 'block'; noPictureText.style.display = 'none'; } 
-                        else { pictureElement.style.display = 'none'; noPictureText.style.display = 'block'; }
+                        if (data.pictureUrl) {
+                            pictureElement.src = data.pictureUrl;
+                            pictureElement.style.display = 'block';
+                            noPictureText.style.display = 'none';
+                        } else {
+                            pictureElement.style.display = 'none';
+                            noPictureText.style.display = 'block';
+                        }
                         document.getElementById('modal_area_of_house').textContent = data.areaOfHouse;
                         document.getElementById('modal_description').textContent = data.description;
-                        document.getElementById('modal_refund_amount').textContent = '$' + parseFloat(data.refundAmount).toFixed(2);
-                        document.getElementById('modal_current_status_display').textContent = data.currentStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        
-                        if(modalLandlordResponseTextarea) modalLandlordResponseTextarea.value = "{{ old('landlord_response', '') }}";
-                        
+                        document.getElementById('modal_refund_amount').textContent = '$' + parseFloat(data
+                            .refundAmount).toFixed(2);
+                        document.getElementById('modal_current_status_display').textContent = data.currentStatus
+                            .replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                        if (modalLandlordResponseTextarea) modalLandlordResponseTextarea.value =
+                            "{{ old('landlord_response', '') }}";
+
                         // Store accept/reject URLs from card data when reopening on error
                         if (landlordProcessResponseForm && data.acceptUrl && data.rejectUrl) {
                             landlordProcessResponseForm.dataset.acceptUrl = data.acceptUrl;
@@ -1347,14 +1411,16 @@
                         }
 
                         // Display validation errors
-                        const landlordResponseErrorContainer = document.getElementById('landlordResponseErrorContainer');
+                        const landlordResponseErrorContainer = document.getElementById(
+                            'landlordResponseErrorContainer');
                         // const modalLandlordResponseError = document.getElementById('modal_landlord_response_error'); // This is for a single field, the container is better for multiple errors
-                        
+
                         @if ($errors->hasBag('landlordResponseErrors_' . session('open_modal_request_id')))
                             const errorsForThisModal = @json($errors->{'landlordResponseErrors_' . session('open_modal_request_id')}->all());
                             if (errorsForThisModal.length > 0 && landlordResponseErrorContainer) {
                                 landlordResponseErrorContainer.classList.remove('hidden');
-                                landlordResponseErrorContainer.innerHTML = '<p class="font-bold">Please correct the following errors:</p><ul class="list-disc list-inside text-sm"></ul>';
+                                landlordResponseErrorContainer.innerHTML =
+                                    '<p class="font-bold">Please correct the following errors:</p><ul class="list-disc list-inside text-sm"></ul>';
                                 const errorList = landlordResponseErrorContainer.querySelector('ul');
                                 errorsForThisModal.forEach(error => {
                                     const li = document.createElement('li');
@@ -1368,41 +1434,53 @@
             }
 
             // --- Update Sent Maintenance Request Modal Script ---
-            const openUpdateSentMaintenanceModalBtns = document.querySelectorAll('.open-update-sent-maintenance-modal-btn');
+            const openUpdateSentMaintenanceModalBtns = document.querySelectorAll(
+                '.open-update-sent-maintenance-modal-btn');
             const updateSentMaintenanceModal = document.getElementById('updateSentMaintenanceRequestModal');
-            const closeUpdateSentMaintenanceModalBtn = document.getElementById('closeUpdateSentMaintenanceModalBtn');
+            const closeUpdateSentMaintenanceModalBtn = document.getElementById(
+            'closeUpdateSentMaintenanceModalBtn');
             const updateSentMaintenanceForm = document.getElementById('updateSentMaintenanceForm');
             const cancelSentMaintenanceRequestBtn = document.getElementById('cancelSentMaintenanceRequestBtn');
             const cancelSentMaintenanceForm = document.getElementById('cancelSentMaintenanceForm');
-            const updateSentMaintenanceSaveChangesBtn = document.getElementById('updateSentMaintenanceSaveChangesBtn');
+            const updateSentMaintenanceSaveChangesBtn = document.getElementById(
+                'updateSentMaintenanceSaveChangesBtn');
 
-            if (updateSentMaintenanceModal && closeUpdateSentMaintenanceModalBtn && updateSentMaintenanceForm && updateSentMaintenanceSaveChangesBtn) {
+            if (updateSentMaintenanceModal && closeUpdateSentMaintenanceModalBtn && updateSentMaintenanceForm &&
+                updateSentMaintenanceSaveChangesBtn) {
                 openUpdateSentMaintenanceModalBtns.forEach(btn => {
                     btn.addEventListener('click', function() {
                         const data = this.dataset;
                         const requestId = data.requestId;
 
                         // Populate display fields
-                        document.getElementById('modal_update_house_title').textContent = data.houseTitle;
-                        document.getElementById('modal_update_area_of_house').textContent = data.areaOfHouse;
-                        document.getElementById('modal_update_created_at').textContent = data.createdAt;
-                        document.getElementById('modal_update_status').textContent = data.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        
-                        const landlordResponseEl = document.getElementById('modal_update_landlord_response');
+                        document.getElementById('modal_update_house_title').textContent = data
+                            .houseTitle;
+                        document.getElementById('modal_update_area_of_house').textContent = data
+                            .areaOfHouse;
+                        document.getElementById('modal_update_created_at').textContent = data
+                            .createdAt;
+                        document.getElementById('modal_update_status').textContent = data.status
+                            .replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                        const landlordResponseEl = document.getElementById(
+                            'modal_update_landlord_response');
                         if (data.landlordResponse) {
                             landlordResponseEl.textContent = data.landlordResponse;
                             landlordResponseEl.classList.remove('italic', 'text-gray-500');
                         } else {
-                            landlordResponseEl.textContent = "@lang('words.maintenance_modal_no_landlord_response')";
+                            landlordResponseEl.textContent = "@lang('words.dashboard_greeting')";
                             landlordResponseEl.classList.add('italic', 'text-gray-500');
                         }
 
                         // Populate editable fields
-                        document.getElementById('modal_update_description').value = data.description;
-                        
+                        document.getElementById('modal_update_description').value = data
+                        .description;
+
                         // Populate current picture
-                        const currentPicImg = document.getElementById('modal_update_current_picture');
-                        const noCurrentPicText = document.getElementById('modal_update_no_current_picture_text');
+                        const currentPicImg = document.getElementById(
+                            'modal_update_current_picture');
+                        const noCurrentPicText = document.getElementById(
+                            'modal_update_no_current_picture_text');
                         if (data.currentPictureUrl) {
                             currentPicImg.src = data.currentPictureUrl;
                             currentPicImg.style.display = 'block';
@@ -1410,18 +1488,20 @@
                         } else {
                             currentPicImg.style.display = 'none';
                             noCurrentPicText.style.display = 'block';
-                            noCurrentPicText.textContent = "@lang('words.maintenance_modal_no_picture_provided')";
+                            noCurrentPicText.textContent = "@lang('words.dashboard_welcome_back')";
                         }
                         // Clear the file input for new picture
                         document.getElementById('modal_update_new_picture').value = '';
 
 
                         // Set form action
-                        updateSentMaintenanceForm.action = data.updateActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
+                        updateSentMaintenanceForm.action = data.updateActionTemplate.replace(
+                            'REQUEST_ID_PLACEHOLDER', requestId);
                         document.getElementById('update_maintenance_request_id').value = requestId;
 
                         const updatableStatuses = ['pending', 'in_progress', 'needs_tenant_input'];
-                        const canUpdate = updatableStatuses.includes(data.status) && !data.landlordResponse;
+                        const canUpdate = updatableStatuses.includes(data.status) && !data
+                            .landlordResponse;
 
                         if (canUpdate) {
                             updateSentMaintenanceSaveChangesBtn.style.display = 'inline-flex';
@@ -1432,13 +1512,15 @@
                         // Handle "Cancel Request" button
                         if (data.status === 'pending') { // Only show cancel if status is pending
                             cancelSentMaintenanceRequestBtn.style.display = 'inline-flex';
-                            cancelSentMaintenanceForm.action = data.cancelActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
+                            cancelSentMaintenanceForm.action = data.cancelActionTemplate.replace(
+                                'REQUEST_ID_PLACEHOLDER', requestId);
                         } else {
                             cancelSentMaintenanceRequestBtn.style.display = 'none';
                         }
-                        
+
                         // Clear previous errors
-                        const errorContainer = document.getElementById('updateSentMaintenanceErrorContainer');
+                        const errorContainer = document.getElementById(
+                            'updateSentMaintenanceErrorContainer');
                         const errorList = document.getElementById('updateSentMaintenanceErrorList');
                         errorContainer.classList.add('hidden');
                         errorList.innerHTML = '';
@@ -1465,45 +1547,63 @@
 
                 if (cancelSentMaintenanceRequestBtn) {
                     cancelSentMaintenanceRequestBtn.addEventListener('click', function() {
-                        if (confirm("@lang('words.maintenance_confirm_cancel_request')")) {
+                        if (confirm("@lang('words.sent_bookings_title')")) {
                             cancelSentMaintenanceForm.submit();
                         }
                     });
                 }
-                
+
                 // Handle re-opening modal if there were validation errors (example)
                 // This requires session flashing of error bag name and request ID
-                @if (session('error_modal_open') === 'updateSentMaintenanceRequestModal' && session('open_modal_request_id_tenant_update'))
+                @if (session('error_modal_open') === 'updateSentMaintenanceRequestModal' &&
+                        session('open_modal_request_id_tenant_update'))
                     const errorRequestIdTenantUpdate = "{{ session('open_modal_request_id_tenant_update') }}";
-                    const cardToReopenTenantUpdate = document.querySelector(`.open-update-sent-maintenance-modal-btn[data-request-id="${errorRequestIdTenantUpdate}"]`);
+                    const cardToReopenTenantUpdate = document.querySelector(
+                        `.open-update-sent-maintenance-modal-btn[data-request-id="${errorRequestIdTenantUpdate}"]`
+                        );
                     if (cardToReopenTenantUpdate) {
                         // Simulate click to reopen and populate
                         updateSentMaintenanceModal.style.display = 'flex'; // Show modal first
-                        
+
                         const data = cardToReopenTenantUpdate.dataset;
                         const requestId = data.requestId;
 
                         document.getElementById('modal_update_house_title').textContent = data.houseTitle;
                         document.getElementById('modal_update_area_of_house').textContent = data.areaOfHouse;
                         document.getElementById('modal_update_created_at').textContent = data.createdAt;
-                        document.getElementById('modal_update_status').textContent = data.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        document.getElementById('modal_update_status').textContent = data.status.replace(/_/g, ' ')
+                            .replace(/\b\w/g, l => l.toUpperCase());
                         const landlordResponseEl = document.getElementById('modal_update_landlord_response');
-                        if (data.landlordResponse) { landlordResponseEl.textContent = data.landlordResponse; landlordResponseEl.classList.remove('italic', 'text-gray-500'); } 
-                        else { landlordResponseEl.textContent = "@lang('words.maintenance_modal_no_landlord_response')"; landlordResponseEl.classList.add('italic', 'text-gray-500'); }
-                        
+                        if (data.landlordResponse) {
+                            landlordResponseEl.textContent = data.landlordResponse;
+                            landlordResponseEl.classList.remove('italic', 'text-gray-500');
+                        } else {
+                            landlordResponseEl.textContent = "@lang('words.dashboard_tab_rented_houses')";
+                            landlordResponseEl.classList.add('italic', 'text-gray-500');
+                        }
+
                         // Keep old input for description if validation failed
                         // document.getElementById('modal_update_description').value = "{{ old('description') }}"; // This would be for Laravel old() helper
-                        
+
                         const currentPicImg = document.getElementById('modal_update_current_picture');
                         const noCurrentPicText = document.getElementById('modal_update_no_current_picture_text');
-                        if (data.currentPictureUrl) { currentPicImg.src = data.currentPictureUrl; currentPicImg.style.display = 'block'; noCurrentPicText.style.display = 'none';} 
-                        else { currentPicImg.style.display = 'none'; noCurrentPicText.style.display = 'block'; noCurrentPicText.textContent = "@lang('words.maintenance_modal_no_picture_provided')";}
-                        
-                        updateSentMaintenanceForm.action = data.updateActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
+                        if (data.currentPictureUrl) {
+                            currentPicImg.src = data.currentPictureUrl;
+                            currentPicImg.style.display = 'block';
+                            noCurrentPicText.style.display = 'none';
+                        } else {
+                            currentPicImg.style.display = 'none';
+                            noCurrentPicText.style.display = 'block';
+                            noCurrentPicText.textContent = "@lang('words.dashboard_tab_received_bookings')";
+                        }
+
+                        updateSentMaintenanceForm.action = data.updateActionTemplate.replace(
+                            'REQUEST_ID_PLACEHOLDER', requestId);
                         document.getElementById('update_maintenance_request_id').value = requestId;
 
                         const updatableStatusesReopen = ['pending', 'in_progress', 'needs_tenant_input'];
-                        const canUpdateReopen = updatableStatusesReopen.includes(data.status) && !data.landlordResponse;
+                        const canUpdateReopen = updatableStatusesReopen.includes(data.status) && !data
+                            .landlordResponse;
 
                         if (canUpdateReopen) {
                             updateSentMaintenanceSaveChangesBtn.style.display = 'inline-flex';
@@ -1513,7 +1613,8 @@
 
                         if (data.status === 'pending') {
                             cancelSentMaintenanceRequestBtn.style.display = 'inline-flex';
-                            cancelSentMaintenanceForm.action = data.cancelActionTemplate.replace('REQUEST_ID_PLACEHOLDER', requestId);
+                            cancelSentMaintenanceForm.action = data.cancelActionTemplate.replace(
+                                'REQUEST_ID_PLACEHOLDER', requestId);
                         } else {
                             cancelSentMaintenanceRequestBtn.style.display = 'none';
                         }
@@ -1523,7 +1624,7 @@
                         const errorList = document.getElementById('updateSentMaintenanceErrorList');
                         errorContainer.classList.remove('hidden');
                         errorList.innerHTML = ''; // Clear previous errors
-                        
+
                         @if ($errors->hasBag('updateSentMaintenanceRequestErrors_' . session('open_modal_request_id_tenant_update')))
                             @foreach ($errors->{'updateSentMaintenanceRequestErrors_' . session('open_modal_request_id_tenant_update')}->all() as $error)
                                 const li = document.createElement('li');
