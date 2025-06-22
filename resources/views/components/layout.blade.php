@@ -32,11 +32,11 @@
             <!-- Center: Desktop Navigation Links -->
             <div class="items-center hidden space-x-6 md:flex">
                 <a href="{{ route('home') }}"
-                    class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('words.Home')</a>
+                    class="px-3 py-2 text-sm font-medium text-gray-600 transition-colors duration-200 rounded-md hover:text-blue-600 hover:bg-gray-100">@lang('words.Home')</a>
                 <a href="#"
-                    class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('words.About')</a>
+                    class="px-3 py-2 text-sm font-medium text-gray-600 transition-colors duration-200 rounded-md hover:text-blue-600 hover:bg-gray-100">@lang('words.About')</a>
                 <a href="{{ route('contact') }}"
-                    class="px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-blue-600">@lang('words.Feedback')</a>
+                    class="px-3 py-2 text-sm font-medium text-gray-600 transition-colors duration-200 rounded-md hover:text-blue-600 hover:bg-gray-100">@lang('words.Feedback')</a>
                 {{-- Add other navigation links here if needed --}}
             </div>
 
@@ -46,16 +46,16 @@
                 @guest
                     <div class="items-center hidden gap-2 md:flex">
                         <a href="{{ route('login') }}"
-                            class="px-3 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 hover:text-blue-700">@lang('words.Login')</a>
+                            class="px-3 py-2 text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-600 rounded-md hover:bg-blue-50 hover:text-blue-700">@lang('words.Login')</a>
                         <a href="{{ route('register') }}"
-                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">@lang('words.Register')</a>
+                            class="px-4 py-2 text-sm font-medium text-white transition-colors duration-200 bg-blue-600 rounded-md hover:bg-blue-700">@lang('words.Register')</a>
                     </div>
                 @endguest
 
                 <!-- Currency Switcher Dropdown (Desktop) -->
                 <div class="relative hidden md:block" x-data="currencySwitcher()" x-init="initGlobal()">
                     <button @click="open = !open" type="button" title="Switch Currency"
-                        class="flex items-center px-3 py-1 space-x-1 text-gray-600 rounded hover:text-blue-600 focus:outline-none hover:bg-gray-100">
+                        class="flex items-center px-3 py-1 space-x-1 text-gray-600 transition-colors duration-200 rounded hover:text-blue-600 focus:outline-none hover:bg-gray-100">
                         <i class="fas fa-dollar-sign"></i>
                         <span x-text="currentCurrencyDisplay" class="hidden ml-1 sm:inline"></span>
                         <i class="ml-1 fas fa-chevron-down fa-xs"></i>
@@ -78,7 +78,7 @@
                 <!-- This will be duplicated into the mobile menu below, or we can make this one work for both -->
                 <div class="relative hidden md:block" x-data="{ langOpen: false }">
                     <button @click="langOpen = !langOpen"
-                        class="flex items-center px-3 py-1 space-x-1 text-gray-600 rounded hover:text-blue-600 focus:outline-none hover:bg-gray-100">
+                        class="flex items-center px-3 py-1 space-x-1 text-gray-600 transition-colors duration-200 rounded hover:text-blue-600 focus:outline-none hover:bg-gray-100">
                         @if (app()->getLocale() == 'en')
                             <img src="{{ asset('images/flags/ENG.PNG') }}" alt="ENG Flag" class="w-5 h-auto">
                             <span class="hidden ml-1 sm:inline">ENG</span>
@@ -107,7 +107,7 @@
                 @auth
                     <!-- Messages Icon -->
                     <a href="{{ route('messages.overview') }}" title="My Messages"
-                        class="relative p-2 text-gray-600 rounded-full hover:text-blue-600 focus:outline-none hover:bg-gray-100">
+                        class="relative p-2 text-gray-600 transition-colors duration-200 rounded-full hover:text-blue-600 focus:outline-none hover:bg-gray-100">
                         <span class="sr-only">View Messages</span>
                         <i class="text-xl fa-solid fa-message"></i>
                         @if (isset($unreadMessagesCountGlobal) && $unreadMessagesCountGlobal > 0)
@@ -121,7 +121,7 @@
                     <!-- Notification Icon with Dropdown -->
                     <div class="relative" x-data="notificationsComponent()" x-init="init()">
                         <button @click="toggleDropdown()" type="button" title="Notifications"
-                            class="relative p-2 text-gray-600 rounded-full hover:text-blue-600 focus:outline-none hover:bg-gray-100">
+                            class="relative p-2 text-gray-600 transition-colors duration-200 rounded-full hover:text-blue-600 focus:outline-none hover:bg-gray-100">
                             <span class="sr-only">View notifications</span>
                             <i class="text-xl fas fa-bell"></i>
                             <template x-if="unreadCount > 0">
@@ -174,7 +174,7 @@
                     <!-- Profile Dropdown -->
                     <div class="relative grid place-items-center" x-data="{ open: false }">
                         <button type="button"
-                            class="flex items-center px-3 py-1 space-x-2 rounded-full hover:bg-gray-100 focus:outline-none"
+                            class="flex items-center px-3 py-1 space-x-2 transition-colors duration-200 rounded-full hover:bg-gray-100 focus:outline-none"
                             @click="open = !open">
                             <div class="w-8 h-8 overflow-hidden border-2 border-gray-300 rounded-full">
                                 @if (auth()->user()->picture)
@@ -269,17 +269,17 @@
             style="display: none;"> {{-- Alpine controls visibility --}}
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="{{ route('home') }}"
-                    class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.Home')</a>
+                    class="block px-3 py-2 text-base font-medium text-gray-700 transition-colors duration-200 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.Home')</a>
                 <a href="#"
-                    class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.About')</a>
+                    class="block px-3 py-2 text-base font-medium text-gray-700 transition-colors duration-200 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.About')</a>
                 <a href="{{ route('contact') }}"
-                    class="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.Feedback')</a>
+                    class="block px-3 py-2 text-base font-medium text-gray-700 transition-colors duration-200 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.Feedback')</a>
 
                 @guest
                     <a href="{{ route('login') }}"
-                        class="block px-3 py-2 text-base font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 hover:text-blue-700">@lang('words.Login')</a>
+                        class="block px-3 py-2 text-base font-medium text-blue-600 transition-colors duration-200 border border-blue-600 rounded-md hover:bg-blue-50 hover:text-blue-700">@lang('words.Login')</a>
                     <a href="{{ route('register') }}"
-                        class="block px-3 py-2 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">@lang('words.Register')</a>
+                        class="block px-3 py-2 text-base font-medium text-white transition-colors duration-200 bg-blue-600 rounded-md hover:bg-blue-700">@lang('words.Register')</a>
                 @endguest
             </div>
             <!-- Currency Switcher Dropdown for mobile -->
