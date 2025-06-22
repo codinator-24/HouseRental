@@ -17,7 +17,7 @@ use function Ramsey\Uuid\v8;
 
 class AgreementController extends Controller
 {
-  public function create(Booking $booking)
+    public function create(Booking $booking)
     {
         // Eager load necessary relationships for efficiency
         $booking->load([
@@ -50,12 +50,13 @@ class AgreementController extends Controller
     }
 
 
-        public function CashAppointment(Request $request)
+    public function CashAppointment(Request $request)
     {
         // Validate incoming request
         $validator = Validator::make($request->all(), [
             'booking_id' => 'required|exists:bookings,id',
-            'rent_amount' => 'required|numeric|min:0.01', // Assuming rent_amount is passed
+            'rent_amount' => 'required|numeric|min:0.01',
+            'payment_deadline' => 'required|date|after_or_equal:today',
         ]);
 
         if ($validator->fails()) {
@@ -74,7 +75,7 @@ class AgreementController extends Controller
             if (!$agreement) {
                 // Based on StripeController's success method, an agreement is expected.
                 return redirect()->route('agreement.create', ['booking' => $bookingId])
-                                 ->with('error', 'No agreement found for this booking. Please initiate the agreement first.');
+                    ->with('error', 'No agreement found for this booking. Please initiate the agreement first.');
             }
 
             // Update Agreement
@@ -92,7 +93,7 @@ class AgreementController extends Controller
                 'amount' => $rentAmount,
                 'payment_method' => 'cash',
                 'status' => 'paying',
-                'payment_deadline' => Carbon::now()->addMonth(),
+                'payment_deadline' => Carbon::parse($request->input('payment_deadline')),
                 'paid_at' => null,
                 'notes' => 'Cash payment initiated for rental agreement. Booking ID: ' . $bookingId,
             ]);
@@ -121,15 +122,17 @@ class AgreementController extends Controller
                 // Continue with the process even if notification fails, but log it.
             }
 
-            return redirect()->route('agreement.create', ['booking' => $bookingId])
-                             ->with('success', 'Cash appointment successfully recorded. Payment is pending.');
+            $paymentDeadline = Carbon::parse($request->input('payment_deadline'))->format('Y-m-d');
+            $successMessage = "Cash appointment successfully recorded. Please bring the cash to the office on {$paymentDeadline}.";
 
+            return redirect()->route('agreement.create', ['booking' => $bookingId])
+                ->with('success', $successMessage)
+                ->with('payment_deadline_date', $paymentDeadline);
         } catch (\Exception $e) {
             Log::error('Cash Appointment processing failed: ' . $e->getMessage());
             $bookingIdForRedirect = $request->input('booking_id', ''); // Fallback if bookingId not set before error
             return redirect()->route('agreement.create', ['booking' => $bookingIdForRedirect])
-                             ->with('error', 'An error occurred while processing the cash appointment. Please try again.');
+                ->with('error', 'An error occurred while processing the cash appointment. Please try again.');
         }
     }
-
 }

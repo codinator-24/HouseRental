@@ -48,6 +48,7 @@
 <x-layout>
     <div id="pdf-content" class="bg-gray-50 min-h-screen py-8" x-data="{
         showConfirmModal: false,
+        showSuccessModal: {{ session()->has('success') ? 'true' : 'false' }},
     
         initiateSignAgreement() {
             const paymentMethod = document.getElementById('payment_method').value;
@@ -519,11 +520,18 @@
                         @csrf
                         <input type="hidden" name="booking_id" :value="bookingId">
                         <input type="hidden" name="rent_amount" :value="rentAmount">
-                         
-                              <div class="mt-2">
-                                <p class="text-sm text-gray-500">
-                                  @lang('words.cash_appointment_message')
-                                </p>
+
+                        <div class="mt-4">
+                            <label for="payment_deadline" class="block text-sm font-medium text-gray-700">@lang('words.payment_deadline')</label>
+                            <input type="date" name="payment_deadline" id="payment_deadline"
+                                class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                required>
+                        </div>
+
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                @lang('words.cash_appointment_message')
+                            </p>
                                 <div class="mt-3 p-3 bg-blue-50 rounded-lg">
                                     <p class="text-sm text-blue-800">
                                         <strong>@lang('words.rent_amount_label'):</strong> $<span x-text="rentAmount || '0.00'"></span><br>
@@ -547,6 +555,25 @@
                 </div>
             </div>
 
+            <!-- Success Modal -->
+            <div x-show="showSuccessModal" x-cloak
+                class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-opacity-50">
+                <div @click.away="showSuccessModal = false"
+                    class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 sm:mx-auto text-center">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10 mb-4">
+                        <i class="fas fa-check text-green-600 text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">@lang('words.success')</h2>
+                    @if(session('success'))
+                        <p class="text-gray-600 mb-2">{{ session('success') }}</p>
+                    @endif
+                    <button @click="showSuccessModal = false"
+                        class="px-6 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition mt-4">
+                        @lang('words.ok_button')
+                    </button>
+                </div>
+            </div>
+
             <!-- Footer -->
             <div class="text-center py-8 mt-4">
                 <p class="text-gray-500 text-sm">@lang('words.footer_copyright', ['year' => date('Y')])
@@ -558,6 +585,11 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('payment_deadline').setAttribute('min', today);
+        });
+
         function downloadPDFAgreement() {
             const element = document.getElementById('pdf-content');
             const opt = {

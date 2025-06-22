@@ -506,4 +506,7 @@ return [
     'PrivacyPolicy' => 'Privacy & Policy',
     'TermsOfService' => 'Terms & Services',
     'DescribeFooter' => 'Finding your perfect home has never been easier. Browse our wide selection of properties and find the one that suits your needs.',
+    'payment_deadline'=>'Enter Payment Deadline to Bring Your Cash',
+    'ok_button'=>'Ok',
+    'success'=>'Success'
 ];
