@@ -96,7 +96,7 @@ Route::middleware('lang')->group(function () {
         Route::post('/maintenance/tenant-cancel/{maintenance}', [MaintenanceController::class, 'tenantCancel'])->name('maintenance.tenant.cancel');
         // The following route can be kept if there's other general processing, or removed if accept/reject cover all landlord responses.
         // Route::post('/maintenance/landlord-process-response/{maintenance}', [MaintenanceController::class, 'processLandlordResponse'])->name('maintenance.landlord.process_response');
-        
+
         // New routes for maintenance acceptance payment flow
         Route::post('/maintenance/{maintenance}/initiate-payment', [MaintenanceController::class, 'initiateAcceptancePayment'])->name('maintenance.initiate_payment');
         Route::get('/maintenance/{maintenance}/checkout-stripe', [StripeController::class, 'checkoutForMaintenance'])->name('maintenance.checkout.stripe');
@@ -133,60 +133,61 @@ Route::get('/success', [StripeController::class, 'success'])->name('success');
 
 
 // Admin Routes
-// Admin Guest Routes (for login and registration)
-// Accessible when not logged in as admin. 'guest:admin' redirects if admin is already logged in.
-// Route::middleware('guest:admin')->group(function () {
-Route::get('/admin/login', [AuthAdminController::class, 'showLoginForm'])->name('AdminLogin.form');
-Route::post('/admin/login', [AuthAdminController::class, 'login'])->name('AdminLogin');
-// });
+Route::prefix(env('ADMIN_ROUTE_PREFIX', 'admin'))->group(function () {
+    // Admin Guest Routes (for login and registration)
+    // Accessible when not logged in as admin. 'guest:admin' redirects if admin is already logged in.
+    // Route::middleware('guest:admin')->group(function () {
+    Route::get('/login', [AuthAdminController::class, 'showLoginForm'])->name('AdminLogin.form');
+    Route::post('/login', [AuthAdminController::class, 'login'])->name('AdminLogin');
+    // });
 
-// Authenticated Admin Routes
-// These routes are protected by the 'admin.auth' middleware
-Route::middleware('admin.auth')->group(function () {
-    Route::get('/admin/register', [AuthAdminController::class, 'showRegistrationForm'])->name('AdminRegister.form');
-    Route::post('/admin/register', [AuthAdminController::class, 'register'])->name('AdminRegister');
-    Route::post('/admin/logout', [AuthAdminController::class, 'logout'])->name('AdminLogout'); // Renamed from 'logout'
-    Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
-    Route::get('approve', [AdminController::class, 'viewaprove'])->name('aprove');
-    Route::get('users', [AdminController::class, 'viewusers'])->name('users');
-    Route::get('houses', [AdminController::class, 'view_house'])->name('houses');
-    Route::get('feedback', [AdminController::class, 'viewfeedback'])->name('feedback');
-    Route::get('/approve-user', [AdminController::class, 'view_aprove_user'])->name('approve-user');
-    Route::get('/delete-aprove/{id}', [AdminController::class, 'delete_aprove']);
-    Route::get('/approve-house/{id}', [AdminController::class, 'approve_house']);
-    Route::get('/delete-user/{id}', [AdminController::class, 'delete_user']);
-    Route::get('/deactivate-user/{id}', [AdminController::class, 'deactivate_user']);
-    Route::get('/approve-user/{id}', [AdminController::class, 'approve_user']);
-    Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
-    Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
-    Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
-    Route::get('/agreements', [AdminController::class, 'ViewAgreement'])->name('agreement');
-    Route::get('/payments', [AdminController::class, 'ViewPayment'])->name('payment');
-    Route::post('/admin/payments/{payment}/update-cash-details', [AdminController::class, 'updateCashPaymentDetails'])->name('admin.payments.update.cash');
-    Route::post('/admin/payments/{payment}/update-credit-landlord-details', [AdminController::class, 'updateCreditLandlordDetails'])->name('admin.payments.update.credit');
+    // Authenticated Admin Routes
+    // These routes are protected by the 'admin.auth' middleware
+    Route::middleware('admin.auth')->group(function () {
+        Route::get('/register', [AuthAdminController::class, 'showRegistrationForm'])->name('AdminRegister.form');
+        Route::post('/register', [AuthAdminController::class, 'register'])->name('AdminRegister');
+        Route::post('/logout', [AuthAdminController::class, 'logout'])->name('AdminLogout'); // Renamed from 'logout'
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
+        Route::get('/approve', [AdminController::class, 'viewaprove'])->name('aprove');
+        Route::get('/users', [AdminController::class, 'viewusers'])->name('users');
+        Route::get('/houses', [AdminController::class, 'view_house'])->name('houses');
+        Route::get('/feedback', [AdminController::class, 'viewfeedback'])->name('feedback');
+        Route::get('/approve-user', [AdminController::class, 'view_aprove_user'])->name('approve-user');
+        Route::get('/delete-aprove/{id}', [AdminController::class, 'delete_aprove']);
+        Route::get('/approve-house/{id}', [AdminController::class, 'approve_house']);
+        Route::get('/delete-user/{id}', [AdminController::class, 'delete_user']);
+        Route::get('/deactivate-user/{id}', [AdminController::class, 'deactivate_user']);
+        Route::get('/approve-user/{id}', [AdminController::class, 'approve_user']);
+        Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
+        Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
+        Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
+        Route::get('/agreements', [AdminController::class, 'ViewAgreement'])->name('agreement');
+        Route::get('/payments', [AdminController::class, 'ViewPayment'])->name('payment');
+        Route::post('/payments/{payment}/update-cash-details', [AdminController::class, 'updateCashPaymentDetails'])->name('admin.payments.update.cash');
+        Route::post('/payments/{payment}/update-credit-landlord-details', [AdminController::class, 'updateCreditLandlordDetails'])->name('admin.payments.update.credit');
 
-    // Admin routes for managing reports
-    Route::get('/admin/reports/{report}', [AdminController::class, 'showReportDetails'])->name('admin.reports.show');
-    Route::post('/admin/reports/{report}/status', [AdminController::class, 'updateReportStatus'])->name('admin.reports.updateStatus');
+        // Admin routes for managing reports
+        Route::get('/reports/{report}', [AdminController::class, 'showReportDetails'])->name('admin.reports.show');
+        Route::post('/reports/{report}/status', [AdminController::class, 'updateReportStatus'])->name('admin.reports.updateStatus');
 
-    // Admin Review Management Routes
-    Route::get('/admin/reviews', [AdminReviewController::class, 'index'])->name('admin.reviews.index');
-    Route::patch('/admin/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('admin.reviews.approve');
-    Route::delete('/admin/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('admin.reviews.destroy');
+        // Admin Review Management Routes
+        Route::get('/reviews', [AdminReviewController::class, 'index'])->name('admin.reviews.index');
+        Route::patch('/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('admin.reviews.approve');
+        Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('admin.reviews.destroy');
 
-    // Admin Configuration / Developer Tools (Local Environment Only)
-    if (app()->environment('local')) {
-        Route::get('/admin/configuration', [AdminConfigurationController::class, 'index'])->name('admin.configuration.index');
-        Route::patch('/admin/configuration/bookings/{booking}/age', [AdminConfigurationController::class, 'ageBooking'])->name('admin.configuration.bookings.age');
-        Route::post('/admin/configuration/currency', [AdminConfigurationController::class, 'updateCurrencyRate'])->name('admin.configuration.currency.update'); // Added route
-    }
+        // Admin Configuration / Developer Tools (Local Environment Only)
+        if (app()->environment('local')) {
+            Route::get('/configuration', [AdminConfigurationController::class, 'index'])->name('admin.configuration.index');
+            Route::patch('/configuration/bookings/{booking}/age', [AdminConfigurationController::class, 'ageBooking'])->name('admin.configuration.bookings.age');
+            Route::post('/configuration/currency', [AdminConfigurationController::class, 'updateCurrencyRate'])->name('admin.configuration.currency.update'); // Added route
+        }
 
-    // Admin Communications / Messages Monitoring
-    Route::get('/admin/communications', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'index'])->name('admin.communications.index');
-    Route::get('/admin/communications/inquiry/house/{house}/with/{userA}/{userB}', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'showInquiryThread'])->name('admin.communications.inquiry.show');
-    Route::get('/admin/communications/agreement/{agreement}', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'showAgreementThread'])->name('admin.communications.agreement.show');
-
-   });
+        // Admin Communications / Messages Monitoring
+        Route::get('/communications', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'index'])->name('admin.communications.index');
+        Route::get('/communications/inquiry/house/{house}/with/{userA}/{userB}', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'showInquiryThread'])->name('admin.communications.inquiry.show');
+        Route::get('/communications/agreement/{agreement}', [\App\Http\Controllers\Admin\AdminCommunicationController::class, 'showAgreementThread'])->name('admin.communications.agreement.show');
+    });
+});
 
 //Stable
 
