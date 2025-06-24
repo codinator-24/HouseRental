@@ -33,7 +33,7 @@
             <div class="items-center hidden space-x-6 md:flex">
                 <a href="{{ route('home') }}"
                     class="px-3 py-2 text-sm font-medium text-gray-600 transition-colors duration-200 rounded-md hover:text-blue-600 hover:bg-gray-100">@lang('words.Home')</a>
-                <a href="#"
+                <a href="{{ route('home') }}#AboutSection"
                     class="px-3 py-2 text-sm font-medium text-gray-600 transition-colors duration-200 rounded-md hover:text-blue-600 hover:bg-gray-100">@lang('words.About')</a>
                 <a href="{{ route('contact') }}"
                     class="px-3 py-2 text-sm font-medium text-gray-600 transition-colors duration-200 rounded-md hover:text-blue-600 hover:bg-gray-100">@lang('words.Feedback')</a>
@@ -195,7 +195,7 @@
 
 
                             <a href="{{ route('profile.show') }}"
-                                class="block py-2 pl-4 pr-8 hover:bg-slate-100">Profile</a>
+                                class="block py-2 pl-4 pr-8 hover:bg-slate-100">@lang('words.Profile')</a>
 
                             <!-- Houses Dropdown -->
                             {{-- <div x-data="{ housesOpen: false }">
@@ -232,17 +232,15 @@
                             <a href="{{ route('dashboard') }}"
                                 class="block py-2 pl-4 pr-8 hover:bg-slate-100">@lang('words.Dashboard')</a>
 
-                            <a href="{{ route('favorites.show') }}" class="block py-2 pl-4 pr-8 hover:bg-slate-100">My
-                                Favorites</a>
+                            <a href="{{ route('favorites.show') }}" class="block py-2 pl-4 pr-8 hover:bg-slate-100">@lang('words.my_favorite')</a>
 
-                            <a href="{{ route('Show.house.add') }}" class="block py-2 pl-4 pr-8 hover:bg-slate-100">Add
-                                Properties</a>
+                            <a href="{{ route('Show.house.add') }}" class="block py-2 pl-4 pr-8 hover:bg-slate-100">@lang('words.AddProperty')</a>
 
 
-                            <form action="{{ route('logout') }}" method="post">
+                            <form action="{{ route('logout') }}" method="post" class="block py-2 pl-4 pr-8 hover:bg-slate-100">
                                 @csrf
                                 <button
-                                    class="block w-full py-2 pl-4 pr-8 text-sm text-left text-gray-700 hover:bg-gray-100">@lang('words.Logout')</button>
+                                    class="">@lang('words.Logout')</button>
                             </form>
                         </div>
                     </div>
@@ -270,7 +268,7 @@
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="{{ route('home') }}"
                     class="block px-3 py-2 text-base font-medium text-gray-700 transition-colors duration-200 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.Home')</a>
-                <a href="#"
+                <a href="{{ route('home') }}#AboutSection"
                     class="block px-3 py-2 text-base font-medium text-gray-700 transition-colors duration-200 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.About')</a>
                 <a href="{{ route('contact') }}"
                     class="block px-3 py-2 text-base font-medium text-gray-700 transition-colors duration-200 rounded-md hover:bg-gray-50 hover:text-blue-600">@lang('words.Feedback')</a>
@@ -386,7 +384,7 @@
                 <ul class="space-y-3 text-sm">
                     <li><a href="{{ route('home') }}"
                             class="hover:text-blue-400 transition-colors duration-200">@lang('words.Home')</a></li>
-                    <li><a href="#"
+                    <li><a href="{{ route('home') }}#AboutSection"
                             class="hover:text-blue-400 transition-colors duration-200">@lang('words.About')</a></li>
                     <li><a href="#"
                             class="hover:text-blue-400 transition-colors duration-200">@lang('words.AllProperties', ['default' => 'All Properties'])</a></li>

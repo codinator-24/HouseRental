@@ -19,6 +19,7 @@ return [
     'No new notifications.' => '.هیچ ئاگادارکردنەوەیەکی نوێ نییە',
     'View all notifications' => 'بینینی هەموو ئاگادارکردنەوەکان',
     'Profile' => 'پڕۆفایل',
+    'my_favorite' => 'دڵخوازەکانم',
     'Houses' => 'خانووەکان',
     'Add House' => 'زیاد کردنی خانوو', // General "Add House" text, e.g. for nav links
     'My Houses' => 'خانووەکانم',

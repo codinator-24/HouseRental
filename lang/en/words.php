@@ -19,6 +19,7 @@ return [
     'No new notifications.' => 'No new notifications.',
     'View all notifications' => 'View all notifications',
     'Profile' => 'Profile',
+    'my_favorite' => 'My Favorite',
     'Houses' => 'Houses',
     'Add House' => 'Add House', // General "Add House" text, e.g. for nav links
     'My Houses' => 'My Houses',
