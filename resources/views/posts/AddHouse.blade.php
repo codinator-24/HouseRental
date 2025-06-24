@@ -508,7 +508,7 @@
         });
     </script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy09TICTEciWuJe8Xq_fhNDcFAvBBL4IQ&callback=initMap" async
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKWlf4wz8z4ZGYXYIk4n1nEs2MEwATrEw&callback=initMap" async
         defer></script>
     <script>
         let map;

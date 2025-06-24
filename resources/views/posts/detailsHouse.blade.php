@@ -816,7 +816,7 @@ $userEligibleBooking = Auth::user()
 
     @if ($house->latitude !== null && $house->longitude !== null)
         <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy09TICTEciWuJe8Xq_fhNDcFAvBBL4IQ&callback=initDetailsHouseMap"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKWlf4wz8z4ZGYXYIk4n1nEs2MEwATrEw&callback=initDetailsHouseMap"
             async defer></script>
         <script>
             let detailsHouseMapInstance;
