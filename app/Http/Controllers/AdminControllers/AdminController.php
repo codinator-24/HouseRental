@@ -114,7 +114,7 @@ class AdminController extends Controller
             $house->landlord->notify(new HouseApproved($house));
         }
 
-        return redirect('/approve');
+        return redirect()->route('aprove')->with('success', 'House approved successfully!');
     }
 
 
@@ -123,7 +123,7 @@ class AdminController extends Controller
 
         $data = House::find($id);
         $data->delete();
-        return redirect()->back();
+        return redirect()->route('aprove')->with('success', 'House rejected successfully!');
     }
 
     public function delete_user($id)
@@ -139,7 +139,7 @@ class AdminController extends Controller
 
         $data = Feedback::find($id);
         $data->delete();
-        return redirect()->back();
+        return redirect()->route('feedback')->with('success', 'Feedback deleted successfully!');
     }
 
     public function approve_user($id)
@@ -151,7 +151,7 @@ class AdminController extends Controller
         // Notify the user
         $user->notify(new AccountVerified($user));
 
-        return redirect('/approve-user');
+        return redirect()->route('approve-user')->with('success', 'User approved successfully!');
     }
 
     public function deactivate_user($id)
@@ -163,7 +163,7 @@ class AdminController extends Controller
         // Notify the user
         $user->notify(new AccountVerified($user));
 
-        return redirect()->back();
+        return redirect()->route('approve-user')->with('success', 'User deleted successfully!');
     }
 
     public function deactivate_house($id)
@@ -171,7 +171,7 @@ class AdminController extends Controller
         $house = House::findOrFail($id);
         $house->status = 'disagree';
         $house->save();
-        return redirect()->back();
+        return redirect()->route('houses')->with('success', 'House deactivated successfully!');
     }
 
     public function ViewProfit()

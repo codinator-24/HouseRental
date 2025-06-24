@@ -76,10 +76,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form action="{{ url('deactivate-house', $house->id) }}" method="GET">
+        <form action="{{ route('admin.houses.deactivate', $house->id) }}" method="POST">
             @csrf
-            @method('GET') <!-- Use DELETE if your route uses it -->
-            <a href="{{ url('deactivate-house', $house->id) }}"><button class="btn btn-sm btn-danger">Deactivate</button></a>
+            <button type="submit" class="btn btn-sm btn-danger">Deactivate</button>
         </form>
       </div>
     </div>

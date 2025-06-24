@@ -71,11 +71,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form action="{{ url('approve-house/' . $house->id) }}" method="GET">
+        <form action="{{ route('admin.houses.approve', $house->id) }}" method="POST">
             @csrf
-            <a href="{{ url('approve-house/' . $house->id) }}"><button
-                                                            class="btn btn-success">Accept</button></a>
-                                                            
+            <button type="submit" class="btn btn-success">Accept</button>
         </form>
       </div>
     </div>
@@ -100,11 +98,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form action="{{ url('delete-aprove', $house->id) }}" method="GET">
+        <form action="{{ route('admin.houses.delete_aprove', $house->id) }}" method="POST">
             @csrf
-            @method('GET') 
-            <a href="{{ url('delete-aprove', $house->id) }}"><button
-                                                            class="btn btn-danger">Reject</button></a>
+            <button type="submit" class="btn btn-danger">Reject</button>
         </form>
       </div>
     </div>

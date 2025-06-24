@@ -90,10 +90,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form action="{{ url('approve-user/' . $user->id) }}" method="GET">
+        <form action="{{ route('admin.users.approve', $user->id) }}" method="POST">
             @csrf
-            <a href="{{ url('approve-user/' . $user->id) }}"><button
-                                                        class="btn btn-success">Accept</button></a>
+            <button type="submit" class="btn btn-success">Accept</button>
         </form>
       </div>
     </div>
@@ -117,11 +116,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form action="{{ url('delete-user/' . $user->id) }}" method="POST">
+        <form action="{{ route('admin.users.delete', $user->id) }}" method="POST">
             @csrf
-            @method('GET')
-             <a href="{{ url('delete-user', $user->id) }}"><button
-                                                        class="btn btn-danger">Reject</button></a>
+            <button type="submit" class="btn btn-danger">Reject</button>
         </form>
       </div>
     </div>

@@ -133,7 +133,7 @@ Route::get('/success', [StripeController::class, 'success'])->name('success');
 
 
 // Admin Routes
-Route::prefix(env('ADMIN_ROUTE_PREFIX', 'admin'))->group(function () {
+Route::prefix('admin')->group(function () {
     // Admin Guest Routes (for login and registration)
     // Accessible when not logged in as admin. 'guest:admin' redirects if admin is already logged in.
     // Route::middleware('guest:admin')->group(function () {
@@ -153,13 +153,13 @@ Route::prefix(env('ADMIN_ROUTE_PREFIX', 'admin'))->group(function () {
         Route::get('/houses', [AdminController::class, 'view_house'])->name('houses');
         Route::get('/feedback', [AdminController::class, 'viewfeedback'])->name('feedback');
         Route::get('/approve-user', [AdminController::class, 'view_aprove_user'])->name('approve-user');
-        Route::get('/delete-aprove/{id}', [AdminController::class, 'delete_aprove']);
-        Route::get('/approve-house/{id}', [AdminController::class, 'approve_house']);
-        Route::get('/delete-user/{id}', [AdminController::class, 'delete_user']);
+        Route::post('/delete-aprove/{id}', [AdminController::class, 'delete_aprove'])->name('admin.houses.delete_aprove');
+        Route::post('/approve-house/{id}', [AdminController::class, 'approve_house'])->name('admin.houses.approve');
+        Route::post('/delete-user/{id}', [AdminController::class, 'delete_user'])->name('admin.users.delete');
         Route::get('/deactivate-user/{id}', [AdminController::class, 'deactivate_user']);
-        Route::get('/approve-user/{id}', [AdminController::class, 'approve_user']);
-        Route::get('/delete-feedback/{id}', [AdminController::class, 'delete_feedback']);
-        Route::get('/deactivate-house/{id}', [AdminController::class, 'deactivate_house']);
+        Route::post('/approve-user/{id}', [AdminController::class, 'approve_user'])->name('admin.users.approve');
+        Route::post('/delete-feedback/{id}', [AdminController::class, 'delete_feedback'])->name('admin.feedback.delete');
+        Route::post('/deactivate-house/{id}', [AdminController::class, 'deactivate_house'])->name('admin.houses.deactivate');
         Route::get('/profits', [AdminController::class, 'ViewProfit'])->name('profit');
         Route::get('/agreements', [AdminController::class, 'ViewAgreement'])->name('agreement');
         Route::get('/payments', [AdminController::class, 'ViewPayment'])->name('payment');

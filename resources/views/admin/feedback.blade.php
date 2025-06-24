@@ -79,12 +79,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form action="{{ url('delete-feedback', $feedback->id) }}" method="GET">
+        <form action="{{ route('admin.feedback.delete', $feedback->id) }}" method="POST">
             @csrf
-            @method('GET') 
-            <a href="{{ url('delete-feedback', $feedback->id) }}">
-                                                <button class="btn btn-danger">Delete</button>
-                                            </a>
+            <button type="submit" class="btn btn-danger">Delete</button>
         </form>
       </div>
     </div>
