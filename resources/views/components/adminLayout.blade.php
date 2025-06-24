@@ -338,8 +338,8 @@
                     </li>
                     {{-- 1. New Communications Nav Item --}}
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('admin.communications') ? 'activee' : '' }}"
-                            href="#"> {{-- Replace # with actual route e.g., {{ route('admin.communications') }} --}}
+                        <a class="nav-link {{ request()->routeIs('admin.communications.index') ? 'activee' : '' }}"
+                            href="{{ route('admin.communications.index') }}">
                             <i class="bi bi-chat-left-text"></i> {{-- Official chat icon --}}
                             <span>Communications</span>
                         </a>

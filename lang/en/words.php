@@ -509,5 +509,12 @@ return [
     'DescribeFooter' => 'Finding your perfect home has never been easier. Browse our wide selection of properties and find the one that suits your needs.',
     'payment_deadline'=>'Enter Payment Deadline to Bring Your Cash',
     'ok_button'=>'Ok',
-    'success'=>'Success'
+    'success'=>'Success',
+    'agreement_details_title' => 'Agreement Details',
+    'close_button' => 'Close',
+    'print_button' => 'Print',
+    'full_name_label' => 'Full Name',
+    'email_label' => 'Email',
+    'phone_number_label' => 'Phone Number',
+    'address_label' => 'Address',
 ];

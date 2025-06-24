@@ -368,7 +368,8 @@
                     <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
                         <div class="flex items-center mb-2">
                             <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
-                            <label for="rent_amount" class="text-sm font-medium text-green-800">@lang('words.monthly_rent_label')</label>
+                            <label for="rent_amount"
+                                class="text-sm font-medium text-green-800">@lang('words.monthly_rent_label')</label>
                         </div>
                         <input type="number" id="rent_amount" name="rent_amount"
                             value="{{ $booking->house->rent_amount ?? '0.00' }}"
@@ -401,7 +402,8 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">@lang('words.payment_date_label'):</span>
-                            <span class="font-semibold text-gray-800">{{ $signedDate->format('d/m/Y') }} @lang('words.payment_date_value')</span>
+                            <span class="font-semibold text-gray-800">{{ $signedDate->format('d/m/Y') }}
+                                @lang('words.payment_date_value')</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">@lang('words.duration_label'):</span>
@@ -432,6 +434,7 @@
                     class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
                     <i class="fas fa-download mr-2"></i>@lang('words.download_pdf_button')
                 </button>
+
                 @if ($agreement->status === 'pending')
                     <button type="button" @click="initiateSignAgreement()"
                         class="gradient-bg text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out">
@@ -506,7 +509,8 @@
 
             <!-- Modal of Cash -->
             <div x-data="{ show: false, bookingId: null, rentAmount: null }"
-                x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId; rentAmount = $event.detail.rentAmount" x-show="show" x-cloak
+                x-on:open-cash-modal.window="show = true; bookingId = $event.detail.bookingId; rentAmount = $event.detail.rentAmount"
+                x-show="show" x-cloak
                 class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-opacity-50">
                 <div @click.away="show = false" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
@@ -522,7 +526,8 @@
                         <input type="hidden" name="rent_amount" :value="rentAmount">
 
                         <div class="mt-4">
-                            <label for="payment_deadline" class="block text-sm font-medium text-gray-700">@lang('words.payment_deadline')</label>
+                            <label for="payment_deadline"
+                                class="block text-sm font-medium text-gray-700">@lang('words.payment_deadline')</label>
                             <input type="date" name="payment_deadline" id="payment_deadline"
                                 class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                 required>
@@ -532,14 +537,15 @@
                             <p class="text-sm text-gray-500">
                                 @lang('words.cash_appointment_message')
                             </p>
-                                <div class="mt-3 p-3 bg-blue-50 rounded-lg">
-                                    <p class="text-sm text-blue-800">
-                                        <strong>@lang('words.rent_amount_label'):</strong> $<span x-text="rentAmount || '0.00'"></span><br>
-                                        <strong>@lang('words.duration_label'):</strong> {{ $booking->month_duration }}
-                                        {{ $booking->month_duration > 1 ? __('words.duration_month_plural') : __('words.duration_month_singular') }}
-                                    </p>
-                                </div>
+                            <div class="mt-3 p-3 bg-blue-50 rounded-lg">
+                                <p class="text-sm text-blue-800">
+                                    <strong>@lang('words.rent_amount_label'):</strong> $<span
+                                        x-text="rentAmount || '0.00'"></span><br>
+                                    <strong>@lang('words.duration_label'):</strong> {{ $booking->month_duration }}
+                                    {{ $booking->month_duration > 1 ? __('words.duration_month_plural') : __('words.duration_month_singular') }}
+                                </p>
                             </div>
+                        </div>
 
                         <div class="flex justify-end space-x-4 mt-6">
                             <button type="button" @click="show = false"
@@ -560,11 +566,12 @@
                 class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-opacity-50">
                 <div @click.away="showSuccessModal = false"
                     class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 sm:mx-auto text-center">
-                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10 mb-4">
+                    <div
+                        class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10 mb-4">
                         <i class="fas fa-check text-green-600 text-xl"></i>
                     </div>
                     <h2 class="text-2xl font-bold mb-4 text-gray-800">@lang('words.success')</h2>
-                    @if(session('success'))
+                    @if (session('success'))
                         <p class="text-gray-600 mb-2">{{ session('success') }}</p>
                     @endif
                     <button @click="showSuccessModal = false"
@@ -593,328 +600,22 @@
         function downloadPDFAgreement() {
             const element = document.getElementById('pdf-content');
             const opt = {
-                margin:       0.5,
-                filename:     'agreement-{{ $agreement->id }}.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                margin: 0.5,
+                filename: 'agreement-{{ $agreement->id }}.pdf',
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'in',
+                    format: 'letter',
+                    orientation: 'portrait'
+                }
             };
             html2pdf().from(element).set(opt).save();
         }
     </script>
 </x-layout>
-
-{{-- G Style --}}
-{{-- <style>
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f3f4f6;
-        /* Light gray background */
-    }
-
-    .card {
-        background-color: white;
-        border-radius: 0.75rem;
-        /* 12px */
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        padding: 1.5rem;
-        /* 24px */
-        margin-bottom: 1.5rem;
-        /* 24px */
-    }
-
-    .section-title {
-        font-size: 1.25rem;
-        /* 20px */
-        font-weight: 600;
-        color: #1f2937;
-        /* Dark gray */
-        margin-bottom: 1rem;
-        /* 16px */
-        border-bottom: 1px solid #e5e7eb;
-        /* Light gray border */
-        padding-bottom: 0.5rem;
-        /* 8px */
-    }
-
-    .info-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.5rem 0;
-        /* 8px top/bottom */
-        border-bottom: 1px solid #f3f4f6;
-        /* Very light gray border for items */
-    }
-
-    .info-item:last-child {
-        border-bottom: none;
-    }
-
-    .info-label {
-        font-weight: 500;
-        color: #4b5563;
-        /* Medium gray */
-    }
-
-    .info-value {
-        color: #1f2937;
-        /* Dark gray */
-        text-align: right;
-    }
-
-    .status-pending {
-        background-color: #fef3c7;
-        /* Light yellow */
-        color: #92400e;
-        /* Dark yellow/brown */
-        padding: 0.25rem 0.75rem;
-        /* 4px 12px */
-        border-radius: 9999px;
-        /* Pill shape */
-        font-size: 0.875rem;
-        /* 14px */
-        font-weight: 500;
-    }
-
-    .image-placeholder {
-        width: 100px;
-        height: 100px;
-        background-color: #e5e7eb;
-        /* Light gray */
-        border-radius: 50%;
-        /* 8px */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #6b7280;
-        /* Gray */
-        font-size: 0.875rem;
-        /* 14px */
-        margin-bottom: 0.5rem;
-        /* 8px */
-    }
-
-    .IdCard_image-placeholder {
-        width: 210px;
-        height: 120px;
-        background-color: #e5e7eb;
-        /* Light gray */
-        border-radius: 0.5rem;
-        /* 8px */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #6b7280;
-        /* Gray */
-        font-size: 0.875rem;
-        /* 14px */
-        margin-bottom: 0.5rem;
-        /* 8px */
-    }
-
-    .header-main {
-        background-color: #4f46e5;
-        /* Indigo */
-        color: white;
-        padding: 2rem 0;
-        /* 32px */
-        text-align: center;
-        border-bottom-left-radius: 1.5rem;
-        /* 24px */
-        border-bottom-right-radius: 1.5rem;
-        /* 24px */
-        margin-bottom: 2rem;
-        /* 32px */
-    }
-
-    .header-main h1 {
-        font-size: 2.25rem;
-        /* 36px */
-        font-weight: 700;
-    }
-
-    /* Additional styling for better visual separation and emphasis */
-    .highlight-section {
-        border-left: 4px solid #4f46e5;
-        /* Indigo border */
-        padding-left: 1rem;
-        /* 16px */
-    }
-</style>
-<x-layout>
-    <header class="header-main">
-        <h1>Rental Agreement Details</h1>
-    </header>
-
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-
-        <div class="grid md:grid-cols-2 gap-6 mb-8">
-            <div class="card">
-                <h2 class="section-title">Tenant Information</h2>
-                <div class="flex flex-col items-center md:items-start mb-4">
-                    <div class="image-placeholder">Photo</div>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value">Hallo Man</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Primary Phone:</span>
-                    <span class="info-value">077504325678</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Secondary Phone:</span>
-                    <span class="info-value">07501541890</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Email:</span>
-                    <span class="info-value">hallo@gmail.com</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Address:</span>
-                    <span class="info-value">Sulaimany</span>
-                </div>
-                <div class="mt-4 flex flex-col items-center md:items-start">
-                    <div class="IdCard_image-placeholder">ID Card</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2 class="section-title">Landlord Information</h2>
-                <div class="flex flex-col items-center md:items-start mb-4">
-                    <div class="image-placeholder">Photo</div>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value">Dyari Morison</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Primary Phone:</span>
-                    <span class="info-value">07701559713</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Secondary Phone:</span>
-                    <span class="info-value">0771213402</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Email:</span>
-                    <span class="info-value">dyari@gmail.com</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Address:</span>
-                    <span class="info-value">Sulaimany</span>
-                </div>
-                <div class="mt-4 flex flex-col items-center md:items-start">
-                    <div class="IdCard_image-placeholder">ID Card</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2 class="section-title">Property Information</h2>
-            <div class="grid md:grid-cols-2 gap-x-6">
-                <div class="info-item">
-                    <span class="info-label">Property Name:</span>
-                    <span class="info-value">[Not Specified in PDF]</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Property Type:</span>
-                    <span class="info-value">[Not Specified in PDF]</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Square Footage:</span>
-                    <span class="info-value">[Not Specified in PDF]</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Number of Floors:</span>
-                    <span class="info-value">[Not Specified in PDF]</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Number of Rooms:</span>
-                    <span class="info-value">[Not Specified in PDF]</span>
-                </div>
-                <div class="info-item md:col-span-2">
-                    <span class="info-label">Property Address:</span>
-                    <span class="info-value">[Not Specified in PDF]</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="card highlight-section">
-            <h2 class="section-title">Agreement Information</h2>
-            <div class="flex justify-between items-center mb-4">
-                <span class="info-label text-lg">Status:</span>
-                <span class="status-pending">Pending</span>
-            </div>
-            <div class="grid md:grid-cols-2 gap-x-6">
-                <div class="info-item">
-                    <span class="info-label">Signed At:</span>
-                    <span class="info-value">15/05/2025</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Rent Amount:</span>
-                    <span class="info-value">$150</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Expires At:</span>
-                    <span class="info-value">15/07/2025</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Rent Frequency:</span>
-                    <span class="info-value">Monthly</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Payment Method:</span>
-                    <span class="info-value">Credit</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Paid At:</span>
-                    <span class="info-value">15/05/2025</span>
-                </div>
-            </div>
-            <div class="mt-6 pt-4 border-t border-gray-200">
-                <h3 class="font-semibold text-gray-700 mb-2">Notes:</h3>
-                <p class="text-gray-600 italic">This Agreement is for 2 Months.</p>
-            </div>
-        </div>
-
-        <div class="mt-8 flex justify-end space-x-4">
-            <button
-                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg shadow transition duration-150 ease-in-out">
-                Download PDF
-            </button>
-            <button
-                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition duration-150 ease-in-out">
-                Sign Agreement
-            </button>
-        </div>
-
-    </div>
-
-    <footer class="text-center p-4 mt-8 text-sm text-gray-500">
-        <p>&copy; <span id="currentYear"></span> Your Company Name. All rights reserved.</p>
-    </footer>
-
-    <script>
-        // Script to set the current year in the footer
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-    </script>
-
-    <script>
-        function downloadPDFAgreement() {
-            // Placeholder for PDF download logic
-            // You'll need to implement the actual PDF generation and download here.
-            // For example, you might make an AJAX request to a backend route
-            // that generates the PDF and returns it for download.
-            alert('Download PDF Agreement button clicked! Implement PDF generation here.');
-            console.log('Attempting to download PDF agreement...');
-        }
-
-        function signAgreement() {
-            // Placeholder for signing agreement logic
-            // This could redirect to a digital signature platform or trigger a modal.
-            alert('Sign Agreement button clicked! Implement signing process here.');
-            console.log('Initiating agreement signing process...');
-        }
-    </script>
-</x-layout> --}}
